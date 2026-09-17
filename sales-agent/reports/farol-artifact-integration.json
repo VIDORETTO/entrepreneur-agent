@@ -1,0 +1,24 @@
+{
+  "schema_version": 1,
+  "generated_at": "2026-09-17",
+  "evidence_class": "real-upstream-farol-artifact-plus-local-import",
+  "farol": {
+    "repository": "https://github.com/VIDORETTO/farol-rag-skill-docs",
+    "revision": "81d5dcb2e189d00406cdd9b9e671d94e3f23cd58",
+    "command": "python -m docops run documents/fixtures/acme-docs --output <artifact> --slug acme --license MIT --redistribution private-only",
+    "exit_code": 0,
+    "artifact_documents": 2,
+    "artifact_paths": ["rag/documents/guide.md", "rag/documents/release.md"]
+  },
+  "import": {
+    "command": "vendedor farol import --business-id acme-demo <artifact>",
+    "backend": "farol-artifact-v1",
+    "imported_documents": 2,
+    "query": "API",
+    "evidence": {"business_id": "acme-demo", "source_id": "guide.md", "source_version": "farol-artifact", "locator": "guide.md", "content_returned": true}
+  },
+  "not_claimed": [
+    "the optional knowledge-rag/MCP backend was not installed or executed",
+    "this does not validate a network production deployment"
+  ]
+}

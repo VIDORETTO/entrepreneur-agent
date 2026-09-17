@@ -1,0 +1,45 @@
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "vendedor-adaptavel"
+version = "0.1.0"
+description = "Vendedor comercial local com estado explícito, políticas e evidências verificáveis"
+readme = "README.md"
+requires-python = ">=3.9"
+license = {text = "MIT"}
+authors = [{name = "Vendedor Adaptável contributors"}]
+dependencies = []
+
+[project.optional-dependencies]
+dev = ["pytest>=7,<9"]
+
+[project.scripts]
+vendedor = "sales_agent.cli:main"
+
+[tool.setuptools]
+package-dir = {"" = "src"}
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.package-data]
+sales_agent = ["resources/*.json"]
+
+[tool.setuptools.data-files]
+"share/vendedor-adaptavel" = ["manifest.json", "LICENSE", "THIRD_PARTY_NOTICES.md"]
+"share/vendedor-adaptavel/references" = ["references/conversation-contract.md", "references/question-policy.md", "references/evidence-policy.md"]
+"share/vendedor-adaptavel/schemas" = ["schemas/business-package.schema.json", "schemas/channel-event.schema.json"]
+"share/vendedor-adaptavel/skills" = ["skills/README.md", "skills/vendor-sources.md"]
+"share/vendedor-adaptavel/skills/sales-setup" = ["skills/sales-setup/SKILL.md"]
+"share/vendedor-adaptavel/skills/sales-business-discovery" = ["skills/sales-business-discovery/SKILL.md"]
+"share/vendedor-adaptavel/skills/sales-knowledge-preparation" = ["skills/sales-knowledge-preparation/SKILL.md"]
+"share/vendedor-adaptavel/skills/sales-knowledge-preparation/scripts" = ["skills/sales-knowledge-preparation/scripts/import_farol.py"]
+"share/vendedor-adaptavel/skills/sales-simulate" = ["skills/sales-simulate/SKILL.md"]
+"share/vendedor-adaptavel/skills/sales-simulate/scripts" = ["skills/sales-simulate/scripts/run_case.py"]
+"share/vendedor-adaptavel/skills/seller-conversation" = ["skills/seller-conversation/SKILL.md"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-ra"

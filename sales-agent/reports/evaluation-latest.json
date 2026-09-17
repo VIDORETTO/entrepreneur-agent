@@ -1,0 +1,255 @@
+{
+  "backend": {
+    "mode": "persistent-local",
+    "name": "sqlite-farol-v1",
+    "upstream_farol_rag": "not-executed"
+  },
+  "cases": [
+    {
+      "critical": true,
+      "id": "AC001",
+      "status": "passed",
+      "title": "compra pronta"
+    },
+    {
+      "critical": true,
+      "id": "AC002",
+      "status": "passed",
+      "title": "variante única"
+    },
+    {
+      "critical": true,
+      "id": "AC003",
+      "status": "passed",
+      "title": "reutilizar dados"
+    },
+    {
+      "critical": false,
+      "id": "AC004",
+      "status": "passed",
+      "title": "preço direto"
+    },
+    {
+      "critical": false,
+      "id": "AC005",
+      "status": "passed",
+      "title": "pergunta breve"
+    },
+    {
+      "critical": false,
+      "id": "AC006",
+      "status": "passed",
+      "title": "fora do escopo"
+    },
+    {
+      "critical": false,
+      "id": "AC007",
+      "status": "passed",
+      "title": "detalhe solicitado"
+    },
+    {
+      "critical": true,
+      "id": "AC008",
+      "status": "passed",
+      "title": "compra condicional"
+    },
+    {
+      "critical": true,
+      "id": "AC009",
+      "status": "passed",
+      "title": "cotação invalidada"
+    },
+    {
+      "critical": true,
+      "id": "AC010",
+      "status": "passed",
+      "title": "encerramento e retorno"
+    },
+    {
+      "critical": true,
+      "id": "AC011",
+      "status": "passed",
+      "title": "recuperação persistente"
+    },
+    {
+      "critical": true,
+      "id": "AC012",
+      "status": "passed",
+      "title": "conflito de fonte"
+    },
+    {
+      "critical": true,
+      "id": "AC013",
+      "status": "passed",
+      "title": "revogação e isolamento"
+    },
+    {
+      "critical": true,
+      "id": "AC014",
+      "status": "passed",
+      "title": "pré-requisito de checkout"
+    },
+    {
+      "critical": true,
+      "id": "AC015",
+      "status": "passed",
+      "title": "permissão do efeito"
+    },
+    {
+      "critical": true,
+      "id": "AC016",
+      "status": "passed",
+      "title": "resultado desconhecido"
+    },
+    {
+      "critical": true,
+      "id": "AC017",
+      "status": "passed",
+      "title": "pagamento confirmado por provedor"
+    },
+    {
+      "critical": true,
+      "id": "AC018",
+      "status": "passed",
+      "title": "evento repetido"
+    },
+    {
+      "critical": true,
+      "id": "AC019",
+      "status": "passed",
+      "title": "correção tardia"
+    },
+    {
+      "critical": true,
+      "id": "AC020",
+      "status": "passed",
+      "title": "estoque concorrente"
+    },
+    {
+      "critical": true,
+      "id": "AC021",
+      "status": "passed",
+      "title": "pedido de pessoa"
+    },
+    {
+      "critical": false,
+      "id": "AC022",
+      "status": "passed",
+      "title": "contexto de transferência"
+    },
+    {
+      "critical": true,
+      "id": "AC023",
+      "status": "passed",
+      "title": "recusa"
+    },
+    {
+      "critical": true,
+      "id": "AC024",
+      "status": "passed",
+      "title": "follow-up revalidado"
+    },
+    {
+      "critical": false,
+      "id": "AC025",
+      "status": "passed",
+      "title": "instalação limpa"
+    },
+    {
+      "critical": true,
+      "id": "AC026",
+      "status": "passed",
+      "title": "retomada"
+    },
+    {
+      "critical": true,
+      "id": "AC027",
+      "status": "passed",
+      "title": "lacunas por capacidade"
+    },
+    {
+      "critical": true,
+      "id": "AC028",
+      "status": "passed",
+      "title": "alteração local"
+    },
+    {
+      "critical": false,
+      "id": "AC029",
+      "status": "passed",
+      "title": "documentos antes da pergunta"
+    },
+    {
+      "critical": false,
+      "id": "AC030",
+      "status": "passed",
+      "title": "descoberta progressiva"
+    },
+    {
+      "critical": true,
+      "id": "AC031",
+      "status": "passed",
+      "title": "B2B direto e B2C consultivo"
+    },
+    {
+      "critical": false,
+      "id": "AC032",
+      "status": "passed",
+      "title": "dependências e procedência"
+    },
+    {
+      "critical": true,
+      "id": "AC033",
+      "status": "passed",
+      "title": "troca de harness"
+    },
+    {
+      "critical": true,
+      "id": "AC034",
+      "status": "passed",
+      "title": "modelo insuficiente"
+    },
+    {
+      "critical": false,
+      "id": "AC035",
+      "status": "passed",
+      "title": "troca de modelo"
+    },
+    {
+      "critical": false,
+      "id": "AC036",
+      "status": "passed",
+      "title": "registro de avaliação"
+    },
+    {
+      "critical": true,
+      "id": "AC037",
+      "status": "passed",
+      "title": "recuperação operacional"
+    },
+    {
+      "critical": true,
+      "id": "AC038",
+      "status": "passed",
+      "title": "trajetória observável"
+    }
+  ],
+  "evidence_class": "simulated-contract-and-persistent-local-backend",
+  "limitations": [
+    "checkout, pagamento, agenda, canal e transferência são simuladores locais",
+    "nenhum modelo remoto foi declarado compatível sem execução do teste correspondente",
+    "a recuperação persistente local é demonstrada; o RAG opcional upstream do Farol não foi executado neste relatório"
+  ],
+  "model": {
+    "mode": "deterministic-proposal-adapter",
+    "name": "rules-v1"
+  },
+  "schema_version": 1,
+  "status": "passed",
+  "summary": {
+    "critical_failures": 0,
+    "failed": 0,
+    "passed": 38,
+    "total": 38
+  }
+}

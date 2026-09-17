@@ -1,0 +1,17 @@
+{
+  "name": "vendedor-adaptavel",
+  "version": "0.1.0",
+  "schema_version": 1,
+  "runtime": {
+    "python": ">=3.9",
+    "default_model_adapter": "rules-v1",
+    "default_knowledge_backend": "sqlite-farol-v1",
+    "default_commerce_adapter": "simulated-commerce-v1"
+  },
+  "sources": [
+    {"id": "corey-marketingskills", "repository": "https://github.com/coreyhaines31/marketingskills", "revision": "5b2c0007766c6a1cf1d53fd8fc73e979e0821022", "license": "MIT", "role": "commercial-skills"},
+    {"id": "matt-skills", "repository": "https://github.com/mattpocock/skills", "revision": "74ca5fe077456a0b3b2f5310cf9430999fd0b5fd", "license": "MIT", "role": "owner-interview"},
+    {"id": "farol-rag-skill-docs", "repository": "https://github.com/VIDORETTO/farol-rag-skill-docs", "revision": "81d5dcb2e189d00406cdd9b9e671d94e3f23cd58", "license": "MIT", "role": "knowledge-preparation-and-evidence"}
+  ],
+  "excluded_sources": [{"name": "Sales-Skills", "reason": "explicitly excluded by product specification"}]
+}
