@@ -3,7 +3,6 @@
 from __future__ import annotations
 
 import json
-import re
 import uuid
 from importlib import resources
 from pathlib import Path
@@ -202,6 +201,25 @@ def seed_examples(store: StateStore) -> List[Dict[str, Any]]:
     return [seed_package(store, example_package(template)) for template in ("physical", "b2b", "service", "digital")]
 
 
+def promote_package(store: StateStore, package: Mapping[str, Any]) -> Dict[str, Any]:
+    """Promote a reviewed draft without allowing silent in-place activation."""
+
+    checked = validate_package(package)
+    business_id = str(checked["business"]["id"])
+    current = store.get_business(business_id)
+    if not current:
+        raise PackageError("não existe rascunho instalado para promover: %s" % business_id)
+    if current.get("lifecycle") != "draft":
+        raise PackageError("a versão instalada não é um rascunho")
+    if checked.get("lifecycle") != "active":
+        raise PackageError("pacote promovido precisa declarar lifecycle active")
+    if checked.get("package_version") == current.get("package_version"):
+        raise PackageError("promoção precisa alterar package_version")
+    if "owner_configuration" not in checked and current.get("owner_configuration"):
+        checked["owner_configuration"] = current["owner_configuration"]
+    return seed_package(store, checked)
+
+
 QUESTIONS = [
     {
         "id": "offer",
@@ -314,19 +332,42 @@ class ConfigurationManager:
 
     def finalize(self, session_id: str) -> Dict[str, Any]:
         payload = self.status(session_id)
-        if payload["status"] not in {"ready", "complete"}:
+        if payload["status"] == "complete":
+            existing = self.store.get_business(payload["business_id"])
+            if not existing:
+                raise ValueError("pacote finalizado não foi encontrado: %s" % payload["business_id"])
+            return existing
+        if payload["status"] != "ready":
             raise ValueError("configuração ainda tem pendências")
         package = example_package(payload["template"], payload["business_id"], payload["business_name"])
+        offer = package["offers"][0]
+        offer_name = payload["facts"].get("offer", "%s — oferta inicial" % payload["business_name"])
+        offer["name"] = offer_name
+        offer["aliases"] = [offer_name]
+        offer["description"] = "Rascunho derivado da decisão do dono; dados operacionais ainda não aprovados."
+        offer["mode"] = "consultative"
+        offer["price_type"] = "on_request"
+        offer["required_fields"] = ["scope"]
+        offer.pop("price", None)
+        offer.pop("access", None)
+        if offer["kind"] == "physical":
+            offer["stock"] = {}
+        package["sources"] = []
+        package["lifecycle"] = "draft"
         package["owner_configuration"] = {
             "session_id": session_id,
             "decisions": payload["decisions"],
             "document_findings": payload["document_findings"],
         }
-        package["capabilities"]["checkout_prepare"]["state"] = payload["capabilities"]["checkout_prepare"]
-        package["capabilities"]["checkout_prepare"]["reason"] = "decisão registrada no checkpoint"
+        for name in ("catalog_query", "quote", "checkout_prepare", "human_transfer", "knowledge_query"):
+            package["capabilities"][name] = {
+                "state": "pending",
+                "reason": "rascunho sem dados operacionais estruturados e aprovados",
+            }
         package = validate_package(package)
         seed_package(self.store, package)
         payload["status"] = "complete"
-        payload["finalized_package_version"] = 1
+        payload["capabilities"] = {name: entry["state"] for name, entry in package["capabilities"].items()}
+        payload["finalized_package_version"] = self.store.list_business_versions(payload["business_id"])[-1]["version"]
         self.store.save_discovery(session_id, payload["business_id"], payload)
         return package

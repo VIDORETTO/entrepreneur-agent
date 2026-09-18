@@ -1,7 +1,9 @@
 # Avaliação
 
 `vendedor evaluate` executa os 38 cenários AC do contrato e emite JSON com caso,
-status, criticidade, backend, adaptador de modelo e limitações. O relatório
+status, criticidade, backend, adaptador de modelo, limitações, versão do pacote,
+runtime e revisão Git quando disponível. `run.source.dirty: true` indica que o
+relatório inclui mudanças ainda não representadas pelo commit registrado. O relatório
 executado no ambiente atual deve ser gerado com:
 
 ```bash

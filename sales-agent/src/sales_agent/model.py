@@ -4,6 +4,9 @@ from __future__ import annotations
 
 import json
 import re
+import time
+import urllib.error
+import urllib.parse
 import urllib.request
 from typing import Any, Dict, Mapping, Optional, Protocol
 
@@ -134,11 +137,62 @@ class UntrustedModel:
 class HTTPModelAdapter:
     """Optional OpenAI-compatible JSON adapter; never receives secrets in logs."""
 
-    def __init__(self, endpoint: str, api_key: str, model: str):
+    allowed_intents = {"unknown", "stop", "human", "thanks", "payment_proof", "price", "knowledge", "buy", "update", "greeting"}
+
+    @staticmethod
+    def _endpoint_is_allowed(endpoint: str) -> bool:
+        parsed = urllib.parse.urlsplit(endpoint)
+        local_http = parsed.scheme == "http" and parsed.hostname in {"localhost", "127.0.0.1", "::1"}
+        return bool((parsed.scheme == "https" or local_http) and parsed.hostname and not parsed.username and not parsed.password)
+
+    def __init__(
+        self,
+        endpoint: str,
+        api_key: str,
+        model: str,
+        *,
+        timeout: float = 15,
+        retries: int = 1,
+        max_response_bytes: int = 1_000_000,
+    ):
+        if not self._endpoint_is_allowed(endpoint):
+            raise ValueError("SELLER_MODEL_URL precisa usar HTTPS; HTTP só é aceito em localhost")
+        if not api_key.strip() or not model.strip():
+            raise ValueError("modelo remoto exige chave e nome não vazios")
+        if timeout <= 0 or timeout > 120 or retries < 0 or retries > 3 or not 1024 <= max_response_bytes <= 10_000_000:
+            raise ValueError("limites do adaptador HTTP são inválidos")
         self.endpoint = endpoint
         self.api_key = api_key
         self.model = model
+        self.timeout = timeout
+        self.retries = retries
+        self.max_response_bytes = max_response_bytes
         self.name = "http:%s" % model
+
+    def _send(self, request: urllib.request.Request) -> Dict[str, Any]:
+        for attempt in range(self.retries + 1):
+            try:
+                with urllib.request.urlopen(request, timeout=self.timeout) as response:
+                    final_url = response.geturl() if hasattr(response, "geturl") else self.endpoint
+                    if not self._endpoint_is_allowed(final_url):
+                        raise ValueError("redirecionamento do modelo usa endpoint inseguro")
+                    body = response.read(self.max_response_bytes + 1)
+                if len(body) > self.max_response_bytes:
+                    raise ValueError("resposta do modelo excedeu o limite permitido")
+                payload = json.loads(body.decode("utf-8"))
+                if not isinstance(payload, dict):
+                    raise ValueError("modelo remoto retornou envelope inválido")
+                return payload
+            except urllib.error.HTTPError as exc:
+                retryable = exc.code == 429 or exc.code >= 500
+                if not retryable or attempt >= self.retries:
+                    raise ValueError("modelo remoto recusou a solicitação (HTTP %d)" % exc.code) from None
+            except urllib.error.URLError:
+                if attempt >= self.retries:
+                    raise ValueError("modelo remoto está indisponível") from None
+            if attempt < self.retries:
+                time.sleep(0.1 * (2**attempt))
+        raise ValueError("modelo remoto está indisponível")
 
     def propose(self, text: str, package: Mapping[str, Any], state: Mapping[str, Any]) -> Proposal:
         prompt = {
@@ -153,16 +207,30 @@ class HTTPModelAdapter:
             headers={"Content-Type": "application/json", "Authorization": "Bearer " + self.api_key},
             method="POST",
         )
-        with urllib.request.urlopen(request, timeout=15) as response:
-            payload = json.loads(response.read().decode("utf-8"))
-        content = payload.get("choices", [{}])[0].get("message", {}).get("content", "{}")
+        payload = self._send(request)
+        choices = payload.get("choices")
+        if not isinstance(choices, list) or not choices or not isinstance(choices[0], Mapping):
+            raise ValueError("modelo remoto retornou choices fora do contrato")
+        message = choices[0].get("message")
+        if not isinstance(message, Mapping):
+            raise ValueError("modelo remoto retornou message fora do contrato")
+        content = message.get("content", "{}")
         parsed = json.loads(content) if isinstance(content, str) else content
         if not isinstance(parsed, dict):
             raise ValueError("modelo remoto não retornou objeto JSON")
+        intent = parsed.get("intent", "unknown")
+        if not isinstance(intent, str) or intent not in self.allowed_intents:
+            raise ValueError("modelo remoto retornou intent fora do contrato")
+        facts = parsed.get("facts", {})
+        if not isinstance(facts, Mapping) or len(facts) > 32 or not all(isinstance(key, str) for key in facts):
+            raise ValueError("modelo remoto retornou facts fora do contrato")
+        for field in ("offer_id", "condition", "requested_action"):
+            if parsed.get(field) is not None and not isinstance(parsed[field], str):
+                raise ValueError("modelo remoto retornou %s fora do contrato" % field)
         return Proposal(
-            intent=str(parsed.get("intent", "unknown")),
+            intent=intent,
             offer_id=parsed.get("offer_id"),
-            facts=dict(parsed.get("facts", {})),
+            facts=dict(facts),
             condition=parsed.get("condition"),
             requested_action=parsed.get("requested_action"),
             model_name=self.name,

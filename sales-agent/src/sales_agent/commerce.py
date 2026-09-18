@@ -7,13 +7,14 @@ import json
 from datetime import datetime, timedelta, timezone
 from typing import Any, Dict, Mapping, Optional
 
-from .storage import StateStore
+from .storage import StateStore, durable_key
 
 
 class CommerceError(RuntimeError):
-    def __init__(self, code: str, message: str, status: str = "failed"):
+    def __init__(self, code: str, message: str, status: str = "failed", details: Optional[Dict[str, Any]] = None):
         self.code = code
         self.status = status
+        self.details = details or {}
         super().__init__(message)
 
 
@@ -67,7 +68,9 @@ class SimulatedCommerce:
             "amount": amount,
             "currency": offer.get("currency", "BRL"),
         }
-        quote_id = "q_%s" % _hash({"conversation": conversation_id, **quote_payload})
+        quote_id = "q_%s" % _hash(
+            {"conversation": conversation_id, "attempt": int(facts.get("_checkout_attempt", 0)), **quote_payload}
+        )
         validity = int(offer.get("quote_validity_minutes", 30))
         expires_at = datetime.now(timezone.utc) + timedelta(minutes=validity)
         return {
@@ -116,27 +119,45 @@ class SimulatedCommerce:
             raise CommerceError("quantity_required", "quantidade é obrigatória")
         if not contact_id.startswith("verified:"):
             raise CommerceError("identity_not_verified", "identificação do comprador ainda não foi verificada", "pending")
-        effect_key = "checkout:%s:%s:%s" % (business_id, conversation_id, quote["id"])
-        created, existing = self.store.reserve_effect(
-            effect_key,
-            "checkout",
-            {"business_id": business_id, "conversation_id": conversation_id, "quote_id": quote["id"]},
-        )
+        effect_key = durable_key("checkout", business_id, conversation_id, str(quote["id"]))
+        effect_payload = {"business_id": business_id, "conversation_id": conversation_id, "quote_id": quote["id"]}
+        offer = self.offer(package, offer_id) or {}
+        if offer.get("kind") == "physical":
+            outcome, existing = self.store.reserve_checkout_effect(
+                effect_key,
+                effect_payload,
+                business_id=business_id,
+                offer_id=offer_id,
+                variant=str(facts.get("variant", "default")),
+                quantity=int(facts.get("quantity", 1)),
+            )
+            created = outcome == "reserved"
+            if outcome == "out_of_stock":
+                raise CommerceError("out_of_stock", "essa combinação não está disponível")
+        else:
+            created, existing = self.store.reserve_effect(effect_key, "checkout", effect_payload)
         if not created:
             if existing.get("status") in {"unknown", "reserved"}:
                 if existing.get("status") == "reserved":
                     self.store.update_effect(effect_key, "unknown", {**existing, "reason": "interrupted before confirmation"})
-                raise CommerceError("effect_unknown", "checkout anterior tem resultado desconhecido", "unknown")
+                raise CommerceError(
+                    "effect_unknown",
+                    "checkout anterior tem resultado desconhecido",
+                    "unknown",
+                    {"effect_key": effect_key},
+                )
+            if existing.get("status") == "failed":
+                reason = existing.get("reason", "failed")
+                raise CommerceError(str(reason), "checkout anterior falhou: %s" % reason)
             return existing
-        offer = self.offer(package, offer_id) or {}
-        if offer.get("kind") == "physical":
-            variant = str(facts.get("variant", "default"))
-            if not self.store.reserve_inventory(business_id, offer_id, variant, int(facts.get("quantity", 1))):
-                self.store.update_effect(effect_key, "failed", {"reason": "out_of_stock", "quote_id": quote["id"]})
-                raise CommerceError("out_of_stock", "essa combinação não está disponível")
         if self.behavior.get("checkout_timeout"):
             self.store.update_effect(effect_key, "unknown", {"quote_id": quote["id"], "effect_key": effect_key})
-            raise CommerceError("effect_unknown", "o provedor não confirmou o resultado do checkout", "unknown")
+            raise CommerceError(
+                "effect_unknown",
+                "o provedor não confirmou o resultado do checkout",
+                "unknown",
+                {"effect_key": effect_key},
+            )
         checkout_id = "co_%s" % _hash({"effect_key": effect_key})
         result = {
             "status": "prepared",
@@ -161,7 +182,7 @@ class SimulatedCommerce:
         business_id: str,
         conversation_id: str,
     ) -> Dict[str, Any]:
-        key = "proposal:%s:%s" % (business_id, conversation_id)
+        key = durable_key("proposal", business_id, conversation_id, _hash(dict(facts)))
         created, existing = self.store.reserve_effect(key, "proposal", {"offer_id": offer_id})
         if not created:
             return existing

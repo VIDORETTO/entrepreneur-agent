@@ -9,18 +9,22 @@ from __future__ import annotations
 
 import re
 import threading
-from typing import Any, Callable, Dict, List, Mapping, Optional, Tuple
+from typing import Any, Callable, Dict, List, Mapping, Optional
 
 from .commerce import CommerceError, SimulatedCommerce
 from .knowledge import KnowledgeBackend, PersistentFarolKnowledge
 from .model import ModelAdapter, RuleBasedModel
-from .storage import StateStore
+from .storage import StateStore, durable_key
 from .types import EngineResult, Proposal
 from .validation import package_capability
 
 
 class ConversationError(ValueError):
     pass
+
+
+MAX_EVENT_TEXT_LENGTH = 20_000
+MAX_EVENT_ID_LENGTH = 200
 
 
 class SellerEngine:
@@ -88,49 +92,17 @@ class SellerEngine:
             result.state = state
             if self.before_send:
                 self.before_send(event, result)
-            latest = self.store.load_conversation(business_id, conversation_id, str(event["contact_id"]))
-            if int(latest.get("version", 0)) != starting_version:
-                # A correction or human takeover won while this response was
-                # being prepared. Persist the event for audit, but do not put
-                # the stale response or effect in the outbox.
-                stale_action = result.action
-                result.state = latest
-                result.response = ""
-                result.action = None
-                if stale_action is not None:
-                    latest["pending"] = {
-                        "type": "post_effect_correction",
-                        "reason": "correction arrived after external effect",
-                        "effect": stale_action,
-                    }
-                    latest["operation"] = {"type": stale_action.get("type"), "status": "unknown", "effect": stale_action}
-                    latest["phase"] = "action_in_progress"
-                    latest["version"] = int(latest.get("version", 0)) + 1
-                    result.state = latest
-                    result.response = "A condição mudou enquanto eu processava. A operação foi registrada para conciliação antes de qualquer novo passo."
-                    self.store.save_conversation(latest)
-                result.trace = result.trace + [
-                    {
-                        "type": "stale_response_suppressed",
-                        "starting_version": starting_version,
-                        "current_version": latest.get("version"),
-                    }
-                ]
-                payload = result.as_dict()
-                self.store.save_event(business_id, conversation_id, event_id, dict(event), payload)
-                return result
             payload = result.as_dict()
-            self.store.save_conversation(state)
-            self.store.enqueue_message(
-                "%s:%s" % (business_id, event_id),
-                business_id,
-                conversation_id,
+            commit_status, replay = self.store.commit_event(
+                state,
+                starting_version,
+                dict(event),
+                payload,
+                durable_key("event", business_id, conversation_id, event_id),
                 {"event_id": event_id, "response": result.response, "action": result.action},
             )
-            inserted = self.store.save_event(business_id, conversation_id, event_id, dict(event), payload)
-            if not inserted:
-                replay = self.store.get_event(business_id, conversation_id, event_id) or payload
-                replay["duplicate"] = True
+            if commit_status == "duplicate":
+                replay = replay or payload
                 return EngineResult(
                     event_id=event_id,
                     conversation_id=conversation_id,
@@ -141,26 +113,96 @@ class SellerEngine:
                     evidence=replay.get("evidence", []),
                     trace=replay.get("trace", []) + [{"type": "deduplicated_race"}],
                 )
+            if commit_status == "stale":
+                # A correction or human takeover won while this response was
+                # being prepared. Persist the event for audit, but do not put
+                # the stale response or effect in the outbox.
+                stale_action = result.action
+                original_trace = list(result.trace)
+                for _ in range(5):
+                    latest = self.store.load_conversation(business_id, conversation_id, str(event["contact_id"]))
+                    latest_version = int(latest.get("version", 0))
+                    result.state = latest
+                    result.response = ""
+                    result.action = None
+                    reconciled_state = None
+                    if stale_action is not None:
+                        effect_key = stale_action.get("effect_key")
+                        quote_id = stale_action.get("quote_id")
+                        latest["pending"] = {
+                            "type": "post_effect_correction",
+                            "reason": "correction arrived after external effect",
+                            "effect": stale_action,
+                            "effect_key": effect_key,
+                        }
+                        latest["operation"] = {
+                            "type": "checkout" if stale_action.get("type") == "prepare_checkout" else stale_action.get("type"),
+                            "status": "unknown",
+                            "effect_key": effect_key,
+                            "quote_id": quote_id,
+                            "effect": stale_action,
+                        }
+                        latest["phase"] = "action_in_progress"
+                        latest["version"] = latest_version + 1
+                        reconciled_state = latest
+                        result.response = (
+                            "A condição mudou enquanto eu processava. A operação foi registrada para conciliação "
+                            "antes de qualquer novo passo."
+                        )
+                    result.trace = original_trace + [
+                        {
+                            "type": "stale_response_suppressed",
+                            "starting_version": starting_version,
+                            "current_version": latest.get("version"),
+                        }
+                    ]
+                    stale_status, stale_replay = self.store.commit_stale_event(
+                        dict(event),
+                        result.as_dict(),
+                        reconciled_state=reconciled_state,
+                        expected_version=latest_version if reconciled_state is not None else None,
+                    )
+                    if stale_status == "committed":
+                        return result
+                    if stale_status == "duplicate":
+                        stale_replay = stale_replay or result.as_dict()
+                        return EngineResult(
+                            event_id=event_id,
+                            conversation_id=conversation_id,
+                            response=stale_replay["response"],
+                            action=stale_replay.get("action"),
+                            state=stale_replay.get("state", latest),
+                            duplicate=True,
+                            evidence=stale_replay.get("evidence", []),
+                            trace=stale_replay.get("trace", []) + [{"type": "deduplicated_stale_race"}],
+                        )
+                raise ConversationError("a conversa mudou repetidamente durante a conciliação; tente novamente")
             return result
 
     def schedule_follow_up(self, business_id: str, conversation_id: str, task_id: str, message: str) -> Dict[str, Any]:
         """Queue a follow-up intent; sending is revalidated at the call site."""
         state = self.store.load_conversation(business_id, conversation_id, "unknown")
+        package = self.store.get_business(business_id) or {}
+        capability_allowed = package_capability(package, "follow_up") in {"enabled", "assisted"}
+        eligible = capability_allowed and self._follow_up_eligible(state)
         scheduled = self.store.enqueue_message(
-            "followup:%s" % task_id,
+            durable_key("followup", business_id, conversation_id, task_id),
             business_id,
             conversation_id,
             {"task_id": task_id, "message": message, "status": "scheduled"},
-        ) if self._follow_up_eligible(state) else False
-        return {"scheduled": scheduled, "task_id": task_id, "eligible_now": self._follow_up_eligible(state)}
+        ) if eligible else False
+        reason = "eligible" if eligible else ("capability disabled" if not capability_allowed else "conversation not eligible")
+        return {"scheduled": scheduled, "task_id": task_id, "eligible_now": eligible, "reason": reason}
 
     def revalidate_follow_up(self, business_id: str, conversation_id: str, task_id: str) -> Dict[str, Any]:
         """Recheck the persisted conversation immediately before delivery."""
         state = self.store.load_conversation(business_id, conversation_id, "unknown")
-        eligible = self._follow_up_eligible(state)
-        reason = "eligible" if eligible else "conversation no longer eligible"
+        package = self.store.get_business(business_id) or {}
+        capability_allowed = package_capability(package, "follow_up") in {"enabled", "assisted"}
+        eligible = capability_allowed and self._follow_up_eligible(state)
+        reason = "eligible" if eligible else ("capability disabled" if not capability_allowed else "conversation no longer eligible")
         if not eligible:
-            self.store.cancel_followup(task_id)
+            self.store.cancel_followup(business_id, conversation_id, task_id)
         return {"task_id": task_id, "send": eligible, "reason": reason, "responsible": state.get("responsible")}
 
     @staticmethod
@@ -176,8 +218,15 @@ class SellerEngine:
     @staticmethod
     def _validate_event(event: Mapping[str, Any]) -> None:
         for field in ("business_id", "conversation_id", "event_id", "contact_id", "text"):
-            if not str(event.get(field, "")).strip():
+            value = event.get(field)
+            if not isinstance(value, str) or not value.strip():
                 raise ConversationError("evento sem campo obrigatório: %s" % field)
+            limit = MAX_EVENT_TEXT_LENGTH if field == "text" else MAX_EVENT_ID_LENGTH
+            if len(value) > limit:
+                raise ConversationError("campo do evento excede o limite: %s" % field)
+        channel = event.get("channel", "cli")
+        if not isinstance(channel, str) or not channel.strip() or len(channel) > 100:
+            raise ConversationError("channel inválido")
 
     def _decide(self, package: Mapping[str, Any], state: Dict[str, Any], event: Mapping[str, Any]) -> EngineResult:
         text = str(event["text"])
@@ -209,6 +258,17 @@ class SellerEngine:
         if proposal.offer_id and not offer:
             trace.append({"type": "proposal_rejected", "reason": "offer_not_in_package"})
             proposal.offer_id = None
+        pending_type = (state.get("pending") or {}).get("type")
+        if proposal.intent in {"buy", "update", "unknown"} and (
+            pending_type in {"reconcile_checkout", "post_effect_correction"}
+            or (state.get("operation") or {}).get("status") == "unknown"
+        ):
+            return self._result(
+                event,
+                state,
+                "Existe uma operação com resultado pendente de conciliação. Não vou alterar o pedido nem iniciar outro checkout antes de resolvê-la.",
+                trace=trace + [{"type": "effect_reconciliation_required"}],
+            )
         self._merge_safe_facts(state, proposal, offer, trace)
 
         if proposal.intent == "stop":
@@ -227,6 +287,14 @@ class SellerEngine:
             state["status"] = "human_paused"
             state["phase"] = "transferido"
             state["pending"] = None
+            if package_capability(package, "human_transfer") not in {"enabled", "assisted"}:
+                state["pending"] = {"type": "human_transfer_unavailable", "context": pending_context}
+                return self._result(
+                    event,
+                    state,
+                    "Pausei as respostas automáticas, mas este negócio ainda não tem uma fila humana habilitada.",
+                    trace=trace + [{"type": "capability_blocked", "capability": "human_transfer"}],
+                )
             action = {
                 "type": "human_transfer",
                 "status": "queued",
@@ -260,6 +328,14 @@ class SellerEngine:
         if proposal.intent == "price":
             if not offer:
                 return self._result(event, state, "Qual oferta você quer consultar?", trace=trace)
+            if package_capability(package, "catalog_query") not in {"enabled", "assisted"}:
+                state["pending"] = {"type": "catalog_disabled"}
+                return self._result(
+                    event,
+                    state,
+                    "A consulta de catálogo ainda não está habilitada para este negócio; não vou informar um valor não aprovado.",
+                    trace=trace + [{"type": "capability_blocked", "capability": "catalog_query"}],
+                )
             if offer.get("price_type", "fixed") != "fixed":
                 question = self._first_missing(offer, state["facts"])
                 return self._ask(event, state, offer, question, "o valor depende desse escopo", trace)
@@ -272,6 +348,14 @@ class SellerEngine:
             return self._result(event, state, response, trace=trace)
 
         if proposal.intent == "knowledge":
+            if package_capability(package, "knowledge_query") not in {"enabled", "assisted"}:
+                state["pending"] = {"type": "knowledge_disabled"}
+                return self._result(
+                    event,
+                    state,
+                    "A consulta de conhecimento ainda não está habilitada para este negócio; não vou responder sem uma fonte aprovada.",
+                    trace=trace + [{"type": "capability_blocked", "capability": "knowledge_query"}],
+                )
             if not offer:
                 offer = self._offer(package, state.get("facts", {}).get("offer_id"))
             query = text
@@ -333,6 +417,16 @@ class SellerEngine:
         offer = self._offer(package, proposal.offer_id or state.get("facts", {}).get("offer_id"))
         if not offer:
             return self._result(event, state, "Qual oferta você quer comprar?", trace=trace)
+        pending_type = (state.get("pending") or {}).get("type")
+        if pending_type in {"reconcile_checkout", "post_effect_correction"} or (
+            state.get("operation") or {}
+        ).get("status") == "unknown":
+            return self._result(
+                event,
+                state,
+                "Existe uma operação com resultado pendente de conciliação. Não vou iniciar outro checkout antes de resolvê-la.",
+                trace=trace + [{"type": "effect_reconciliation_required"}],
+            )
         state["facts"]["offer_id"] = offer["id"]
         self.store.cancel_followups(str(package["business"]["id"]), str(state["conversation_id"]))
         if offer.get("kind") == "digital" and not state["facts"].get("quantity"):
@@ -348,6 +442,15 @@ class SellerEngine:
                 state,
                 "Posso preparar o próximo passo, mas não vou cobrar nem usar um identificador não verificado.",
                 trace=trace,
+            )
+
+        if package_capability(package, "quote") not in {"enabled", "assisted"}:
+            state["pending"] = {"type": "quote_disabled"}
+            return self._result(
+                event,
+                state,
+                "A cotação ou proposta ainda não está habilitada para este negócio; vou registrar a solicitação sem inventar condições.",
+                trace=trace + [{"type": "capability_blocked", "capability": "quote"}],
             )
 
         # Conditional purchase is not unconditional permission to close.
@@ -379,7 +482,7 @@ class SellerEngine:
                 business_id=package["business"]["id"],
                 conversation_id=state["conversation_id"],
             )
-            state["operation"] = {"type": "proposal", "status": "confirmed", **result}
+            state["operation"] = {"type": "proposal", **result, "status": "confirmed"}
             state["phase"] = "action_in_progress"
             state["pending"] = None
             action = {"type": "prepare_proposal", **result}
@@ -430,12 +533,17 @@ class SellerEngine:
                 state["pending"] = {"type": "identity", "reason": "checkout requires verified contact"}
                 return self._result(event, state, "Para preparar o checkout, preciso confirmar a identificação do comprador. Qual e-mail devo usar?", trace=trace)
             if exc.status == "unknown":
-                state["operation"] = {"type": "checkout", "status": "unknown", "quote_id": new_quote["id"]}
+                state["operation"] = {
+                    "type": "checkout",
+                    "status": "unknown",
+                    "quote_id": new_quote["id"],
+                    **exc.details,
+                }
                 state["pending"] = {"type": "reconcile_checkout"}
                 return self._result(event, state, "O provedor não confirmou o resultado do checkout. Não vou repetir a operação; preciso conciliá-la antes de informar um link.", trace=trace)
             return self._result(event, state, "Não consegui preparar o checkout: %s" % str(exc), trace=trace)
 
-        state["operation"] = {"type": "checkout", "status": "confirmed", **checkout}
+        state["operation"] = {"type": "checkout", **checkout, "status": "confirmed"}
         state["phase"] = "action_in_progress"
         state["pending"] = None
         state["facts"].pop("confirmation", None)
@@ -458,10 +566,32 @@ class SellerEngine:
     def _merge_safe_facts(
         state: Dict[str, Any], proposal: Proposal, offer: Optional[Mapping[str, Any]], trace: List[Dict[str, Any]]
     ) -> None:
-        allowed = {"offer_id", "variant", "color", "quantity", "payment_method", "email", "region", "company_name", "scope", "site", "deadline_condition", "delivery", "confirmation"}
+        text_fields = {
+            "variant",
+            "color",
+            "payment_method",
+            "email",
+            "region",
+            "company_name",
+            "scope",
+            "site",
+            "deadline_condition",
+        }
         changed = {}
         for key, value in proposal.facts.items():
-            if key not in allowed or value in (None, ""):
+            valid = (
+                key in text_fields
+                and isinstance(value, str)
+                and bool(value.strip())
+                and len(value) <= 1000
+            ) or (
+                key == "quantity"
+                and isinstance(value, int)
+                and not isinstance(value, bool)
+                and 1 <= value <= 1_000_000
+            ) or (key == "confirmation" and isinstance(value, bool))
+            if not valid:
+                trace.append({"type": "fact_rejected", "field": str(key), "reason": "invalid_name_or_value"})
                 continue
             if state["facts"].get(key) != value:
                 changed[key] = {"old": state["facts"].get(key), "new": value}

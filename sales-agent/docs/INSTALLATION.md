@@ -10,7 +10,10 @@
 Para desenvolvimento, instale o extra de testes com `python -m pip install -e ".[dev]"` e execute `python -m pytest -q`.
 
 Os packs de skills, referências, schemas e atribuições também são incluídos na
-wheel em `share/vendedor-adaptavel/`. O código instalado é separado dos dados em `.vendedor-data/`. O SQLite contém
+wheel em `share/vendedor-adaptavel/`. O código instalado é separado dos dados
+em `.vendedor-data/`. Em sistemas POSIX, o runtime restringe o diretório a
+`0700` e o SQLite a `0600`; em Windows, use um perfil de usuário com ACL privada.
+O SQLite contém
 pacotes, conversas, eventos, efeitos idempotentes, outbox, inventário,
 checkpoint e fontes. Não coloque segredos no pacote; o adaptador HTTP lê a chave
 somente de `SELLER_MODEL_API_KEY` em tempo de execução.

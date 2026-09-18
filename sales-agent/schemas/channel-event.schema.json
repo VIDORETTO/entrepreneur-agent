@@ -1,13 +1,14 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://example.invalid/vendedor-adaptavel/channel-event.schema.json",
+  "$id": "https://raw.githubusercontent.com/VIDORETTO/entrepreneur-agent/main/sales-agent/schemas/channel-event.schema.json",
   "type": "object",
   "required": ["business_id", "conversation_id", "contact_id", "event_id", "text"],
   "properties": {
-    "business_id": {"type": "string", "minLength": 1},
-    "conversation_id": {"type": "string", "minLength": 1},
-    "contact_id": {"type": "string", "minLength": 1},
-    "event_id": {"type": "string", "minLength": 1},
-    "text": {"type": "string", "minLength": 1}
+    "business_id": {"type": "string", "minLength": 1, "maxLength": 200},
+    "conversation_id": {"type": "string", "minLength": 1, "maxLength": 200},
+    "contact_id": {"type": "string", "minLength": 1, "maxLength": 200},
+    "channel": {"type": "string", "minLength": 1, "maxLength": 100},
+    "event_id": {"type": "string", "minLength": 1, "maxLength": 200},
+    "text": {"type": "string", "minLength": 1, "maxLength": 20000}
   }
 }

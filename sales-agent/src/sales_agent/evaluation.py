@@ -3,16 +3,20 @@
 from __future__ import annotations
 
 import json
-import os
-import shutil
+import platform
+import sqlite3
+import subprocess
+import sys
 import tempfile
+from datetime import datetime, timezone
 from pathlib import Path
-from typing import Any, Callable, Dict, List, Mapping, Optional
+from typing import Any, Dict, List
 
+from . import __version__
 from .config import ConfigurationManager, load_manifest, seed_examples, seed_package
 from .conversation import SellerEngine
 from .knowledge import PersistentFarolKnowledge
-from .model import RuleBasedModel, UntrustedModel
+from .model import UntrustedModel
 from .storage import StateStore
 
 
@@ -282,7 +286,6 @@ def _case_ac033(ctx: EvaluationContext) -> None:
 
 
 def _case_ac034(ctx: EvaluationContext) -> None:
-    package = ctx.store.get_business("azul-b2c")
     state = ctx.store.load_conversation("azul-b2c", "ac034", "verified:test")
     state["facts"] = {"offer_id": "camiseta-azul", "variant": "M", "quantity": 1, "region": "SP"}
     ctx.store.save_conversation(state)
@@ -304,13 +307,13 @@ def _case_ac036(ctx: EvaluationContext) -> None:
 
 
 def _case_ac037(ctx: EvaluationContext) -> None:
-    backup = Path(tempfile.mkstemp(prefix="seller-backup-", suffix=".sqlite3")[1])
-    try:
-        shutil.copy2(ctx.store.db_path, backup)
+    with tempfile.TemporaryDirectory(prefix="seller-recovery-") as temporary:
+        recovery_root = Path(temporary)
+        backup = ctx.store.backup_to(recovery_root / "backup.sqlite3")
         first = ctx.send("azul-b2c", "ac037", "Quero comprar a camiseta azul tamanho M, uma unidade para SP.")
-        restored_root = Path(tempfile.mkdtemp(prefix="seller-restore-"))
+        restored_root = recovery_root / "restored"
         restored_store = StateStore(restored_root)
-        shutil.copy2(backup, restored_store.db_path)
+        restored_store.restore_from(backup, recovery_root / "empty-state.sqlite3")
         restored = SellerEngine(restored_store)
         replay = restored.handle(
             {"business_id": "azul-b2c", "conversation_id": "ac037", "contact_id": "verified:test", "event_id": "ac037-001", "text": "Quero comprar a camiseta azul tamanho M, uma unidade para SP."}
@@ -320,11 +323,6 @@ def _case_ac037(ctx: EvaluationContext) -> None:
             {"business_id": "azul-b2c", "conversation_id": "ac037", "contact_id": "verified:test", "event_id": "ac037-001", "text": "Quero comprar a camiseta azul tamanho M, uma unidade para SP."}
         )
         _check(duplicate.duplicate, "recuperação permitiu duplicar evento")
-    finally:
-        try:
-            backup.unlink()
-        except OSError:
-            pass
 
 
 def _case_ac038(ctx: EvaluationContext) -> None:
@@ -402,6 +400,15 @@ class EvaluationRunner:
         critical_failures = sum(1 for result in results if result["status"] == "failed" and result["critical"])
         return {
             "schema_version": 1,
+            "run": {
+                "generated_at": datetime.now(timezone.utc).isoformat(timespec="seconds"),
+                "package_version": __version__,
+                "python": platform.python_version(),
+                "python_implementation": platform.python_implementation(),
+                "platform": sys.platform,
+                "sqlite": sqlite3.sqlite_version,
+                "source": self._source_state(),
+            },
             "status": "passed" if failed == 0 else "failed",
             "evidence_class": "simulated-contract-and-persistent-local-backend",
             "backend": {"name": "sqlite-farol-v1", "mode": "persistent-local", "upstream_farol_rag": "not-executed"},
@@ -414,6 +421,31 @@ class EvaluationRunner:
                 "a recuperação persistente local é demonstrada; o RAG opcional upstream do Farol não foi executado neste relatório",
             ],
         }
+
+    @staticmethod
+    def _source_state() -> Dict[str, Any]:
+        """Describe the checked-out source when Git is available."""
+
+        try:
+            revision = subprocess.run(
+                ["git", "rev-parse", "HEAD"],
+                check=True,
+                capture_output=True,
+                text=True,
+                timeout=5,
+            ).stdout.strip()
+            dirty = bool(
+                subprocess.run(
+                    ["git", "status", "--short"],
+                    check=True,
+                    capture_output=True,
+                    text=True,
+                    timeout=5,
+                ).stdout.strip()
+            )
+            return {"revision": revision, "dirty": dirty}
+        except (OSError, subprocess.SubprocessError):
+            return {"revision": "unavailable", "dirty": None}
 
 
 def model_contract_check() -> Dict[str, Any]:

@@ -110,6 +110,10 @@ class FarolArtifactImporter:
         for path in sorted(documents_root.rglob("*")):
             if not path.is_file() or path.is_symlink():
                 continue
+            if count >= 1000:
+                raise ValueError("artefato Farol excede 1000 documentos")
+            if path.stat().st_size > 5_000_000:
+                raise ValueError("documento Farol excede 5 MB: %s" % path.name)
             relative = path.relative_to(documents_root).as_posix()
             metadata = metadata_by_path.get(relative, {})
             self.backend.ingest(

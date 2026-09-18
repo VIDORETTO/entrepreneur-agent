@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import argparse
+import importlib.util
 import json
 import os
 import shutil
@@ -11,9 +12,9 @@ import tempfile
 from pathlib import Path
 from typing import Any, Dict, List, Optional
 
-from .commerce import SimulatedCommerce
-from .config import ConfigurationManager, example_package, load_manifest, load_package, seed_examples, seed_package
-from .conversation import SellerEngine
+from . import __version__
+from .config import ConfigurationManager, load_manifest, load_package, promote_package, seed_examples, seed_package
+from .conversation import ConversationError, SellerEngine
 from .evaluation import EvaluationRunner
 from .knowledge import FarolArtifactImporter, PersistentFarolKnowledge
 from .model import HTTPModelAdapter, RuleBasedModel
@@ -34,8 +35,9 @@ def _print(value: Any, pretty: bool = True) -> None:
 
 def command_doctor(args: argparse.Namespace) -> int:
     store = _store(args)
+    storage_report = store.integrity_report()
     diagnostics: Dict[str, Any] = {
-        "ok": True,
+        "ok": storage_report["ok"],
         "python": sys.version.split()[0],
         "python_supported": sys.version_info >= (3, 9),
         "sqlite": __import__("sqlite3").sqlite_version,
@@ -48,7 +50,8 @@ def command_doctor(args: argparse.Namespace) -> int:
             "upstream_rag_validated": False,
             "reason": "a instalação upstream opcional do Farol não foi executada nesta instalação",
         },
-        "dependencies": {"external_runtime": "none", "pytest": bool(shutil.which("pytest"))},
+        "dependencies": {"external_runtime": "none", "pytest": importlib.util.find_spec("pytest") is not None},
+        "storage": storage_report,
     }
     try:
         manifest = load_manifest()
@@ -94,8 +97,12 @@ def command_validate(args: argparse.Namespace) -> int:
             values.append({"business_id": package["business"]["id"], "valid": True})
         except PackageError as exc:
             values.append({"business_id": package.get("business", {}).get("id"), "valid": False, "error": str(exc)})
-    _print({"valid": all(item["valid"] for item in values), "packages": values})
-    return 0 if all(item["valid"] for item in values) else 2
+    valid = bool(values) and all(item["valid"] for item in values)
+    payload: Dict[str, Any] = {"valid": valid, "packages": values}
+    if not values:
+        payload["error"] = "nenhum negócio instalado; use 'vendedor examples' ou 'vendedor import-package'"
+    _print(payload)
+    return 0 if valid else 2
 
 
 def command_import_package(args: argparse.Namespace) -> int:
@@ -106,11 +113,45 @@ def command_import_package(args: argparse.Namespace) -> int:
     return 0
 
 
+def command_export_package(args: argparse.Namespace) -> int:
+    package = _store(args).get_business(args.business_id)
+    if not package:
+        raise ValueError("negócio não configurado: %s" % args.business_id)
+    if args.output:
+        output = Path(args.output)
+        output.write_text(json.dumps(package, ensure_ascii=False, indent=2, sort_keys=True) + "\n", encoding="utf-8")
+        _print({"exported": args.business_id, "output": str(output)})
+    else:
+        _print(package)
+    return 0
+
+
+def command_promote_package(args: argparse.Namespace) -> int:
+    store = _store(args)
+    package = promote_package(store, load_package(args.package))
+    version = store.list_business_versions(package["business"]["id"])[-1]["version"]
+    _print(
+        {
+            "promoted": package["business"]["id"],
+            "package_version": package["package_version"],
+            "storage_version": version,
+            "lifecycle": package["lifecycle"],
+        }
+    )
+    return 0
+
+
 def command_configure_start(args: argparse.Namespace) -> int:
     store = _store(args)
     materials = []
+    total_size = 0
     for path in args.material or []:
-        materials.append(Path(path).read_text(encoding="utf-8"))
+        material_path = Path(path)
+        size = material_path.stat().st_size
+        total_size += size
+        if size > 5_000_000 or total_size > 10_000_000:
+            raise ValueError("materiais excedem o limite seguro de tamanho")
+        materials.append(material_path.read_text(encoding="utf-8"))
     manager = ConfigurationManager(store)
     payload = manager.start(
         args.business_id,
@@ -136,8 +177,10 @@ def command_configure_answer(args: argparse.Namespace) -> int:
 
 
 def command_configure_finalize(args: argparse.Namespace) -> int:
-    package = ConfigurationManager(_store(args)).finalize(args.session_id)
-    _print({"finalized": True, "business_id": package["business"]["id"], "version": 1})
+    store = _store(args)
+    package = ConfigurationManager(store).finalize(args.session_id)
+    version = store.list_business_versions(package["business"]["id"])[-1]["version"]
+    _print({"finalized": True, "business_id": package["business"]["id"], "version": version})
     return 0
 
 
@@ -288,8 +331,79 @@ def command_model_check(args: argparse.Namespace) -> int:
     return 0
 
 
+def command_storage_check(args: argparse.Namespace) -> int:
+    report = _store(args).integrity_report()
+    _print(report)
+    return 0 if report["ok"] else 2
+
+
+def command_storage_backup(args: argparse.Namespace) -> int:
+    output = _store(args).backup_to(args.output)
+    _print({"backup": str(output), "created": True})
+    return 0
+
+
+def command_storage_restore(args: argparse.Namespace) -> int:
+    result = _store(args).restore_from(args.input, args.backup_current)
+    _print(result)
+    return 0
+
+
+def command_outbox_list(args: argparse.Namespace) -> int:
+    items = _store(args).list_outbox(args.status)
+    _print({"items": items, "count": len(items)})
+    return 0
+
+
+def command_outbox_claim(args: argparse.Namespace) -> int:
+    items = _store(args).claim_outbox(args.limit, args.lease_seconds)
+    _print({"items": items, "count": len(items)})
+    return 0
+
+
+def command_outbox_ack(args: argparse.Namespace) -> int:
+    acknowledged = _store(args).ack_outbox(args.message_key)
+    if not acknowledged:
+        raise ValueError("mensagem não está em processamento: %s" % args.message_key)
+    _print({"message_key": args.message_key, "status": "sent"})
+    return 0
+
+
+def command_outbox_nack(args: argparse.Namespace) -> int:
+    status = _store(args).nack_outbox(
+        args.message_key,
+        args.error,
+        max_attempts=args.max_attempts,
+        delay_seconds=args.delay_seconds,
+    )
+    _print({"message_key": args.message_key, "status": status})
+    return 0
+
+
+def command_outbox_recover(args: argparse.Namespace) -> int:
+    count = _store(args).recover_expired_outbox()
+    _print({"recovered": count})
+    return 0
+
+
+def command_effects_list(args: argparse.Namespace) -> int:
+    items = _store(args).list_effects(args.status)
+    _print({"items": items, "count": len(items)})
+    return 0
+
+
+def command_effects_reconcile(args: argparse.Namespace) -> int:
+    details = json.loads(args.details) if args.details else {}
+    if not isinstance(details, dict):
+        raise ValueError("details precisa ser um objeto JSON")
+    result = _store(args).reconcile_effect(args.effect_key, args.resolution, details)
+    _print(result)
+    return 0
+
+
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(prog="vendedor", description="Vendedor Adaptável — runtime local demonstrável")
+    parser.add_argument("--version", action="version", version="%(prog)s " + __version__)
     parser.add_argument("--data-dir", default=".vendedor-data", help="diretório privado de estado")
     sub = parser.add_subparsers(dest="command", required=True)
 
@@ -309,6 +423,13 @@ def build_parser() -> argparse.ArgumentParser:
     import_cmd = sub.add_parser("import-package", help="importar um package.json versionado")
     import_cmd.add_argument("package")
     import_cmd.set_defaults(func=command_import_package)
+    export_cmd = sub.add_parser("export-package", help="exportar um pacote instalado para revisão")
+    export_cmd.add_argument("--business-id", required=True)
+    export_cmd.add_argument("--output")
+    export_cmd.set_defaults(func=command_export_package)
+    promote_cmd = sub.add_parser("promote-package", help="promover um rascunho revisado para active")
+    promote_cmd.add_argument("package")
+    promote_cmd.set_defaults(func=command_promote_package)
 
     configure = sub.add_parser("configure", help="entrevista persistente do dono")
     configure_sub = configure.add_subparsers(dest="configure_command", required=True)
@@ -370,6 +491,50 @@ def build_parser() -> argparse.ArgumentParser:
     evaluate.set_defaults(func=command_evaluate)
     model_check = sub.add_parser("model-check", help="testar contrato do adaptador de modelo")
     model_check.set_defaults(func=command_model_check)
+
+    storage = sub.add_parser("storage", help="verificar, copiar ou restaurar o estado SQLite")
+    storage_sub = storage.add_subparsers(dest="storage_command", required=True)
+    storage_check = storage_sub.add_parser("check", help="verificar integridade e versão")
+    storage_check.set_defaults(func=command_storage_check)
+    storage_backup = storage_sub.add_parser("backup", help="criar backup consistente sem sobrescrever arquivos")
+    storage_backup.add_argument("output")
+    storage_backup.set_defaults(func=command_storage_backup)
+    storage_restore = storage_sub.add_parser("restore", help="restaurar backup após preservar o estado atual")
+    storage_restore.add_argument("input")
+    storage_restore.add_argument("--backup-current", required=True)
+    storage_restore.set_defaults(func=command_storage_restore)
+
+    outbox = sub.add_parser("outbox", help="operar entrega durável de mensagens")
+    outbox_sub = outbox.add_subparsers(dest="outbox_command", required=True)
+    outbox_list = outbox_sub.add_parser("list")
+    outbox_list.add_argument("--status", choices=["pending", "processing", "sent", "cancelled", "dead_letter"])
+    outbox_list.set_defaults(func=command_outbox_list)
+    outbox_claim = outbox_sub.add_parser("claim")
+    outbox_claim.add_argument("--limit", type=int, default=10)
+    outbox_claim.add_argument("--lease-seconds", type=int, default=60)
+    outbox_claim.set_defaults(func=command_outbox_claim)
+    outbox_ack = outbox_sub.add_parser("ack")
+    outbox_ack.add_argument("message_key")
+    outbox_ack.set_defaults(func=command_outbox_ack)
+    outbox_nack = outbox_sub.add_parser("nack")
+    outbox_nack.add_argument("message_key")
+    outbox_nack.add_argument("--error", required=True)
+    outbox_nack.add_argument("--max-attempts", type=int, default=5)
+    outbox_nack.add_argument("--delay-seconds", type=int, default=30)
+    outbox_nack.set_defaults(func=command_outbox_nack)
+    outbox_recover = outbox_sub.add_parser("recover")
+    outbox_recover.set_defaults(func=command_outbox_recover)
+
+    effects = sub.add_parser("effects", help="inspecionar e conciliar efeitos persistentes")
+    effects_sub = effects.add_subparsers(dest="effects_command", required=True)
+    effects_list = effects_sub.add_parser("list")
+    effects_list.add_argument("--status", choices=["reserved", "unknown", "confirmed", "failed"])
+    effects_list.set_defaults(func=command_effects_list)
+    effects_reconcile = effects_sub.add_parser("reconcile")
+    effects_reconcile.add_argument("effect_key")
+    effects_reconcile.add_argument("--resolution", choices=["confirmed", "failed"], required=True)
+    effects_reconcile.add_argument("--details", help="objeto JSON com evidência da resolução")
+    effects_reconcile.set_defaults(func=command_effects_reconcile)
     return parser
 
 
@@ -378,7 +543,7 @@ def main(argv: Optional[List[str]] = None) -> int:
     args = parser.parse_args(argv)
     try:
         return int(args.func(args))
-    except (PackageError, ValueError, FileNotFoundError) as exc:
+    except (ConversationError, PackageError, OSError, TypeError, ValueError) as exc:
         print(json.dumps({"ok": False, "error": str(exc)}, ensure_ascii=False), file=sys.stderr)
         return 2
 

@@ -44,9 +44,15 @@ Este arquivo é o checkpoint de desenvolvimento do produto. O planejamento do pr
 - 17/09/2026: configuração persistente retomada e finalizada em processo separado; quatro demonstrações executadas.
 - 17/09/2026: `pytest -q` passou com 19 testes, incluindo correção durante/depois de efeito externo e decisão do dono adiada; `vendedor evaluate` passou 38/38 cenários AC; `model-check` rejeitou ação de cobrança inválida.
 - 17/09/2026: Farol upstream executou o fixture local na revisão fixada e produziu dois documentos; `vendedor farol import` recuperou conteúdo com locator e negócio. RAG/MCP opcional segue explicitamente não executado.
+- 17/09/2026: preparação para distribuição adicionou CI em Python 3.9/3.12, build e `twine check`, documentação de contribuição/segurança/release, metadados do pacote e sincronização verificável de versão/manifesto.
+- 17/09/2026: estado local passou a usar permissões POSIX privadas; validação rejeita preços/estoques inseguros, `validate` vazio deixa de produzir falso positivo e o adaptador HTTP rejeita `facts` fora do contrato.
+- 17/09/2026: auditoria de autorização fechou os caminhos de cotação, proposta, catálogo, conhecimento, transferência e follow-up; rascunhos de configuração não promovem dados fictícios. A suíte ampliada passou com 40 testes e cobertura total acima de 85% em Python 3.9.
+- 18/09/2026: persistência recebeu schema versionado, migração aditiva, commit atômico de evento/estado/outbox, leases e dead-letter; efeitos de checkout e estoque passaram a ser reservados e conciliados atomicamente.
+- 18/09/2026: foram adicionados backup/restauração validados, promoção explícita de rascunho, limites de entrada, endurecimento do adaptador HTTP e testes multiprocesso. A suíte ampliada chegou a 74 testes em Python 3.9 e 3.12 antes da verificação final.
 
 ## Pendências honestas
 
 - Não há credenciais nem canal real autorizados; checkout, pagamento, agenda, envio e transferência são simuladores com contratos reais de estado.
 - Nenhum modelo remoto será declarado compatível sem executar o teste de capacidade correspondente.
 - A integração upstream com o RAG opcional do Farol depende de Python 3.11+ e de sua dependência opcional; o produto deve continuar instalável e útil sem ela.
+- O projeto é publicado como alpha: a API pública ainda pode mudar antes da primeira versão estável.

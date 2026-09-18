@@ -1,0 +1,13 @@
+version: 2
+updates:
+  - package-ecosystem: pip
+    directory: "/sales-agent"
+    schedule:
+      interval: monthly
+    groups:
+      sales-agent-development:
+        dependency-type: development
+  - package-ecosystem: github-actions
+    directory: "/"
+    schedule:
+      interval: monthly

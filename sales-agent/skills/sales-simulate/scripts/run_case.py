@@ -1,7 +1,6 @@
 """Small portable helper for harnesses that can only execute one script."""
 
 import json
-import sys
 
 from sales_agent.evaluation import EvaluationRunner
 
