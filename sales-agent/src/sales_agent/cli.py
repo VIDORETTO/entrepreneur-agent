@@ -10,15 +10,20 @@ import shutil
 import sys
 import tempfile
 from pathlib import Path
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List, Mapping, Optional
 
 from . import __version__
+from .channel import ChatwootBinding, ChatwootDeliveryProvider, ChatwootReceiver, FakeChatwootTransport
 from .config import ConfigurationManager, load_manifest, load_package, promote_package, seed_examples, seed_package
 from .conversation import ConversationError, SellerEngine
-from .evaluation import EvaluationRunner
-from .knowledge import FarolArtifactImporter, PersistentFarolKnowledge
+from .delivery import DeliveryProcessor
+from .evaluation import EvaluationRunner, model_contract_check
+from .governance import PilotController, QualitySupervisor
+from .knowledge import FarolArtifactImporter, PersistentFarolKnowledge, StableFarolAdapter
 from .model import HTTPModelAdapter, RuleBasedModel
+from .skills import SkillCatalog
 from .storage import StateStore
+from .turns import TurnAssembler
 from .validation import PackageError, validate_package
 
 
@@ -48,6 +53,7 @@ def command_doctor(args: argparse.Namespace) -> int:
         "farol": {
             "command_available": bool(shutil.which("farol") or shutil.which("docops")),
             "upstream_rag_validated": False,
+            "stable_adapter": StableFarolAdapter().status(),
             "reason": "a instalação upstream opcional do Farol não foi executada nesta instalação",
         },
         "dependencies": {"external_runtime": "none", "pytest": importlib.util.find_spec("pytest") is not None},
@@ -141,6 +147,47 @@ def command_promote_package(args: argparse.Namespace) -> int:
     return 0
 
 
+def command_restore_package(args: argparse.Namespace) -> int:
+    result = ConfigurationManager(_store(args)).restore(args.business_id, args.storage_version)
+    _print({key: value for key, value in result.items() if key != "package"})
+    return 0
+
+
+def command_configuration_inspect(args: argparse.Namespace) -> int:
+    _print(ConfigurationManager(_store(args)).inspect(args.business_id))
+    return 0
+
+
+def command_configuration_diff(args: argparse.Namespace) -> int:
+    candidate = load_package(args.package)
+    _print(ConfigurationManager(_store(args)).diff(args.business_id, candidate))
+    return 0
+
+
+def command_configuration_simulate(args: argparse.Namespace) -> int:
+    candidate = load_package(args.package)
+    _print(ConfigurationManager(_store(args)).simulate(candidate, args.message, contact_id=args.contact_id))
+    return 0
+
+
+def command_skills_list(args: argparse.Namespace) -> int:
+    skills = SkillCatalog().list_skills()
+    _print({"skills": skills, "count": len(skills)})
+    return 0
+
+
+def command_skills_show(args: argparse.Namespace) -> int:
+    value = SkillCatalog().read_skill(args.skill_id)
+    _print(value)
+    return 0 if value.get("available") else 2
+
+
+def command_skills_doctor(args: argparse.Namespace) -> int:
+    value = SkillCatalog().diagnose()
+    _print(value)
+    return 0 if value.get("ok") else 2
+
+
 def command_configure_start(args: argparse.Namespace) -> int:
     store = _store(args)
     materials = []
@@ -159,6 +206,7 @@ def command_configure_start(args: argparse.Namespace) -> int:
         business_name=args.business_name,
         materials=materials,
         session_id=args.session_id,
+        capability=args.capability,
     )
     _print(_discovery_view(payload))
     return 0
@@ -197,6 +245,9 @@ def _discovery_view(payload: Dict[str, Any]) -> Dict[str, Any]:
         "answered_question_ids": payload.get("answered_question_ids", []),
         "pending_decision_ids": payload.get("deferred_question_ids", []),
         "next_question": next_question,
+        "capability": payload.get("capability"),
+        "blockers": payload.get("blockers", []),
+        "checkpoint": payload.get("checkpoint", {}),
         "capabilities": payload.get("capabilities", {}),
     }
 
@@ -208,7 +259,11 @@ def _engine_for(store: StateStore, args: argparse.Namespace) -> SellerEngine:
     model_name = os.environ.get("SELLER_MODEL_NAME", "configured-model")
     if endpoint and key and not getattr(args, "rules", False):
         model = HTTPModelAdapter(endpoint, key, model_name)  # type: ignore[assignment]
-    return SellerEngine(store, model=model)
+    supervisor = None
+    setting = store.get_supervisor_setting()
+    if setting and setting.get("mode") != "off":
+        supervisor = QualitySupervisor(store)
+    return SellerEngine(store, model=model, supervisor=supervisor)
 
 
 def command_chat(args: argparse.Namespace) -> int:
@@ -232,6 +287,19 @@ def command_chat(args: argparse.Namespace) -> int:
     return 0
 
 
+def command_conversation_resume(args: argparse.Namespace) -> int:
+    store = _store(args)
+    result = _engine_for(store, args).resume(
+        args.business_id,
+        args.conversation_id,
+        contact_id=args.contact_id,
+        authority=args.authority,
+        reason=args.reason,
+    )
+    _print(result)
+    return 0 if result.get("resumed") else 2
+
+
 def command_knowledge_query(args: argparse.Namespace) -> int:
     store = _store(args)
     hits = PersistentFarolKnowledge(store).search(args.business_id, args.query, args.max_results)
@@ -246,10 +314,159 @@ def command_knowledge_revoke(args: argparse.Namespace) -> int:
     return 0
 
 
+def command_knowledge_reapprove(args: argparse.Namespace) -> int:
+    store = _store(args)
+    knowledge = PersistentFarolKnowledge(store)
+    reapproved = knowledge.reapprove(args.business_id, args.source_id, args.version, args.reason)
+    _print(
+        {
+            "reapproved": reapproved,
+            "business_id": args.business_id,
+            "source_id": args.source_id,
+            "source_version": args.version,
+            "reason": args.reason,
+        }
+    )
+    return 0 if reapproved else 2
+
+
+def command_knowledge_pending_reviews(args: argparse.Namespace) -> int:
+    knowledge = PersistentFarolKnowledge(_store(args))
+    items = knowledge.pending_reviews(args.business_id)
+    _print({"items": items, "count": len(items), "status": "pending_review"})
+    return 0
+
+
+def command_knowledge_review(args: argparse.Namespace) -> int:
+    knowledge = PersistentFarolKnowledge(_store(args))
+    reviewed = knowledge.review_legacy(args.business_id, args.source_id, args.version, args.reason)
+    _print(
+        {
+            "reviewed": reviewed,
+            "business_id": args.business_id,
+            "source_id": args.source_id,
+            "source_version": args.version,
+            "reason": args.reason,
+        }
+    )
+    return 0 if reviewed else 2
+
+
 def command_farol_import(args: argparse.Namespace) -> int:
     store = _store(args)
-    count = FarolArtifactImporter(PersistentFarolKnowledge(store)).import_package(args.business_id, args.path)
-    _print({"imported_documents": count, "backend": "farol-artifact-v1", "business_id": args.business_id})
+    importer = FarolArtifactImporter(PersistentFarolKnowledge(store))
+    count = importer.import_package(args.business_id, args.path)
+    _print({"imported_documents": count, "backend": "farol-artifact-v1", "business_id": args.business_id, "report": importer.last_report})
+    return 0
+
+
+def command_farol_status(args: argparse.Namespace) -> int:
+    _print(StableFarolAdapter().status())
+    return 0
+
+
+def command_turn_receive(args: argparse.Namespace) -> int:
+    store = _store(args)
+    event = {
+        "business_id": args.business_id,
+        "conversation_id": args.conversation_id,
+        "contact_id": args.contact_id,
+        "channel": args.channel,
+        "event_id": args.event_id,
+        "text": args.message,
+    }
+    result = TurnAssembler(store, _engine_for(store, args)).receive(event, received_at=args.received_at)
+    if hasattr(result.get("result"), "as_dict"):
+        result["result"] = result["result"].as_dict()
+    _print(result)
+    return 0
+
+
+def command_turn_process(args: argparse.Namespace) -> int:
+    store = _store(args)
+    results = TurnAssembler(store, _engine_for(store, args), window_seconds=args.window_seconds, max_wait_seconds=args.max_wait_seconds).process_due(now=args.now)
+    _print({"results": [item.as_dict() for item in results], "count": len(results)})
+    return 0
+
+
+class _CLIProvider:
+    def __init__(self, behavior: str):
+        self.behavior = behavior
+
+    def send(self, payload: Mapping[str, Any], *, idempotency_key: str) -> Mapping[str, Any]:
+        if self.behavior in {"unknown", "timeout"}:
+            return {"status": "unknown", "provider_id": "cli-fake-unknown"}
+        if self.behavior == "rejected":
+            return {"status": "rejected", "error": "cli fake provider rejected"}
+        return {"status": "sent", "provider_id": "cli-fake-sent", "idempotency_key": idempotency_key}
+
+
+def command_outbox_process(args: argparse.Namespace) -> int:
+    store = _store(args)
+    provider: Any = _CLIProvider(args.behavior)
+    if args.channel == "chatwoot":
+        provider = ChatwootDeliveryProvider(FakeChatwootTransport(behavior=args.behavior))
+    pilot = PilotController(store) if args.channel == "chatwoot" else None
+    outcomes = DeliveryProcessor(store, pilot=pilot).process_once(provider, limit=args.limit, lease_seconds=args.lease_seconds)
+    _print({"outcomes": outcomes, "count": len(outcomes), "provider": args.behavior, "channel": args.channel})
+    return 0 if all(item.get("status") in {"sent", "cancelled", "observed"} for item in outcomes) else 2
+
+
+def command_chatwoot_admit(args: argparse.Namespace) -> int:
+    raw = Path(args.body).read_bytes() if args.body else args.payload.encode("utf-8")
+    binding = ChatwootBinding(args.business_id, args.account_id, args.inbox_id, args.secret)
+    receiver = ChatwootReceiver(_store(args), [binding])
+    result = receiver.admit(raw, {"X-Chatwoot-Signature": args.signature})
+    _print(result)
+    return 0 if result.get("ack") else 2
+
+
+def command_pilot_configure(args: argparse.Namespace) -> int:
+    cohort = json.loads(args.cohort) if args.cohort else {}
+    limits = json.loads(args.limits) if args.limits else {}
+    if not isinstance(cohort, dict) or not isinstance(limits, dict):
+        raise ValueError("cohort e limits precisam ser objetos JSON")
+    result = PilotController(_store(args)).configure(
+        args.business_id,
+        args.channel,
+        mode=args.mode,
+        cohort=cohort,
+        limits=limits,
+        evaluated_package_version=args.evaluated_package_version,
+        evaluated_model=args.evaluated_model,
+        evaluated_backend=args.evaluated_backend,
+        authorize=args.authorize,
+        reason=args.reason or "",
+    )
+    _print(result)
+    return 0
+
+
+def command_pilot_inspect(args: argparse.Namespace) -> int:
+    _print(PilotController(_store(args)).inspect(args.business_id, args.channel))
+    return 0
+
+
+def command_pilot_interrupt(args: argparse.Namespace) -> int:
+    _print(PilotController(_store(args)).interrupt(args.business_id, args.channel, reason=args.reason))
+    return 0
+
+
+def command_supervisor_list(args: argparse.Namespace) -> int:
+    reviews = _store(args).list_supervisor_reviews(args.candidate_id)
+    _print({"reviews": reviews, "count": len(reviews), "mode": "observation-only"})
+    return 0
+
+
+def command_supervisor_report(args: argparse.Namespace) -> int:
+    supervisor = QualitySupervisor(_store(args), scope_key=args.scope_key)
+    _print(supervisor.report(args.candidate_id))
+    return 0
+
+
+def command_supervisor_configure(args: argparse.Namespace) -> int:
+    supervisor = QualitySupervisor(_store(args))
+    _print(supervisor.configure(args.mode, policy=args.policy))
     return 0
 
 
@@ -316,19 +533,30 @@ def _run_demo(store: StateStore) -> int:
 
 
 def command_evaluate(args: argparse.Namespace) -> int:
-    runner = EvaluationRunner(Path(args.data_dir))
+    candidate_package = load_package(args.package) if args.package else None
+    runner = EvaluationRunner(
+        Path(args.data_dir),
+        model_name=args.model,
+        backend_name=args.backend,
+        channel=args.channel,
+        candidate_package=candidate_package,
+        candidate_business_id=args.business_id,
+    )
     report = runner.run()
     if args.output:
         Path(args.output).write_text(json.dumps(report, ensure_ascii=False, indent=2, sort_keys=True) + "\n", encoding="utf-8")
     _print(report)
-    return 0 if report["summary"]["critical_failures"] == 0 and report["summary"]["failed"] == 0 else 2
+    return 0 if report["evaluation"]["thresholds_met"] else 2
 
 
 def command_model_check(args: argparse.Namespace) -> int:
-    from .evaluation import model_contract_check
-
-    _print(model_contract_check())
-    return 0
+    if args.model is None:
+        result = model_contract_check()
+    else:
+        factory = EvaluationRunner.MODEL_NAMES[args.model]
+        result = model_contract_check(factory())
+    _print(result)
+    return 0 if result.get("passed") else 2
 
 
 def command_storage_check(args: argparse.Namespace) -> int:
@@ -362,7 +590,7 @@ def command_outbox_claim(args: argparse.Namespace) -> int:
 
 
 def command_outbox_ack(args: argparse.Namespace) -> int:
-    acknowledged = _store(args).ack_outbox(args.message_key)
+    acknowledged = _store(args).ack_outbox(args.message_key, lease_owner=args.lease_owner)
     if not acknowledged:
         raise ValueError("mensagem não está em processamento: %s" % args.message_key)
     _print({"message_key": args.message_key, "status": "sent"})
@@ -375,6 +603,7 @@ def command_outbox_nack(args: argparse.Namespace) -> int:
         args.error,
         max_attempts=args.max_attempts,
         delay_seconds=args.delay_seconds,
+        lease_owner=args.lease_owner,
     )
     _print({"message_key": args.message_key, "status": status})
     return 0
@@ -383,6 +612,15 @@ def command_outbox_nack(args: argparse.Namespace) -> int:
 def command_outbox_recover(args: argparse.Namespace) -> int:
     count = _store(args).recover_expired_outbox()
     _print({"recovered": count})
+    return 0
+
+
+def command_outbox_reconcile(args: argparse.Namespace) -> int:
+    details = json.loads(args.details) if args.details else {}
+    if not isinstance(details, dict):
+        raise ValueError("details precisa ser um objeto JSON")
+    result = _store(args).reconcile_outbox(args.message_key, args.resolution, details)
+    _print(result)
     return 0
 
 
@@ -430,6 +668,10 @@ def build_parser() -> argparse.ArgumentParser:
     promote_cmd = sub.add_parser("promote-package", help="promover um rascunho revisado para active")
     promote_cmd.add_argument("package")
     promote_cmd.set_defaults(func=command_promote_package)
+    restore_cmd = sub.add_parser("restore-package", help="restaurar uma versão histórica como nova promoção")
+    restore_cmd.add_argument("--business-id", required=True)
+    restore_cmd.add_argument("--storage-version", type=int, required=True)
+    restore_cmd.set_defaults(func=command_restore_package)
 
     configure = sub.add_parser("configure", help="entrevista persistente do dono")
     configure_sub = configure.add_subparsers(dest="configure_command", required=True)
@@ -439,6 +681,7 @@ def build_parser() -> argparse.ArgumentParser:
     start.add_argument("--template", choices=["physical", "b2b", "service", "digital"], default="physical")
     start.add_argument("--material", action="append")
     start.add_argument("--session-id")
+    start.add_argument("--capability", default="checkout_prepare")
     start.set_defaults(func=command_configure_start)
     status = configure_sub.add_parser("status")
     status.add_argument("session_id")
@@ -451,6 +694,32 @@ def build_parser() -> argparse.ArgumentParser:
     finalize = configure_sub.add_parser("finalize")
     finalize.add_argument("session_id")
     finalize.set_defaults(func=command_configure_finalize)
+    config_inspect = configure_sub.add_parser("inspect")
+    config_inspect.add_argument("--business-id", required=True)
+    config_inspect.set_defaults(func=command_configuration_inspect)
+    config_diff = configure_sub.add_parser("diff")
+    config_diff.add_argument("--business-id", required=True)
+    config_diff.add_argument("package")
+    config_diff.set_defaults(func=command_configuration_diff)
+    config_simulate = configure_sub.add_parser("simulate")
+    config_simulate.add_argument("package")
+    config_simulate.add_argument("--message", required=True)
+    config_simulate.add_argument("--contact-id", default="verified:simulation")
+    config_simulate.set_defaults(func=command_configuration_simulate)
+    config_restore = configure_sub.add_parser("restore")
+    config_restore.add_argument("--business-id", required=True)
+    config_restore.add_argument("--storage-version", type=int, required=True)
+    config_restore.set_defaults(func=command_restore_package)
+
+    skills = sub.add_parser("skills", help="inspecionar skills instaladas")
+    skills_sub = skills.add_subparsers(dest="skills_command", required=True)
+    skills_list = skills_sub.add_parser("list")
+    skills_list.set_defaults(func=command_skills_list)
+    skills_show = skills_sub.add_parser("show")
+    skills_show.add_argument("skill_id")
+    skills_show.set_defaults(func=command_skills_show)
+    skills_doctor = skills_sub.add_parser("doctor")
+    skills_doctor.set_defaults(func=command_skills_doctor)
 
     chat = sub.add_parser("chat", help="processar uma mensagem persistente")
     chat.add_argument("--business-id", required=True)
@@ -462,6 +731,16 @@ def build_parser() -> argparse.ArgumentParser:
     chat.add_argument("--json", action="store_true")
     chat.add_argument("--rules", action="store_true")
     chat.set_defaults(func=command_chat)
+
+    conversation = sub.add_parser("conversation", help="controles explícitos da conversa")
+    conversation_sub = conversation.add_subparsers(dest="conversation_command", required=True)
+    conversation_resume = conversation_sub.add_parser("resume", help="liberar uma pausa humana explicitamente")
+    conversation_resume.add_argument("--business-id", required=True)
+    conversation_resume.add_argument("--conversation-id", required=True)
+    conversation_resume.add_argument("--contact-id", required=True)
+    conversation_resume.add_argument("--authority", required=True)
+    conversation_resume.add_argument("--reason", required=True)
+    conversation_resume.set_defaults(func=command_conversation_resume)
 
     knowledge = sub.add_parser("knowledge", help="consultar e governar evidências")
     knowledge_sub = knowledge.add_subparsers(dest="knowledge_command", required=True)
@@ -475,6 +754,21 @@ def build_parser() -> argparse.ArgumentParser:
     revoke.add_argument("--source-id", required=True)
     revoke.add_argument("--version")
     revoke.set_defaults(func=command_knowledge_revoke)
+    reapprove = knowledge_sub.add_parser("reapprove")
+    reapprove.add_argument("--business-id", required=True)
+    reapprove.add_argument("--source-id", required=True)
+    reapprove.add_argument("--version")
+    reapprove.add_argument("--reason", required=True)
+    reapprove.set_defaults(func=command_knowledge_reapprove)
+    pending_reviews = knowledge_sub.add_parser("pending-reviews")
+    pending_reviews.add_argument("--business-id")
+    pending_reviews.set_defaults(func=command_knowledge_pending_reviews)
+    review = knowledge_sub.add_parser("review")
+    review.add_argument("--business-id", required=True)
+    review.add_argument("--source-id", required=True)
+    review.add_argument("--version", required=True)
+    review.add_argument("--reason", required=True)
+    review.set_defaults(func=command_knowledge_review)
 
     farol = sub.add_parser("farol", help="importar artefatos gerados pelo Farol")
     farol_sub = farol.add_subparsers(dest="farol_command", required=True)
@@ -482,14 +776,22 @@ def build_parser() -> argparse.ArgumentParser:
     farol_import.add_argument("--business-id", required=True)
     farol_import.add_argument("path")
     farol_import.set_defaults(func=command_farol_import)
+    farol_status = farol_sub.add_parser("status")
+    farol_status.set_defaults(func=command_farol_status)
 
     demo = sub.add_parser("demo", help="executar as quatro demonstrações fictícias")
     demo.add_argument("--persist", action="store_true", help="manter o estado da demonstração em --data-dir")
     demo.set_defaults(func=command_demo)
     evaluate = sub.add_parser("evaluate", help="executar cenários AC e gerar relatório")
     evaluate.add_argument("--output")
+    evaluate.add_argument("--model", choices=sorted(EvaluationRunner.MODEL_NAMES), default="rules-v1")
+    evaluate.add_argument("--backend", choices=["sqlite-farol-v1"], default="sqlite-farol-v1")
+    evaluate.add_argument("--channel", default="evaluation")
+    evaluate.add_argument("--package", help="arquivo JSON do pacote candidato")
+    evaluate.add_argument("--business-id", help="identificador do negócio do pacote candidato")
     evaluate.set_defaults(func=command_evaluate)
     model_check = sub.add_parser("model-check", help="testar contrato do adaptador de modelo")
+    model_check.add_argument("--model", choices=sorted(EvaluationRunner.MODEL_NAMES))
     model_check.set_defaults(func=command_model_check)
 
     storage = sub.add_parser("storage", help="verificar, copiar ou restaurar o estado SQLite")
@@ -507,7 +809,7 @@ def build_parser() -> argparse.ArgumentParser:
     outbox = sub.add_parser("outbox", help="operar entrega durável de mensagens")
     outbox_sub = outbox.add_subparsers(dest="outbox_command", required=True)
     outbox_list = outbox_sub.add_parser("list")
-    outbox_list.add_argument("--status", choices=["pending", "processing", "sent", "cancelled", "dead_letter"])
+    outbox_list.add_argument("--status", choices=["pending", "processing", "sent", "cancelled", "dead_letter", "unknown", "observed"])
     outbox_list.set_defaults(func=command_outbox_list)
     outbox_claim = outbox_sub.add_parser("claim")
     outbox_claim.add_argument("--limit", type=int, default=10)
@@ -515,15 +817,28 @@ def build_parser() -> argparse.ArgumentParser:
     outbox_claim.set_defaults(func=command_outbox_claim)
     outbox_ack = outbox_sub.add_parser("ack")
     outbox_ack.add_argument("message_key")
+    outbox_ack.add_argument("--lease-owner")
     outbox_ack.set_defaults(func=command_outbox_ack)
     outbox_nack = outbox_sub.add_parser("nack")
     outbox_nack.add_argument("message_key")
     outbox_nack.add_argument("--error", required=True)
     outbox_nack.add_argument("--max-attempts", type=int, default=5)
     outbox_nack.add_argument("--delay-seconds", type=int, default=30)
+    outbox_nack.add_argument("--lease-owner")
     outbox_nack.set_defaults(func=command_outbox_nack)
     outbox_recover = outbox_sub.add_parser("recover")
     outbox_recover.set_defaults(func=command_outbox_recover)
+    outbox_reconcile = outbox_sub.add_parser("reconcile", help="conciliar uma entrega com resultado desconhecido")
+    outbox_reconcile.add_argument("message_key")
+    outbox_reconcile.add_argument("--resolution", choices=["sent", "cancelled", "dead_letter"], required=True)
+    outbox_reconcile.add_argument("--details", help="objeto JSON com evidência do provedor")
+    outbox_reconcile.set_defaults(func=command_outbox_reconcile)
+    outbox_process = outbox_sub.add_parser("process", help="executar ciclo com provedor falso explícito")
+    outbox_process.add_argument("--limit", type=int, default=10)
+    outbox_process.add_argument("--lease-seconds", type=int, default=60)
+    outbox_process.add_argument("--behavior", choices=["sent", "unknown", "timeout", "rejected"], default="sent")
+    outbox_process.add_argument("--channel", choices=["local", "chatwoot"], default="local")
+    outbox_process.set_defaults(func=command_outbox_process)
 
     effects = sub.add_parser("effects", help="inspecionar e conciliar efeitos persistentes")
     effects_sub = effects.add_subparsers(dest="effects_command", required=True)
@@ -535,6 +850,76 @@ def build_parser() -> argparse.ArgumentParser:
     effects_reconcile.add_argument("--resolution", choices=["confirmed", "failed"], required=True)
     effects_reconcile.add_argument("--details", help="objeto JSON com evidência da resolução")
     effects_reconcile.set_defaults(func=command_effects_reconcile)
+
+    turns = sub.add_parser("turn", help="receber e processar turnos duráveis")
+    turns_sub = turns.add_subparsers(dest="turn_command", required=True)
+    turn_receive = turns_sub.add_parser("receive")
+    turn_receive.add_argument("--business-id", required=True)
+    turn_receive.add_argument("--conversation-id", required=True)
+    turn_receive.add_argument("--contact-id", required=True)
+    turn_receive.add_argument("--event-id", required=True)
+    turn_receive.add_argument("--message", required=True)
+    turn_receive.add_argument("--channel", default="cli")
+    turn_receive.add_argument("--received-at")
+    turn_receive.add_argument("--rules", action="store_true")
+    turn_receive.set_defaults(func=command_turn_receive)
+    turn_process = turns_sub.add_parser("process")
+    turn_process.add_argument("--now")
+    turn_process.add_argument("--window-seconds", type=int, default=3)
+    turn_process.add_argument("--max-wait-seconds", type=int, default=15)
+    turn_process.add_argument("--rules", action="store_true")
+    turn_process.set_defaults(func=command_turn_process)
+
+    channel = sub.add_parser("channel", help="contratos de canais externos")
+    channel_sub = channel.add_subparsers(dest="channel_command", required=True)
+    chatwoot = channel_sub.add_parser("chatwoot-admit")
+    chatwoot.add_argument("--business-id", required=True)
+    chatwoot.add_argument("--account-id", required=True)
+    chatwoot.add_argument("--inbox-id", required=True)
+    chatwoot.add_argument("--secret", required=True)
+    body_group = chatwoot.add_mutually_exclusive_group(required=True)
+    body_group.add_argument("--body")
+    body_group.add_argument("--payload")
+    chatwoot.add_argument("--signature", required=True)
+    chatwoot.set_defaults(func=command_chatwoot_admit)
+
+    pilot = sub.add_parser("pilot", help="modos graduais e interrupção")
+    pilot_sub = pilot.add_subparsers(dest="pilot_command", required=True)
+    pilot_config = pilot_sub.add_parser("configure")
+    pilot_config.add_argument("--business-id", required=True)
+    pilot_config.add_argument("--channel", default="chatwoot")
+    pilot_config.add_argument("--mode", choices=["observation", "assistance", "pilot"], default="observation")
+    pilot_config.add_argument("--cohort")
+    pilot_config.add_argument("--limits")
+    pilot_config.add_argument("--evaluated-package-version")
+    pilot_config.add_argument("--evaluated-model")
+    pilot_config.add_argument("--evaluated-backend")
+    pilot_config.add_argument("--authorize", action="store_true")
+    pilot_config.add_argument("--reason", default="")
+    pilot_config.set_defaults(func=command_pilot_configure)
+    pilot_inspect = pilot_sub.add_parser("inspect")
+    pilot_inspect.add_argument("--business-id", required=True)
+    pilot_inspect.add_argument("--channel", default="chatwoot")
+    pilot_inspect.set_defaults(func=command_pilot_inspect)
+    pilot_interrupt = pilot_sub.add_parser("interrupt")
+    pilot_interrupt.add_argument("--business-id", required=True)
+    pilot_interrupt.add_argument("--channel", default="chatwoot")
+    pilot_interrupt.add_argument("--reason", default="interrompido pelo operador")
+    pilot_interrupt.set_defaults(func=command_pilot_interrupt)
+
+    supervisor = sub.add_parser("supervisor", help="listar observações de qualidade")
+    supervisor_sub = supervisor.add_subparsers(dest="supervisor_command", required=True)
+    supervisor_configure = supervisor_sub.add_parser("configure")
+    supervisor_configure.add_argument("--mode", choices=["off", "observation", "selective"], required=True)
+    supervisor_configure.add_argument("--policy", choices=["optional", "mandatory"], default="optional")
+    supervisor_configure.set_defaults(func=command_supervisor_configure)
+    supervisor_list = supervisor_sub.add_parser("list")
+    supervisor_list.add_argument("--candidate-id")
+    supervisor_list.set_defaults(func=command_supervisor_list)
+    supervisor_report = supervisor_sub.add_parser("report")
+    supervisor_report.add_argument("--candidate-id")
+    supervisor_report.add_argument("--scope-key", default="global")
+    supervisor_report.set_defaults(func=command_supervisor_report)
     return parser
 
 

@@ -31,8 +31,8 @@ def test_legacy_database_is_migrated_without_losing_outbox(tmp_path: Path):
     by_key = {item["message_key"]: item for item in migrated}
     assert by_key["legacy-1"]["attempts"] == 0
     assert by_key["legacy-1"]["available_at"] == "2026-01-01T00:00:00+00:00"
-    assert by_key["legacy-processing"]["status"] == "pending"
-    assert by_key["legacy-processing"]["last_error"] == "processing lease missing during migration"
+    assert by_key["legacy-processing"]["status"] == "unknown"
+    assert by_key["legacy-processing"]["last_error"] == "processing lease missing; delivery outcome is unknown"
 
 
 def test_event_state_and_outbox_commit_as_one_unit(tmp_path: Path):
@@ -100,6 +100,76 @@ def test_stale_atomic_commit_changes_nothing(tmp_path: Path):
     assert store.load_conversation("azul-b2c", "stale", "verified:test")["summary"] == ""
 
 
+def test_duplicate_event_with_pending_action_is_repaired_after_effect_confirmation(tmp_path: Path):
+    store = StateStore(tmp_path / "data")
+    seed_examples(store)
+    state = store.load_conversation("azul-b2c", "pending-action", "verified:test")
+    effect_key = "checkout:pending-action"
+    state["version"] = 1
+    state["operation"] = {"type": "checkout", "status": "pending", "effect_key": effect_key}
+    state["pending"] = {"type": "effect_in_progress", "effect_key": effect_key}
+    state["history"] = [{"event_id": "same", "response": "aguarde", "action": {"type": "prepare_checkout", "effect_key": effect_key, "status": "pending"}}]
+    event = {
+        "business_id": "azul-b2c",
+        "conversation_id": "pending-action",
+        "contact_id": "verified:test",
+        "event_id": "same",
+        "text": "Quero comprar a camiseta azul",
+    }
+    pending_result = {
+        "response": "aguarde",
+        "action": {"type": "prepare_checkout", "effect_key": effect_key, "status": "pending"},
+        "state": state,
+        "trace": [{"type": "checkout_in_progress"}],
+    }
+    status, _ = store.commit_event(
+        state,
+        0,
+        event,
+        pending_result,
+        "event:pending-action",
+        {"event_id": "same", "response": "aguarde", "action": pending_result["action"], "defer_delivery": True},
+    )
+    assert status == "committed"
+
+    created, _ = store.reserve_effect(
+        effect_key,
+        "checkout",
+        {"business_id": "azul-b2c", "conversation_id": "pending-action", "quote_id": "quote-1"},
+    )
+    assert created is True
+    store.update_effect(
+        effect_key,
+        "confirmed",
+        {
+            "status": "prepared",
+            "checkout_id": "co-1",
+            "url": "https://checkout.invalid/co-1",
+            "charged": False,
+        },
+    )
+    confirmed_action = {"type": "prepare_checkout", "effect_key": effect_key}
+    confirmed_result = {
+        "response": "Checkout preparado",
+        "action": confirmed_action,
+        "state": state,
+        "trace": [],
+    }
+    duplicate, replay = store.commit_event(
+        state,
+        0,
+        event,
+        confirmed_result,
+        "event:pending-action",
+        {"event_id": "same", "response": "Checkout preparado", "action": confirmed_action},
+    )
+
+    assert duplicate == "duplicate"
+    assert replay["action"]["checkout_id"] == "co-1"
+    assert store.load_conversation("azul-b2c", "pending-action", "verified:test")["operation"]["status"] == "confirmed"
+    assert store.list_outbox("pending")[0]["action"]["checkout_id"] == "co-1"
+
+
 def test_outbox_lease_ack_retry_dead_letter_and_recovery(tmp_path: Path):
     store = StateStore(tmp_path / "data")
     assert store.enqueue_message("message-1", "business", "conversation", {"response": "fictícia"})
@@ -123,7 +193,8 @@ def test_outbox_lease_ack_retry_dead_letter_and_recovery(tmp_path: Path):
     with store.connect() as db:
         db.execute("UPDATE outbox SET leased_until = '2000-01-01T00:00:00+00:00' WHERE message_key = 'message-3'")
     assert store.recover_expired_outbox() == 1
-    assert store.list_outbox("pending")[0]["message_key"] == "message-3"
+    assert store.list_outbox("unknown")[0]["message_key"] == "message-3"
+    assert not store.list_outbox("pending")
 
 
 def test_outbox_payload_cannot_override_delivery_metadata(tmp_path: Path):
@@ -183,6 +254,61 @@ def test_effect_transitions_and_inventory_quantity_are_guarded(tmp_path: Path):
     with pytest.raises(ValueError, match="inteiro positivo"):
         store.reserve_inventory("azul-b2c", "camiseta-azul", "M", -1)
     assert store.inventory("azul-b2c", "camiseta-azul", "M") == 1
+
+
+def test_pilot_reservation_survives_restart_and_settles_once(tmp_path: Path):
+    store = StateStore(tmp_path / "data")
+    scope_key = "azul-b2c:chatwoot"
+    limits = {"max_deliveries": 2, "max_cost": 1.0}
+
+    first = store.try_consume_pilot_limits(
+        scope_key,
+        limits,
+        estimated_cost=0.125,
+        reservation_key="pilot-restart-1",
+    )
+    assert first["allowed"] is True
+    assert store.get_pilot_metrics(scope_key)["reserved_cost"] == pytest.approx(0.125)
+
+    restarted = StateStore(tmp_path / "data")
+    replay = restarted.try_consume_pilot_limits(
+        scope_key,
+        limits,
+        estimated_cost=0.125,
+        reservation_key="pilot-restart-1",
+    )
+    assert replay["allowed"] is True
+    assert replay["reservation_existing"] is True
+
+    unknown = restarted.settle_pilot_reservation(scope_key, "pilot-restart-1", "unknown")
+    assert unknown["settled"] is True
+    assert restarted.get_pilot_metrics(scope_key)["reserved_cost"] == pytest.approx(0.125)
+    repeated_unknown = restarted.settle_pilot_reservation(scope_key, "pilot-restart-1", "unknown")
+    assert repeated_unknown["settled"] is False
+    assert repeated_unknown["reason"] == "reservation_already_unknown"
+
+    settled = restarted.settle_pilot_reservation(
+        scope_key,
+        "pilot-restart-1",
+        "sent",
+        actual_cost=0.375,
+    )
+    assert settled["settled"] is True
+    metrics = restarted.get_pilot_metrics(scope_key)
+    assert metrics["reserved_cost"] == 0
+    assert metrics["reserved_deliveries"] == 0
+    assert metrics["deliveries"] == 1
+    assert metrics["cost"] == pytest.approx(0.375)
+
+    repeated_settlement = restarted.settle_pilot_reservation(
+        scope_key,
+        "pilot-restart-1",
+        "sent",
+        actual_cost=0.375,
+    )
+    assert repeated_settlement["settled"] is False
+    assert repeated_settlement["reason"] == "reservation_already_settled"
+    assert restarted.get_pilot_metrics(scope_key)["cost"] == pytest.approx(0.375)
 
 
 def test_reconciliation_cannot_redirect_effect_or_inventory(tmp_path: Path):

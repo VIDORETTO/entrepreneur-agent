@@ -20,3 +20,17 @@ instalados.
 Os testes também exercitam deduplicação persistente, correção de cotação,
 isolamento e revogação de fontes, transferência, follow-up, retomada,
 restauração e rejeição de proposta de modelo incapaz.
+
+O `evaluation/golden_set.json` acompanha a distribuição e mantém casos
+sintéticos de pertinência, versões, revogação, intervenção humana, canal,
+correção e segurança do modelo. Relatórios de instalação usam a cópia em
+`share/vendedor-adaptavel/evaluation` quando o checkout não está disponível.
+
+A versão atual do golden set contém 38 casos AC, cada um com expectativa,
+afirmações proibidas, evidência e operações permitidas. O relatório marca
+`golden_set_complete` e separa a verificação adversarial do modelo da avaliação
+do atendimento. Custos ficam nulos para o adaptador determinístico local; isso
+não é uma estimativa de um modelo remoto. A elegibilidade também exige zero
+falhas críticas, 100% de aprovação do golden set e latência máxima abaixo do
+limite registrado em `evaluation.thresholds`; o modelo, backend, canal e
+geração de corpus selecionados ficam no mesmo relatório.

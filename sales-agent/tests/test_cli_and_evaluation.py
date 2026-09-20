@@ -17,6 +17,29 @@ def test_model_contract_check_is_explicitly_passed():
     assert result["model"] == "untrusted-invalid-actions"
 
 
+def test_model_selection_is_used_by_evaluate_and_model_check(tmp_path, capsys):
+    assert main(["model-check", "--model", "rules-v1"]) == 0
+    model_check = json.loads(capsys.readouterr().out)
+    assert model_check["model"] == "rules-v1"
+    assert model_check["passed"] is True
+
+    assert main(
+        ["--data-dir", str(tmp_path / "evaluation"), "evaluate", "--model", "untrusted-invalid-actions"]
+    ) == 2
+    report = json.loads(capsys.readouterr().out)
+    assert report["model"]["name"] == "untrusted-invalid-actions"
+    assert report["evaluation"]["thresholds_met"] is False
+
+
+def test_evaluation_latency_threshold_participates_in_eligibility(tmp_path, monkeypatch):
+    monkeypatch.setattr(EvaluationRunner, "MAX_LATENCY_MS", 0)
+
+    report = EvaluationRunner(tmp_path / "evaluation").run()
+
+    assert report["evaluation"]["performance"]["latency_met"] is False
+    assert report["evaluation"]["thresholds_met"] is False
+
+
 def test_evaluation_executes_all_contract_scenarios(tmp_path):
     report = EvaluationRunner(tmp_path / "evaluation").run()
 
@@ -26,6 +49,15 @@ def test_evaluation_executes_all_contract_scenarios(tmp_path):
     assert report["run"]["package_version"] == sales_agent.__version__
     assert report["run"]["python"]
     assert set(report["run"]["source"]) == {"revision", "dirty"}
+
+
+def test_evaluation_report_declares_versioned_golden_set_thresholds_and_external_status(tmp_path):
+    report = EvaluationRunner(tmp_path / "evaluation").run()
+
+    assert report["evaluation"]["golden_set_version"]
+    assert report["evaluation"]["thresholds"]["critical_failures"] == 0
+    assert report["evaluation"]["external_execution"]["status"] == "not-executed"
+    assert all("duration_ms" in case for case in report["cases"])
 
 
 def test_validate_fails_when_no_business_is_installed(tmp_path, capsys):
@@ -55,6 +87,109 @@ def test_cli_reports_package_version(capsys):
 
     assert exit_info.value.code == 0
     assert capsys.readouterr().out.strip() == "vendedor %s" % sales_agent.__version__
+
+
+def test_cli_attaches_persisted_supervisor_mode(tmp_path, capsys):
+    data_dir = str(tmp_path / "state")
+    assert main(["--data-dir", data_dir, "init", "--examples"]) == 0
+    capsys.readouterr()
+    assert main(["--data-dir", data_dir, "supervisor", "configure", "--mode", "observation"]) == 0
+    assert json.loads(capsys.readouterr().out)["mode"] == "observation"
+
+    assert main(
+        [
+            "--data-dir",
+            data_dir,
+            "chat",
+            "--business-id",
+            "azul-b2c",
+            "--conversation-id",
+            "supervised-cli",
+            "--contact-id",
+            "verified:teste",
+            "--event-id",
+            "supervised-1",
+            "--message",
+            "Quanto custa a camiseta azul?",
+            "--json",
+        ]
+    ) == 0
+    assert "79" in json.loads(capsys.readouterr().out)["response"]
+    assert main(["--data-dir", data_dir, "supervisor", "list"]) == 0
+    assert json.loads(capsys.readouterr().out)["count"] == 1
+
+
+def test_cli_human_pause_needs_explicit_resume_command(tmp_path, capsys):
+    data_dir = str(tmp_path / "state")
+    assert main(["--data-dir", data_dir, "init", "--examples"]) == 0
+    capsys.readouterr()
+    assert main(
+        [
+            "--data-dir",
+            data_dir,
+            "chat",
+            "--business-id",
+            "azul-b2c",
+            "--conversation-id",
+            "resume-cli",
+            "--contact-id",
+            "verified:cli",
+            "--event-id",
+            "resume-1",
+            "--message",
+            "Quero falar com uma pessoa.",
+            "--json",
+        ]
+    ) == 0
+    assert json.loads(capsys.readouterr().out)["state"]["status"] == "human_paused"
+    assert (
+        main(
+            [
+                "--data-dir",
+                data_dir,
+                "conversation",
+                "resume",
+                "--business-id",
+                "azul-b2c",
+                "--conversation-id",
+                "resume-cli",
+                "--contact-id",
+                "verified:cli",
+                "--authority",
+                "operator",
+                "--reason",
+                "fila liberada",
+            ]
+        )
+        == 0
+    )
+    assert json.loads(capsys.readouterr().out)["resumed"] is True
+
+
+def test_cli_reconciles_unknown_outbox_without_requeue(tmp_path, capsys):
+    data_dir = str(tmp_path / "state")
+    store = StateStore(data_dir)
+    assert store.enqueue_message("unknown-cli", "business", "conversation", {"response": "fictícia"})
+    claimed = store.claim_outbox(limit=1, lease_seconds=1, now="2099-01-01T00:00:00+00:00")[0]
+    assert claimed["message_key"] == "unknown-cli"
+    assert store.recover_expired_outbox(now="2099-01-01T00:00:02+00:00") == 1
+
+    assert main(
+        [
+            "--data-dir",
+            data_dir,
+            "outbox",
+            "reconcile",
+            "unknown-cli",
+            "--resolution",
+            "sent",
+            "--details",
+            '{"provider":{"provider_id":"fake-message-1"},"reason":"contract confirmation"}',
+        ]
+    ) == 0
+    result = json.loads(capsys.readouterr().out)
+    assert result["status"] == "sent"
+    assert StateStore(data_dir).list_outbox("pending") == []
 
 
 def test_cli_happy_path_uses_persistent_fictional_state(tmp_path, capsys):

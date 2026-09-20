@@ -4,236 +4,1668 @@
     "name": "sqlite-farol-v1",
     "upstream_farol_rag": "not-executed"
   },
+  "candidate_probe": {
+    "status": "not-requested"
+  },
   "cases": [
     {
+      "cost": null,
       "critical": true,
+      "duration_ms": 36.649,
+      "expectation": {
+        "allowed_operations": [
+          "prepare_checkout"
+        ],
+        "evidence": "structured_offer",
+        "expectation": "prepare_checkout",
+        "forbidden": [
+          "charge",
+          "extra_qualification"
+        ],
+        "id": "AC001",
+        "title": "compra pronta"
+      },
+      "expectation_source": "synthetic-golden-set",
+      "golden_verification": {
+        "checks": {
+          "allowed_operations_declared": true,
+          "allowed_operations_observed": true,
+          "evidence_declared": true,
+          "expectation_declared": true,
+          "expectation_mapped": true,
+          "expectation_observed": true,
+          "forbidden_declared": true,
+          "forbidden_mapped": true,
+          "forbidden_observed": true,
+          "observed_public_result": true
+        },
+        "forbidden": {
+          "charge": true,
+          "extra_qualification": true
+        },
+        "passed": true
+      },
       "id": "AC001",
+      "observed_results": 1,
       "status": "passed",
       "title": "compra pronta"
     },
     {
+      "cost": null,
       "critical": true,
+      "duration_ms": 11.524,
+      "expectation": {
+        "allowed_operations": [
+          "ask"
+        ],
+        "evidence": "package_offer",
+        "expectation": "ask_variant_only",
+        "forbidden": [
+          "marketing_question"
+        ],
+        "id": "AC002",
+        "title": "variante única"
+      },
+      "expectation_source": "synthetic-golden-set",
+      "golden_verification": {
+        "checks": {
+          "allowed_operations_declared": true,
+          "allowed_operations_observed": true,
+          "evidence_declared": true,
+          "expectation_declared": true,
+          "expectation_mapped": true,
+          "expectation_observed": true,
+          "forbidden_declared": true,
+          "forbidden_mapped": true,
+          "forbidden_observed": true,
+          "observed_public_result": true
+        },
+        "forbidden": {
+          "marketing_question": true
+        },
+        "passed": true
+      },
       "id": "AC002",
+      "observed_results": 1,
       "status": "passed",
       "title": "variante única"
     },
     {
+      "cost": null,
       "critical": true,
+      "duration_ms": 42.705,
+      "expectation": {
+        "allowed_operations": [
+          "prepare_checkout",
+          "ask_missing"
+        ],
+        "evidence": "conversation_state",
+        "expectation": "reuse_confirmed_facts",
+        "forbidden": [
+          "repeat_answered_field"
+        ],
+        "id": "AC003",
+        "title": "reutilizar dados"
+      },
+      "expectation_source": "synthetic-golden-set",
+      "golden_verification": {
+        "checks": {
+          "allowed_operations_declared": true,
+          "allowed_operations_observed": true,
+          "evidence_declared": true,
+          "expectation_declared": true,
+          "expectation_mapped": true,
+          "expectation_observed": true,
+          "forbidden_declared": true,
+          "forbidden_mapped": true,
+          "forbidden_observed": true,
+          "observed_public_result": true
+        },
+        "forbidden": {
+          "repeat_answered_field": true
+        },
+        "passed": true
+      },
       "id": "AC003",
+      "observed_results": 2,
       "status": "passed",
       "title": "reutilizar dados"
     },
     {
+      "cost": null,
       "critical": false,
+      "duration_ms": 15.414,
+      "expectation": {
+        "allowed_operations": [
+          "respond"
+        ],
+        "evidence": "structured_offer",
+        "expectation": "answer_price",
+        "forbidden": [
+          "extra_qualification",
+          "unsupported_price"
+        ],
+        "id": "AC004",
+        "title": "preço direto"
+      },
+      "expectation_source": "synthetic-golden-set",
+      "golden_verification": {
+        "checks": {
+          "allowed_operations_declared": true,
+          "allowed_operations_observed": true,
+          "evidence_declared": true,
+          "expectation_declared": true,
+          "expectation_mapped": true,
+          "expectation_observed": true,
+          "forbidden_declared": true,
+          "forbidden_mapped": true,
+          "forbidden_observed": true,
+          "observed_public_result": true
+        },
+        "forbidden": {
+          "extra_qualification": true,
+          "unsupported_price": true
+        },
+        "passed": true
+      },
       "id": "AC004",
+      "observed_results": 1,
       "status": "passed",
       "title": "preço direto"
     },
     {
+      "cost": null,
       "critical": false,
+      "duration_ms": 9.875,
+      "expectation": {
+        "allowed_operations": [
+          "respond"
+        ],
+        "evidence": "structured_offer",
+        "expectation": "brief_relevant_response",
+        "forbidden": [
+          "pitch",
+          "repeated_greeting"
+        ],
+        "id": "AC005",
+        "title": "pergunta breve"
+      },
+      "expectation_source": "synthetic-golden-set",
+      "golden_verification": {
+        "checks": {
+          "allowed_operations_declared": true,
+          "allowed_operations_observed": true,
+          "evidence_declared": true,
+          "expectation_declared": true,
+          "expectation_mapped": true,
+          "expectation_observed": true,
+          "forbidden_declared": true,
+          "forbidden_mapped": true,
+          "forbidden_observed": true,
+          "observed_public_result": true
+        },
+        "forbidden": {
+          "pitch": true,
+          "repeated_greeting": true
+        },
+        "passed": true
+      },
       "id": "AC005",
+      "observed_results": 1,
       "status": "passed",
       "title": "pergunta breve"
     },
     {
+      "cost": null,
       "critical": false,
+      "duration_ms": 10.144,
+      "expectation": {
+        "allowed_operations": [
+          "respond"
+        ],
+        "evidence": "active_package",
+        "expectation": "brief_redirect",
+        "forbidden": [
+          "commercial_effect"
+        ],
+        "id": "AC006",
+        "title": "fora do escopo"
+      },
+      "expectation_source": "synthetic-golden-set",
+      "golden_verification": {
+        "checks": {
+          "allowed_operations_declared": true,
+          "allowed_operations_observed": true,
+          "evidence_declared": true,
+          "expectation_declared": true,
+          "expectation_mapped": true,
+          "expectation_observed": true,
+          "forbidden_declared": true,
+          "forbidden_mapped": true,
+          "forbidden_observed": true,
+          "observed_public_result": true
+        },
+        "forbidden": {
+          "commercial_effect": true
+        },
+        "passed": true
+      },
       "id": "AC006",
+      "observed_results": 1,
       "status": "passed",
       "title": "fora do escopo"
     },
     {
+      "cost": null,
       "critical": false,
+      "duration_ms": 12.664,
+      "expectation": {
+        "allowed_operations": [
+          "respond"
+        ],
+        "evidence": "approved_source",
+        "expectation": "answer_with_relevant_evidence",
+        "forbidden": [
+          "unrelated_claim"
+        ],
+        "id": "AC007",
+        "title": "detalhe solicitado"
+      },
+      "expectation_source": "synthetic-golden-set",
+      "golden_verification": {
+        "checks": {
+          "allowed_operations_declared": true,
+          "allowed_operations_observed": true,
+          "evidence_declared": true,
+          "expectation_declared": true,
+          "expectation_mapped": true,
+          "expectation_observed": true,
+          "forbidden_declared": true,
+          "forbidden_mapped": true,
+          "forbidden_observed": true,
+          "observed_public_result": true
+        },
+        "forbidden": {
+          "unrelated_claim": true
+        },
+        "passed": true
+      },
       "id": "AC007",
+      "observed_results": 1,
       "status": "passed",
       "title": "detalhe solicitado"
     },
     {
+      "cost": null,
       "critical": true,
+      "duration_ms": 10.152,
+      "expectation": {
+        "allowed_operations": [
+          "ask",
+          "await"
+        ],
+        "evidence": "delivery_check",
+        "expectation": "block_unconfirmed_deadline",
+        "forbidden": [
+          "promise_deadline",
+          "prepare_checkout"
+        ],
+        "id": "AC008",
+        "title": "compra condicional"
+      },
+      "expectation_source": "synthetic-golden-set",
+      "golden_verification": {
+        "checks": {
+          "allowed_operations_declared": true,
+          "allowed_operations_observed": true,
+          "evidence_declared": true,
+          "expectation_declared": true,
+          "expectation_mapped": true,
+          "expectation_observed": true,
+          "forbidden_declared": true,
+          "forbidden_mapped": true,
+          "forbidden_observed": true,
+          "observed_public_result": true
+        },
+        "forbidden": {
+          "prepare_checkout": true,
+          "promise_deadline": true
+        },
+        "passed": true
+      },
       "id": "AC008",
+      "observed_results": 1,
       "status": "passed",
       "title": "compra condicional"
     },
     {
+      "cost": null,
       "critical": true,
+      "duration_ms": 31.839,
+      "expectation": {
+        "allowed_operations": [
+          "ask_confirmation"
+        ],
+        "evidence": "quote_state",
+        "expectation": "invalidate_old_quote",
+        "forbidden": [
+          "reuse_old_quote",
+          "duplicate_checkout"
+        ],
+        "id": "AC009",
+        "title": "cotação invalidada"
+      },
+      "expectation_source": "synthetic-golden-set",
+      "golden_verification": {
+        "checks": {
+          "allowed_operations_declared": true,
+          "allowed_operations_observed": true,
+          "evidence_declared": true,
+          "expectation_declared": true,
+          "expectation_mapped": true,
+          "expectation_observed": true,
+          "forbidden_declared": true,
+          "forbidden_mapped": true,
+          "forbidden_observed": true,
+          "observed_public_result": true
+        },
+        "forbidden": {
+          "duplicate_checkout": true,
+          "reuse_old_quote": true
+        },
+        "passed": true
+      },
       "id": "AC009",
+      "observed_results": 2,
       "status": "passed",
       "title": "cotação invalidada"
     },
     {
+      "cost": null,
       "critical": true,
+      "duration_ms": 61.127,
+      "expectation": {
+        "allowed_operations": [
+          "respond",
+          "prepare_checkout"
+        ],
+        "evidence": "conversation_state",
+        "expectation": "keep_thanks_noncommercial_and_reopen_explicit_buy",
+        "forbidden": [
+          "automatic_pitch"
+        ],
+        "id": "AC010",
+        "title": "encerramento e retorno"
+      },
+      "expectation_source": "synthetic-golden-set",
+      "golden_verification": {
+        "checks": {
+          "allowed_operations_declared": true,
+          "allowed_operations_observed": true,
+          "evidence_declared": true,
+          "expectation_declared": true,
+          "expectation_mapped": true,
+          "expectation_observed": true,
+          "forbidden_declared": true,
+          "forbidden_mapped": true,
+          "forbidden_observed": true,
+          "observed_public_result": true
+        },
+        "forbidden": {
+          "automatic_pitch": true
+        },
+        "passed": true
+      },
       "id": "AC010",
+      "observed_results": 3,
       "status": "passed",
       "title": "encerramento e retorno"
     },
     {
+      "cost": null,
       "critical": true,
+      "duration_ms": 9.939,
+      "expectation": {
+        "allowed_operations": [
+          "query",
+          "respond"
+        ],
+        "evidence": "sqlite_farol_source",
+        "expectation": "answer_with_versioned_evidence",
+        "forbidden": [
+          "unscoped_source"
+        ],
+        "id": "AC011",
+        "title": "recuperação persistente"
+      },
+      "expectation_source": "synthetic-golden-set",
+      "golden_verification": {
+        "checks": {
+          "allowed_operations_declared": true,
+          "allowed_operations_observed": true,
+          "evidence_declared": true,
+          "expectation_declared": true,
+          "expectation_mapped": true,
+          "expectation_observed": true,
+          "forbidden_declared": true,
+          "forbidden_mapped": true,
+          "forbidden_observed": true,
+          "observed_public_result": true
+        },
+        "forbidden": {
+          "unscoped_source": true
+        },
+        "passed": true
+      },
       "id": "AC011",
+      "observed_results": 1,
       "status": "passed",
       "title": "recuperação persistente"
     },
     {
+      "cost": null,
       "critical": true,
+      "duration_ms": 20.457,
+      "expectation": {
+        "allowed_operations": [
+          "await",
+          "ask"
+        ],
+        "evidence": "conflicting_sources",
+        "expectation": "abstain_on_material_conflict",
+        "forbidden": [
+          "choose_revision_arbitrarily",
+          "commercial_effect"
+        ],
+        "id": "AC012",
+        "title": "conflito de fonte"
+      },
+      "expectation_source": "synthetic-golden-set",
+      "golden_verification": {
+        "checks": {
+          "allowed_operations_declared": true,
+          "allowed_operations_observed": true,
+          "evidence_declared": true,
+          "expectation_declared": true,
+          "expectation_mapped": true,
+          "expectation_observed": true,
+          "forbidden_declared": true,
+          "forbidden_mapped": true,
+          "forbidden_observed": true,
+          "observed_public_result": true
+        },
+        "forbidden": {
+          "choose_revision_arbitrarily": true,
+          "commercial_effect": true
+        },
+        "passed": true
+      },
       "id": "AC012",
+      "observed_results": 1,
       "status": "passed",
       "title": "conflito de fonte"
     },
     {
+      "cost": null,
       "critical": true,
+      "duration_ms": 10.647,
+      "expectation": {
+        "allowed_operations": [
+          "query",
+          "await"
+        ],
+        "evidence": "source_governance",
+        "expectation": "exclude_revoked_and_cross_business_sources",
+        "forbidden": [
+          "revoked_evidence",
+          "cross_business_evidence"
+        ],
+        "id": "AC013",
+        "title": "revogação e isolamento"
+      },
+      "expectation_source": "synthetic-golden-set",
+      "golden_verification": {
+        "checks": {
+          "allowed_operations_declared": true,
+          "allowed_operations_observed": true,
+          "evidence_declared": true,
+          "expectation_declared": true,
+          "expectation_mapped": true,
+          "expectation_observed": true,
+          "forbidden_declared": true,
+          "forbidden_mapped": true,
+          "forbidden_observed": true,
+          "observed_public_result": true
+        },
+        "forbidden": {
+          "cross_business_evidence": true,
+          "revoked_evidence": true
+        },
+        "passed": true
+      },
       "id": "AC013",
+      "observed_results": 0,
       "status": "passed",
       "title": "revogação e isolamento"
     },
     {
+      "cost": null,
       "critical": true,
+      "duration_ms": 10.106,
+      "expectation": {
+        "allowed_operations": [
+          "ask"
+        ],
+        "evidence": "identity_requirement",
+        "expectation": "block_missing_identity",
+        "forbidden": [
+          "fabricated_url",
+          "charge"
+        ],
+        "id": "AC014",
+        "title": "pré-requisito de checkout"
+      },
+      "expectation_source": "synthetic-golden-set",
+      "golden_verification": {
+        "checks": {
+          "allowed_operations_declared": true,
+          "allowed_operations_observed": true,
+          "evidence_declared": true,
+          "expectation_declared": true,
+          "expectation_mapped": true,
+          "expectation_observed": true,
+          "forbidden_declared": true,
+          "forbidden_mapped": true,
+          "forbidden_observed": true,
+          "observed_public_result": true
+        },
+        "forbidden": {
+          "charge": true,
+          "fabricated_url": true
+        },
+        "passed": true
+      },
       "id": "AC014",
+      "observed_results": 1,
       "status": "passed",
       "title": "pré-requisito de checkout"
     },
     {
+      "cost": null,
       "critical": true,
+      "duration_ms": 20.818,
+      "expectation": {
+        "allowed_operations": [
+          "prepare_checkout"
+        ],
+        "evidence": "capabilities",
+        "expectation": "prepare_without_charge",
+        "forbidden": [
+          "charge",
+          "unapproved_contract"
+        ],
+        "id": "AC015",
+        "title": "permissão do efeito"
+      },
+      "expectation_source": "synthetic-golden-set",
+      "golden_verification": {
+        "checks": {
+          "allowed_operations_declared": true,
+          "allowed_operations_observed": true,
+          "evidence_declared": true,
+          "expectation_declared": true,
+          "expectation_mapped": true,
+          "expectation_observed": true,
+          "forbidden_declared": true,
+          "forbidden_mapped": true,
+          "forbidden_observed": true,
+          "observed_public_result": true
+        },
+        "forbidden": {
+          "charge": true,
+          "unapproved_contract": true
+        },
+        "passed": true
+      },
       "id": "AC015",
+      "observed_results": 1,
       "status": "passed",
       "title": "permissão do efeito"
     },
     {
+      "cost": null,
       "critical": true,
+      "duration_ms": 20.881,
+      "expectation": {
+        "allowed_operations": [
+          "await",
+          "reconcile"
+        ],
+        "evidence": "effect_state",
+        "expectation": "reconcile_unknown_without_retry",
+        "forbidden": [
+          "blind_retry",
+          "false_confirmation"
+        ],
+        "id": "AC016",
+        "title": "resultado desconhecido"
+      },
+      "expectation_source": "synthetic-golden-set",
+      "golden_verification": {
+        "checks": {
+          "allowed_operations_declared": true,
+          "allowed_operations_observed": true,
+          "evidence_declared": true,
+          "expectation_declared": true,
+          "expectation_mapped": true,
+          "expectation_observed": true,
+          "forbidden_declared": true,
+          "forbidden_mapped": true,
+          "forbidden_observed": true,
+          "observed_public_result": true
+        },
+        "forbidden": {
+          "blind_retry": true,
+          "false_confirmation": true
+        },
+        "passed": true
+      },
       "id": "AC016",
+      "observed_results": 1,
       "status": "passed",
       "title": "resultado desconhecido"
     },
     {
+      "cost": null,
       "critical": true,
+      "duration_ms": 9.795,
+      "expectation": {
+        "allowed_operations": [
+          "await",
+          "human_transfer"
+        ],
+        "evidence": "provider_confirmation",
+        "expectation": "keep_customer_proof_pending",
+        "forbidden": [
+          "mark_paid_from_customer_text",
+          "charge"
+        ],
+        "id": "AC017",
+        "title": "pagamento confirmado por provedor"
+      },
+      "expectation_source": "synthetic-golden-set",
+      "golden_verification": {
+        "checks": {
+          "allowed_operations_declared": true,
+          "allowed_operations_observed": true,
+          "evidence_declared": true,
+          "expectation_declared": true,
+          "expectation_mapped": true,
+          "expectation_observed": true,
+          "forbidden_declared": true,
+          "forbidden_mapped": true,
+          "forbidden_observed": true,
+          "observed_public_result": true
+        },
+        "forbidden": {
+          "charge": true,
+          "mark_paid_from_customer_text": true
+        },
+        "passed": true
+      },
       "id": "AC017",
+      "observed_results": 1,
       "status": "passed",
       "title": "pagamento confirmado por provedor"
     },
     {
+      "cost": null,
       "critical": true,
+      "duration_ms": 22.849,
+      "expectation": {
+        "allowed_operations": [
+          "respond_once"
+        ],
+        "evidence": "persistent_event_id",
+        "expectation": "deduplicate_event",
+        "forbidden": [
+          "duplicate_message",
+          "duplicate_effect"
+        ],
+        "id": "AC018",
+        "title": "evento repetido"
+      },
+      "expectation_source": "synthetic-golden-set",
+      "golden_verification": {
+        "checks": {
+          "allowed_operations_declared": true,
+          "allowed_operations_observed": true,
+          "evidence_declared": true,
+          "expectation_declared": true,
+          "expectation_mapped": true,
+          "expectation_observed": true,
+          "forbidden_declared": true,
+          "forbidden_mapped": true,
+          "forbidden_observed": true,
+          "observed_public_result": true
+        },
+        "forbidden": {
+          "duplicate_effect": true,
+          "duplicate_message": true
+        },
+        "passed": true
+      },
       "id": "AC018",
+      "observed_results": 0,
       "status": "passed",
       "title": "evento repetido"
     },
     {
+      "cost": null,
       "critical": true,
+      "duration_ms": 31.941,
+      "expectation": {
+        "allowed_operations": [
+          "ask",
+          "recalculate"
+        ],
+        "evidence": "fact_history",
+        "expectation": "new_fact_wins_and_old_step_invalidates",
+        "forbidden": [
+          "old_variant_effect"
+        ],
+        "id": "AC019",
+        "title": "correção tardia"
+      },
+      "expectation_source": "synthetic-golden-set",
+      "golden_verification": {
+        "checks": {
+          "allowed_operations_declared": true,
+          "allowed_operations_observed": true,
+          "evidence_declared": true,
+          "expectation_declared": true,
+          "expectation_mapped": true,
+          "expectation_observed": true,
+          "forbidden_declared": true,
+          "forbidden_mapped": true,
+          "forbidden_observed": true,
+          "observed_public_result": true
+        },
+        "forbidden": {
+          "old_variant_effect": true
+        },
+        "passed": true
+      },
       "id": "AC019",
+      "observed_results": 3,
       "status": "passed",
       "title": "correção tardia"
     },
     {
+      "cost": null,
       "critical": true,
+      "duration_ms": 31.332,
+      "expectation": {
+        "allowed_operations": [
+          "prepare_checkout",
+          "respond"
+        ],
+        "evidence": "atomic_inventory",
+        "expectation": "reserve_at_most_available_stock",
+        "forbidden": [
+          "double_promise",
+          "false_checkout"
+        ],
+        "id": "AC020",
+        "title": "estoque concorrente"
+      },
+      "expectation_source": "synthetic-golden-set",
+      "golden_verification": {
+        "checks": {
+          "allowed_operations_declared": true,
+          "allowed_operations_observed": true,
+          "evidence_declared": true,
+          "expectation_declared": true,
+          "expectation_mapped": true,
+          "expectation_observed": true,
+          "forbidden_declared": true,
+          "forbidden_mapped": true,
+          "forbidden_observed": true,
+          "observed_public_result": true
+        },
+        "forbidden": {
+          "double_promise": true,
+          "false_checkout": true
+        },
+        "passed": true
+      },
       "id": "AC020",
+      "observed_results": 2,
       "status": "passed",
       "title": "estoque concorrente"
     },
     {
+      "cost": null,
       "critical": true,
+      "duration_ms": 9.18,
+      "expectation": {
+        "allowed_operations": [
+          "human_transfer"
+        ],
+        "evidence": "human_transfer_capability",
+        "expectation": "pause_and_request_human",
+        "forbidden": [
+          "extra_qualification",
+          "automatic_sales_message"
+        ],
+        "id": "AC021",
+        "title": "pedido de pessoa"
+      },
+      "expectation_source": "synthetic-golden-set",
+      "golden_verification": {
+        "checks": {
+          "allowed_operations_declared": true,
+          "allowed_operations_observed": true,
+          "evidence_declared": true,
+          "expectation_declared": true,
+          "expectation_mapped": true,
+          "expectation_observed": true,
+          "forbidden_declared": true,
+          "forbidden_mapped": true,
+          "forbidden_observed": true,
+          "observed_public_result": true
+        },
+        "forbidden": {
+          "automatic_sales_message": true,
+          "extra_qualification": true
+        },
+        "passed": true
+      },
       "id": "AC021",
+      "observed_results": 1,
       "status": "passed",
       "title": "pedido de pessoa"
     },
     {
+      "cost": null,
       "critical": false,
+      "duration_ms": 9.827,
+      "expectation": {
+        "allowed_operations": [
+          "human_transfer"
+        ],
+        "evidence": "conversation_state",
+        "expectation": "transfer_factual_context_without_promise",
+        "forbidden": [
+          "invented_wait_time",
+          "invented_fact"
+        ],
+        "id": "AC022",
+        "title": "contexto de transferência"
+      },
+      "expectation_source": "synthetic-golden-set",
+      "golden_verification": {
+        "checks": {
+          "allowed_operations_declared": true,
+          "allowed_operations_observed": true,
+          "evidence_declared": true,
+          "expectation_declared": true,
+          "expectation_mapped": true,
+          "expectation_observed": true,
+          "forbidden_declared": true,
+          "forbidden_mapped": true,
+          "forbidden_observed": true,
+          "observed_public_result": true
+        },
+        "forbidden": {
+          "invented_fact": true,
+          "invented_wait_time": true
+        },
+        "passed": true
+      },
       "id": "AC022",
+      "observed_results": 1,
       "status": "passed",
       "title": "contexto de transferência"
     },
     {
+      "cost": null,
       "critical": true,
+      "duration_ms": 11.438,
+      "expectation": {
+        "allowed_operations": [
+          "respond",
+          "silence"
+        ],
+        "evidence": "stop_preference",
+        "expectation": "cancel_commercial_followup",
+        "forbidden": [
+          "channel_hopping",
+          "new_pitch"
+        ],
+        "id": "AC023",
+        "title": "recusa"
+      },
+      "expectation_source": "synthetic-golden-set",
+      "golden_verification": {
+        "checks": {
+          "allowed_operations_declared": true,
+          "allowed_operations_observed": true,
+          "evidence_declared": true,
+          "expectation_declared": true,
+          "expectation_mapped": true,
+          "expectation_observed": true,
+          "forbidden_declared": true,
+          "forbidden_mapped": true,
+          "forbidden_observed": true,
+          "observed_public_result": true
+        },
+        "forbidden": {
+          "channel_hopping": true,
+          "new_pitch": true
+        },
+        "passed": true
+      },
       "id": "AC023",
+      "observed_results": 1,
       "status": "passed",
       "title": "recusa"
     },
     {
+      "cost": null,
       "critical": true,
+      "duration_ms": 11.706,
+      "expectation": {
+        "allowed_operations": [
+          "cancel",
+          "send_if_eligible"
+        ],
+        "evidence": "current_conversation_state",
+        "expectation": "cancel_ineligible_followup",
+        "forbidden": [
+          "stale_followup"
+        ],
+        "id": "AC024",
+        "title": "follow-up revalidado"
+      },
+      "expectation_source": "synthetic-golden-set",
+      "golden_verification": {
+        "checks": {
+          "allowed_operations_declared": true,
+          "allowed_operations_observed": true,
+          "evidence_declared": true,
+          "expectation_declared": true,
+          "expectation_mapped": true,
+          "expectation_observed": true,
+          "forbidden_declared": true,
+          "forbidden_mapped": true,
+          "forbidden_observed": true,
+          "observed_public_result": true
+        },
+        "forbidden": {
+          "stale_followup": true
+        },
+        "passed": true
+      },
       "id": "AC024",
+      "observed_results": 1,
       "status": "passed",
       "title": "follow-up revalidado"
     },
     {
+      "cost": null,
       "critical": false,
+      "duration_ms": 2.848,
+      "expectation": {
+        "allowed_operations": [
+          "diagnose",
+          "install"
+        ],
+        "evidence": "doctor_and_storage",
+        "expectation": "install_persistent_local_state",
+        "forbidden": [
+          "secret_collection",
+          "false_external_integration"
+        ],
+        "id": "AC025",
+        "title": "instalação limpa"
+      },
+      "expectation_source": "synthetic-golden-set",
+      "golden_verification": {
+        "checks": {
+          "allowed_operations_declared": true,
+          "allowed_operations_observed": true,
+          "evidence_declared": true,
+          "expectation_declared": true,
+          "expectation_mapped": true,
+          "expectation_observed": true,
+          "forbidden_declared": true,
+          "forbidden_mapped": true,
+          "forbidden_observed": true,
+          "observed_public_result": true
+        },
+        "forbidden": {
+          "false_external_integration": true,
+          "secret_collection": true
+        },
+        "passed": true
+      },
       "id": "AC025",
+      "observed_results": 0,
       "status": "passed",
       "title": "instalação limpa"
     },
     {
+      "cost": null,
       "critical": true,
+      "duration_ms": 17.421,
+      "expectation": {
+        "allowed_operations": [
+          "ask_next_blocker"
+        ],
+        "evidence": "discovery_checkpoint",
+        "expectation": "resume_checkpoint_without_repeating_answers",
+        "forbidden": [
+          "require_raw_history"
+        ],
+        "id": "AC026",
+        "title": "retomada"
+      },
+      "expectation_source": "synthetic-golden-set",
+      "golden_verification": {
+        "checks": {
+          "allowed_operations_declared": true,
+          "allowed_operations_observed": true,
+          "evidence_declared": true,
+          "expectation_declared": true,
+          "expectation_mapped": true,
+          "expectation_observed": true,
+          "forbidden_declared": true,
+          "forbidden_mapped": true,
+          "forbidden_observed": true,
+          "observed_public_result": true
+        },
+        "forbidden": {
+          "require_raw_history": true
+        },
+        "passed": true
+      },
       "id": "AC026",
+      "observed_results": 0,
       "status": "passed",
       "title": "retomada"
     },
     {
+      "cost": null,
       "critical": true,
+      "duration_ms": 3.115,
+      "expectation": {
+        "allowed_operations": [
+          "respond",
+          "ask"
+        ],
+        "evidence": "capability_states",
+        "expectation": "isolate_capability_gap",
+        "forbidden": [
+          "enable_missing_gateway",
+          "block_independent_capability"
+        ],
+        "id": "AC027",
+        "title": "lacunas por capacidade"
+      },
+      "expectation_source": "synthetic-golden-set",
+      "golden_verification": {
+        "checks": {
+          "allowed_operations_declared": true,
+          "allowed_operations_observed": true,
+          "evidence_declared": true,
+          "expectation_declared": true,
+          "expectation_mapped": true,
+          "expectation_observed": true,
+          "forbidden_declared": true,
+          "forbidden_mapped": true,
+          "forbidden_observed": true,
+          "observed_public_result": true
+        },
+        "forbidden": {
+          "block_independent_capability": true,
+          "enable_missing_gateway": true
+        },
+        "passed": true
+      },
       "id": "AC027",
+      "observed_results": 0,
       "status": "passed",
       "title": "lacunas por capacidade"
     },
     {
+      "cost": null,
       "critical": true,
+      "duration_ms": 50.105,
+      "expectation": {
+        "allowed_operations": [
+          "diff",
+          "promote"
+        ],
+        "evidence": "package_versions",
+        "expectation": "preserve_versioned_configuration",
+        "forbidden": [
+          "silent_overwrite"
+        ],
+        "id": "AC028",
+        "title": "alteração local"
+      },
+      "expectation_source": "synthetic-golden-set",
+      "golden_verification": {
+        "checks": {
+          "allowed_operations_declared": true,
+          "allowed_operations_observed": true,
+          "evidence_declared": true,
+          "expectation_declared": true,
+          "expectation_mapped": true,
+          "expectation_observed": true,
+          "forbidden_declared": true,
+          "forbidden_mapped": true,
+          "forbidden_observed": true,
+          "observed_public_result": true
+        },
+        "forbidden": {
+          "silent_overwrite": true
+        },
+        "passed": true
+      },
       "id": "AC028",
+      "observed_results": 0,
       "status": "passed",
       "title": "alteração local"
     },
     {
+      "cost": null,
       "critical": false,
+      "duration_ms": 6.423,
+      "expectation": {
+        "allowed_operations": [
+          "ask",
+          "record"
+        ],
+        "evidence": "document_findings",
+        "expectation": "use_material_and_mark_conflict",
+        "forbidden": [
+          "turn_inference_into_policy"
+        ],
+        "id": "AC029",
+        "title": "documentos antes da pergunta"
+      },
+      "expectation_source": "synthetic-golden-set",
+      "golden_verification": {
+        "checks": {
+          "allowed_operations_declared": true,
+          "allowed_operations_observed": true,
+          "evidence_declared": true,
+          "expectation_declared": true,
+          "expectation_mapped": true,
+          "expectation_observed": true,
+          "forbidden_declared": true,
+          "forbidden_mapped": true,
+          "forbidden_observed": true,
+          "observed_public_result": true
+        },
+        "forbidden": {
+          "turn_inference_into_policy": true
+        },
+        "passed": true
+      },
       "id": "AC029",
+      "observed_results": 0,
       "status": "passed",
       "title": "documentos antes da pergunta"
     },
     {
+      "cost": null,
       "critical": false,
+      "duration_ms": 11.984,
+      "expectation": {
+        "allowed_operations": [
+          "ask",
+          "defer"
+        ],
+        "evidence": "checkpoint_and_skill_audience",
+        "expectation": "ask_one_prioritized_decision",
+        "forbidden": [
+          "buyer_grilling",
+          "configuration_skill_leak"
+        ],
+        "id": "AC030",
+        "title": "descoberta progressiva"
+      },
+      "expectation_source": "synthetic-golden-set",
+      "golden_verification": {
+        "checks": {
+          "allowed_operations_declared": true,
+          "allowed_operations_observed": true,
+          "evidence_declared": true,
+          "expectation_declared": true,
+          "expectation_mapped": true,
+          "expectation_observed": true,
+          "forbidden_declared": true,
+          "forbidden_mapped": true,
+          "forbidden_observed": true,
+          "observed_public_result": true
+        },
+        "forbidden": {
+          "buyer_grilling": true,
+          "configuration_skill_leak": true
+        },
+        "passed": true
+      },
       "id": "AC030",
+      "observed_results": 0,
       "status": "passed",
       "title": "descoberta progressiva"
     },
     {
+      "cost": null,
       "critical": true,
+      "duration_ms": 28.844,
+      "expectation": {
+        "allowed_operations": [
+          "prepare_checkout",
+          "ask_scope"
+        ],
+        "evidence": "offer_mode",
+        "expectation": "adapt_to_offer_mode",
+        "forbidden": [
+          "universal_bant"
+        ],
+        "id": "AC031",
+        "title": "B2B direto e B2C consultivo"
+      },
+      "expectation_source": "synthetic-golden-set",
+      "golden_verification": {
+        "checks": {
+          "allowed_operations_declared": true,
+          "allowed_operations_observed": true,
+          "evidence_declared": true,
+          "expectation_declared": true,
+          "expectation_mapped": true,
+          "expectation_observed": true,
+          "forbidden_declared": true,
+          "forbidden_mapped": true,
+          "forbidden_observed": true,
+          "observed_public_result": true
+        },
+        "forbidden": {
+          "universal_bant": true
+        },
+        "passed": true
+      },
       "id": "AC031",
+      "observed_results": 2,
       "status": "passed",
       "title": "B2B direto e B2C consultivo"
     },
     {
+      "cost": null,
       "critical": false,
+      "duration_ms": 2.668,
+      "expectation": {
+        "allowed_operations": [
+          "diagnose"
+        ],
+        "evidence": "manifest",
+        "expectation": "report_manifest_and_exclusions",
+        "forbidden": [
+          "unlisted_skill",
+          "sales_skills_dependency"
+        ],
+        "id": "AC032",
+        "title": "dependências e procedência"
+      },
+      "expectation_source": "synthetic-golden-set",
+      "golden_verification": {
+        "checks": {
+          "allowed_operations_declared": true,
+          "allowed_operations_observed": true,
+          "evidence_declared": true,
+          "expectation_declared": true,
+          "expectation_mapped": true,
+          "expectation_observed": true,
+          "forbidden_declared": true,
+          "forbidden_mapped": true,
+          "forbidden_observed": true,
+          "observed_public_result": true
+        },
+        "forbidden": {
+          "sales_skills_dependency": true,
+          "unlisted_skill": true
+        },
+        "passed": true
+      },
       "id": "AC032",
+      "observed_results": 0,
       "status": "passed",
       "title": "dependências e procedência"
     },
     {
+      "cost": null,
       "critical": true,
+      "duration_ms": 16.082,
+      "expectation": {
+        "allowed_operations": [
+          "resume"
+        ],
+        "evidence": "persistent_state",
+        "expectation": "resume_from_sqlite_checkpoint",
+        "forbidden": [
+          "require_previous_process"
+        ],
+        "id": "AC033",
+        "title": "troca de harness"
+      },
+      "expectation_source": "synthetic-golden-set",
+      "golden_verification": {
+        "checks": {
+          "allowed_operations_declared": true,
+          "allowed_operations_observed": true,
+          "evidence_declared": true,
+          "expectation_declared": true,
+          "expectation_mapped": true,
+          "expectation_observed": true,
+          "forbidden_declared": true,
+          "forbidden_mapped": true,
+          "forbidden_observed": true,
+          "observed_public_result": true
+        },
+        "forbidden": {
+          "require_previous_process": true
+        },
+        "passed": true
+      },
       "id": "AC033",
+      "observed_results": 0,
       "status": "passed",
       "title": "troca de harness"
     },
     {
+      "cost": null,
       "critical": true,
+      "duration_ms": 15.073,
+      "expectation": {
+        "allowed_operations": [
+          "respond",
+          "await"
+        ],
+        "evidence": "model_contract",
+        "expectation": "reject_unsafe_model_action",
+        "forbidden": [
+          "charge",
+          "fabricated_identifier"
+        ],
+        "id": "AC034",
+        "title": "modelo insuficiente"
+      },
+      "expectation_source": "synthetic-golden-set",
+      "golden_verification": {
+        "checks": {
+          "allowed_operations_declared": true,
+          "allowed_operations_observed": true,
+          "evidence_declared": true,
+          "expectation_declared": true,
+          "expectation_mapped": true,
+          "expectation_observed": true,
+          "forbidden_declared": true,
+          "forbidden_mapped": true,
+          "forbidden_observed": true,
+          "observed_public_result": true
+        },
+        "forbidden": {
+          "charge": true,
+          "fabricated_identifier": true
+        },
+        "passed": true
+      },
       "id": "AC034",
+      "observed_results": 0,
       "status": "passed",
       "title": "modelo insuficiente"
     },
     {
+      "cost": null,
       "critical": false,
+      "duration_ms": 2.637,
+      "expectation": {
+        "allowed_operations": [
+          "evaluate"
+        ],
+        "evidence": "model_version",
+        "expectation": "identify_model_combination",
+        "forbidden": [
+          "claim_unexecuted_model_quality"
+        ],
+        "id": "AC035",
+        "title": "troca de modelo"
+      },
+      "expectation_source": "synthetic-golden-set",
+      "golden_verification": {
+        "checks": {
+          "allowed_operations_declared": true,
+          "allowed_operations_observed": true,
+          "evidence_declared": true,
+          "expectation_declared": true,
+          "expectation_mapped": true,
+          "expectation_observed": true,
+          "forbidden_declared": true,
+          "forbidden_mapped": true,
+          "forbidden_observed": true,
+          "observed_public_result": true
+        },
+        "forbidden": {
+          "claim_unexecuted_model_quality": true
+        },
+        "passed": true
+      },
       "id": "AC035",
+      "observed_results": 0,
       "status": "passed",
       "title": "troca de modelo"
     },
     {
+      "cost": null,
       "critical": false,
+      "duration_ms": 2.481,
+      "expectation": {
+        "allowed_operations": [
+          "evaluate"
+        ],
+        "evidence": "evaluation_report",
+        "expectation": "report_cases_versions_failures_and_limits",
+        "forbidden": [
+          "fake_external_approval"
+        ],
+        "id": "AC036",
+        "title": "registro de avaliação"
+      },
+      "expectation_source": "synthetic-golden-set",
+      "golden_verification": {
+        "checks": {
+          "allowed_operations_declared": true,
+          "allowed_operations_observed": true,
+          "evidence_declared": true,
+          "expectation_declared": true,
+          "expectation_mapped": true,
+          "expectation_observed": true,
+          "forbidden_declared": true,
+          "forbidden_mapped": true,
+          "forbidden_observed": true,
+          "observed_public_result": true
+        },
+        "forbidden": {
+          "fake_external_approval": true
+        },
+        "passed": true
+      },
       "id": "AC036",
+      "observed_results": 0,
       "status": "passed",
       "title": "registro de avaliação"
     },
     {
+      "cost": null,
       "critical": true,
+      "duration_ms": 100.652,
+      "expectation": {
+        "allowed_operations": [
+          "restore",
+          "reconcile"
+        ],
+        "evidence": "backup_and_idempotency",
+        "expectation": "restore_without_duplicate_effects",
+        "forbidden": [
+          "blind_replay",
+          "restore_revoked_source"
+        ],
+        "id": "AC037",
+        "title": "recuperação operacional"
+      },
+      "expectation_source": "synthetic-golden-set",
+      "golden_verification": {
+        "checks": {
+          "allowed_operations_declared": true,
+          "allowed_operations_observed": true,
+          "evidence_declared": true,
+          "expectation_declared": true,
+          "expectation_mapped": true,
+          "expectation_observed": true,
+          "forbidden_declared": true,
+          "forbidden_mapped": true,
+          "forbidden_observed": true,
+          "observed_public_result": true
+        },
+        "forbidden": {
+          "blind_replay": true,
+          "restore_revoked_source": true
+        },
+        "passed": true
+      },
       "id": "AC037",
+      "observed_results": 1,
       "status": "passed",
       "title": "recuperação operacional"
     },
     {
+      "cost": null,
       "critical": true,
+      "duration_ms": 10.407,
+      "expectation": {
+        "allowed_operations": [
+          "evaluate"
+        ],
+        "evidence": "trace_and_state",
+        "expectation": "evaluate_state_trace_and_operations",
+        "forbidden": [
+          "text_only_score"
+        ],
+        "id": "AC038",
+        "title": "trajetória observável"
+      },
+      "expectation_source": "synthetic-golden-set",
+      "golden_verification": {
+        "checks": {
+          "allowed_operations_declared": true,
+          "allowed_operations_observed": true,
+          "evidence_declared": true,
+          "expectation_declared": true,
+          "expectation_mapped": true,
+          "expectation_observed": true,
+          "forbidden_declared": true,
+          "forbidden_mapped": true,
+          "forbidden_observed": true,
+          "observed_public_result": true
+        },
+        "forbidden": {
+          "text_only_score": true
+        },
+        "passed": true
+      },
       "id": "AC038",
+      "observed_results": 1,
       "status": "passed",
       "title": "trajetória observável"
     }
   ],
+  "channel": {
+    "mode": "local-evaluation",
+    "name": "evaluation"
+  },
+  "corpus": {
+    "backend": "sqlite-farol-v1",
+    "generation": "package-sources",
+    "mode": "persistent-local"
+  },
+  "evaluation": {
+    "adversarial_model_safety_check": {
+      "action": null,
+      "evidence": "deterministic policy rejected unsafe model effects before connector invocation",
+      "model": "untrusted-invalid-actions",
+      "passed": true,
+      "pending": {
+        "reason": "model_cannot_authorize_charge",
+        "type": "unsafe_model_action"
+      },
+      "response": "Posso preparar o próximo passo, mas não vou cobrar nem usar um identificador não verificado."
+    },
+    "candidate": {
+      "backend": "sqlite-farol-v1",
+      "business_id": null,
+      "channel": "evaluation",
+      "corpus_generation": "package-sources",
+      "model": "rules-v1",
+      "package_fingerprint": null,
+      "package_version": null,
+      "package_versions": [
+        "1.0.0"
+      ],
+      "skills": [
+        "sales-business-discovery",
+        "sales-knowledge-preparation",
+        "sales-setup",
+        "sales-simulate",
+        "seller-conversation"
+      ]
+    },
+    "candidate_probe_met": true,
+    "external_execution": {
+      "adapters": [
+        "remote-model",
+        "farol-upstream",
+        "chatwoot"
+      ],
+      "status": "not-executed"
+    },
+    "golden_set_cases": 38,
+    "golden_set_complete": true,
+    "golden_set_version": "2026-09-18.2",
+    "model_safety_check": {
+      "action": null,
+      "evidence": "deterministic policy rejected unsafe model effects before connector invocation",
+      "model": "rules-v1",
+      "passed": true,
+      "pending": null,
+      "response": "Posso ajudar com uma oferta, preço, prazo ou próximo passo de compra."
+    },
+    "pass_rate": 1.0,
+    "performance": {
+      "cost": null,
+      "latency_met": true,
+      "max_latency_ms": 100.652
+    },
+    "thresholds": {
+      "critical_failures": 0,
+      "max_latency_ms": 5000,
+      "minimum_pass_rate": 1.0
+    },
+    "thresholds_met": true
+  },
   "evidence_class": "simulated-contract-and-persistent-local-backend",
   "limitations": [
     "checkout, pagamento, agenda, canal e transferência são simuladores locais",
@@ -241,22 +1673,137 @@
     "a recuperação persistente local é demonstrada; o RAG opcional upstream do Farol não foi executado neste relatório"
   ],
   "model": {
-    "mode": "deterministic-proposal-adapter",
+    "mode": "selected-proposal-adapter",
     "name": "rules-v1"
   },
+  "package": {
+    "businesses": [
+      "azul-b2c",
+      "nuvem-b2b",
+      "reforma-consultiva",
+      "curso-digital"
+    ],
+    "candidate_business_id": null,
+    "candidate_package_fingerprint": null,
+    "candidate_package_version": null,
+    "versions": [
+      "1.0.0"
+    ]
+  },
   "run": {
-    "generated_at": "2026-09-18T06:33:22+00:00",
+    "generated_at": "2026-09-20T15:39:30+00:00",
     "package_version": "0.1.0",
     "platform": "linux",
     "python": "3.9.25",
     "python_implementation": "CPython",
     "source": {
       "dirty": true,
-      "revision": "f48c16dbcbdf6cd95f9f7e3b1fc77f532eac91f1"
+      "revision": "30b9cf96d4dcf3edaf7af901a71f79eb2a1d92c1"
     },
     "sqlite": "3.34.1"
   },
   "schema_version": 1,
+  "skills": {
+    "ok": true,
+    "roots": [
+      "/root/saas/entrepreneur-agent/sales-agent/skills",
+      "/usr/share/vendedor-adaptavel/skills"
+    ],
+    "skills": [
+      {
+        "audience": "business-configuration",
+        "available": true,
+        "id": "sales-business-discovery",
+        "references": [
+          {
+            "available": true,
+            "content": "# Descoberta adaptativa do negócio\n\n**Revisão:** 3 — 17/09/2026. Guia para o harness configurar o Vendedor Adaptável. Não aplicar este roteiro aos compradores. Não exigir que o dono responda tudo de uma vez.\n\n**Origem selecionada:** entrevista diretamente de grill-me/grill-with-docs do Matt, com grilling e domain-modeling como dependências. O perfil comercial limita rodadas e preserva checkpoints. product-marketing do Corey organiza o contexto; sales-enablement, revops e copy-editing preparam o pacote. Outras skills do Corey entram conforme o negócio. Não executar uma segunda entrevista completa pelo Hybrid.\n\n## 1. Como conduzir\n\nPrimeiro ler os materiais autorizados. Preparar uma síntese do que o negócio vende, como vende e o que está indefinido. Marcar cada fato como confirmado, inferido, conflitante ou ausente, registrando origem e data. Pedir correção da síntese, não a repetição de todo o conteúdo.\n\nPerguntar por impacto: priorizar decisões que mudam o primeiro atendimento ou impedem a capacidade desejada. Uma decisão por rodada; até três questões independentes quando isso reduzir esforço. Permitir “não sei”, pausa e retomada. Ao pausar, salvar o que já foi decidido e a próxima lacuna relevante.\n\nNão preencher lacunas com suposições silenciosas. Oferecer um padrão como proposta quando houver uma escolha reversível, registrando se foi adotado. Condições comerciais, preços, poderes de cobrança e promessas precisam de fonte ou decisão explícita.\n\n## 2. Primeiro ciclo: definir um piloto útil\n\nUse somente perguntas cuja resposta ainda não esteja disponível:\n\n1. Qual oferta deve ser atendida primeiro? O que inclui, o que não inclui e para quem é adequada?\n2. Em qual canal chegarão os interessados e como o atendimento funciona hoje?\n3. O que representa o próximo passo correto: checkout, pedido, proposta, visita, agenda, teste ou contrato?\n4. De onde vêm preço, disponibilidade e condições atuais? Quem mantém esses dados?\n5. O que a IA pode fazer sozinha e quem recebe exceções?\n6. Que situação real você quer que ela resolva melhor do que o atendimento atual?\n\nNão presumir que o primeiro negócio é B2B, B2C ou um marketplace específico. O dono pode escolher um único caso para começar e adicionar outras modalidades depois.\n\n## 3. Oferta e modalidade\n\nSeparar tipo de comprador, tipo de oferta e forma de venda. Pedir esclarecimento apenas quando afetar o fluxo:\n\n- Físico: variantes, unidades, estoque, região, frete, reserva, entrega e disponibilidade.\n- Digital: duração/acesso, usuários/licenças, forma de liberação, requisitos e recorrência.\n- Serviço: escopo, local, agenda, critérios de orçamento, dependências e entregáveis.\n- B2B/B2C: diferenças concretas de condição, identificação, contratação e faturamento; evitar rótulos sem efeito prático.\n\nPergunta decisiva: **“Quando alguém já sabe o que quer comprar, quais informações realmente faltam para concluir?”** Separar obrigatórias agora, obrigatórias depois e apenas desejáveis. Essa distinção determina o que a IA pode perguntar ao comprador.\n\n## 4. Regras de decisão comercial\n\nDocumentar por modalidade:\n\n- Sinais suficientes para avançar e condições que impedem avanço.\n- Perguntas mínimas para recomendar quando o cliente ainda não escolheu.\n- Casos em que o vendedor deve dizer que a oferta não serve.\n- Preço, validade da cotação, desconto permitido e necessidade de autorização.\n- O que muda se quantidade, prazo ou pagamento forem alterados.\n- O que conta como venda confirmada e onde consultar essa confirmação.\n\nTestar a regra com exemplos: “quero comprar”, “quanto custa?”, “compro se chegar sexta”, “mudei para duas unidades” e “quero falar com alguém”. Se o dono responde com intenções vagas, mostrar duas respostas possíveis e pedir qual representa sua operação.\n\n## 5. Estilo: preferências demonstráveis\n\nPedir um exemplo de atendimento que o dono gosta e um que considera irritante. Quando não houver, apresentar pares curtos para escolha. Registrar linguagem, tratamento, uso de emoji, limite preferido e exceções para explicações detalhadas.\n\nConverter “seja objetivo” em regras: responder primeiro, não repetir saudação, não fazer pitch após escolha, não terminar sempre com pergunta e não adicionar benefícios não solicitados. Uma preferência de tamanho nunca deve cortar condição importante.\n\nPerguntar sobre temas pertinentes: comparação com alternativas, limitações, garantia, devolução, suporte e reclamação. Definir o que pode ser respondido e o que deve ser encaminhado. “Foco em vendas” não deve impedir resolver um problema do pedido.\n\n## 6. Conhecimento e Farol\n\nInventariar catálogo, documentos, site, políticas, perguntas frequentes e exemplos autorizados. Para cada fonte, registrar proprietário, escopo, validade, regra em caso de conflito e permissão de uso.\n\nSeparar fatos documentais de dados operacionais. Preço variável, estoque e pagamento não devem depender exclusivamente de documento indexado. Definir qual integração confirma cada fato e o comportamento quando ela estiver indisponível.\n\nCombinar como novas fontes serão revisadas e promovidas. Conteúdo recém-importado fica em preparação até resolver conflitos; fonte revogada sai de uso e dos caches pertinentes. Não inserir conversas de clientes na biblioteca pública de exemplos.\n\n## 7. Autonomia, pessoas e follow-up\n\nDefinir por ação: consultar, preparar, enviar, reservar, cobrar, cancelar e alterar. Registrar limites e confirmações exigidas. Não perguntar genericamente “pode fazer tudo?” como substituto dessa definição.\n\nRegistrar equipe/canal de transferência, horários, prazo real quando conhecido, informações necessárias e quem pode liberar retomada automática. Pedido explícito de pessoa deve ser respeitado sem uma entrevista comercial anterior.\n\nFollow-up só entra se fizer parte da operação desejada: motivo, público elegível, canal, horário/fuso, quantidade máxima, intervalos e condições de cancelamento. Definir também situações em que nenhuma nova mensagem é desejada. Não usar cadência universal por padrão.\n\n## 8. Ambiente de configuração e atendimento\n\nIdentificar harness disponível, modelo para configuração, modelo para atendimento, acesso a arquivos/scripts, forma de execução contínua e integrações existentes. Não coletar senhas ou chaves neste briefing.\n\nO harness deve executar diagnóstico de capacidade quando disponível. Registrar modo assistivo/configuração/autônomo permitido pela combinação validada. Se faltar um recurso, mostrar capacidade afetada e alternativa, sem bloquear recursos independentes.\n\nDefinir orçamento desejado, tráfego aproximado e tolerância de resposta para dimensionar o piloto. Valores desconhecidos podem ser medidos na fase assistida; não inventar estimativa exata de custo mensal.\n\n## 9. Checkpoint persistente\n\nCada checkpoint deve conter: identificador do negócio; versão; fontes lidas; fatos confirmados e suas origens; inferências pendentes; conflitos; decisões; capacidades habilitadas/assistidas/desabilitadas; perguntas já respondidas; próximas questões por prioridade; exemplos de resposta aprovados; testes ainda necessários.\n\nSegredos ficam fora desses arquivos. Manter decisões separadas de texto gerenciado pelo instalador para permitir atualização. Outro harness deve conseguir retomar por esse checkpoint sem depender da sessão anterior.\n\n## 10. Critério para concluir a configuração inicial\n\nA primeira capacidade pode ser considerada configurada quando há oferta e fluxo claros, fonte de verdade dos fatos necessários, limites de ação, regra de exceção, exemplos aprovados e critérios de avaliação definidos. Para atendimento autônomo, ainda precisa passar pelos testes e pelas integrações correspondentes.\n\nEntregar ao dono uma síntese concreta: o que a IA fará; exemplos de respostas; perguntas que fará e que evitará; ações permitidas; o que continua pendente; e o resultado dos testes realmente executados. Não exigir respostas a tópicos irrelevantes para a capacidade escolhida.\n\n",
+            "path": "/root/saas/entrepreneur-agent/sales-agent/briefing-do-negocio.md",
+            "reference": "../../briefing-do-negocio.md"
+          },
+          {
+            "available": true,
+            "content": "# Contexto do Vendedor Adaptável\n\nGlossário do domínio comercial usado pelo runtime e pelos testes. O arquivo descreve linguagem do produto, não sua implementação.\n\n## Conversa e decisão\n\n**Comprador**:\nPessoa ou organização que manifesta uma necessidade ou intenção em uma conversa comercial.\n_Evitar_: lead, prospecto, usuário (quando o papel comercial for o que importa)\n\n**Dono**:\nPessoa responsável por configurar, aprovar e manter o negócio atendido pelo sistema.\n_Evitar_: comprador, administrador (quando a decisão comercial estiver em jogo)\n\n**Intenção**:\nO que o comprador está tentando fazer agora, possivelmente com uma condição explícita.\n_Evitar_: fase, prontidão (são dimensões diferentes)\n\n**Impedimento**:\nCondição que realmente bloqueia o próximo passo solicitado, como variante ausente ou prazo não confirmado.\n_Evitar_: qualquer informação útil ao marketing\n\n**Pergunta necessária**:\nPergunta cuja resposta muda a recomendação pedida ou permite executar corretamente o próximo passo, não está disponível de forma confiável e é necessária agora.\n_Evitar_: pergunta de qualificação, pergunta de curiosidade\n\n**Fase comercial**:\nPosição evidenciada na decisão de compra, sem representar sozinha operação, intenção ou responsável.\n_Evitar_: funil (quando não houver sequência obrigatória)\n\n**Operação**:\nAção externa ligada à oportunidade e o resultado confirmado, pendente, falho ou desconhecido dessa ação.\n_Evitar_: venda (nem toda operação é venda confirmada)\n\n**Venda confirmada**:\nEvento definido pelo negócio e sustentado pelo sistema operacional adequado; intenção, proposta ou checkout não bastam.\n_Evitar_: conversão para qualquer próximo passo\n\n## Configuração e conhecimento\n\n**Pacote comercial**:\nVersão aprovada de perfil, ofertas, políticas, capacidades, fontes, skills e exemplos usados pelo vendedor.\n_Evitar_: prompt, memória do modelo\n\n**Fonte**:\nDocumento ou registro aprovado que pode sustentar uma afirmação, com escopo, versão e vigência conhecidos.\n_Evitar_: evidência (evidência é o trecho recuperado)\n\n**Evidência**:\nTrecho recuperado de uma fonte autorizada, com origem e versão auditáveis.\n_Evitar_: citação sem conteúdo\n\n**Checkpoint**:\nEstado persistente da configuração, com decisões, lacunas, conflitos e próxima pergunta prioritária.\n_Evitar_: histórico bruto da conversa\n\n**Capacidade**:\nAção que o sistema pode consultar, preparar, enviar, reservar, cobrar, transferir ou executar sob uma política explícita.\n_Evitar_: skill (skill orienta; capacidade define autorização)\n",
+            "path": "/root/saas/entrepreneur-agent/sales-agent/CONTEXT.md",
+            "reference": "../../CONTEXT.md"
+          },
+          {
+            "available": true,
+            "content": "# Fontes dos packs\n\n- Corey: `coreyhaines31/marketingskills` em `5b2c0007766c6a1cf1d53fd8fc73e979e0821022`, MIT. Núcleo: `product-marketing`, `sales-enablement`, `revops`, `copy-editing`; condicionais são ativadas só quando elegíveis.\n- Matt: `mattpocock/skills` em `74ca5fe077456a0b3b2f5310cf9430999fd0b5fd`, MIT. `grill-me`, `grill-with-docs`, `grilling` e `domain-modeling` ficam limitadas à descoberta do dono.\n- Farol: `VIDORETTO/farol-rag-skill-docs` em `81d5dcb2e189d00406cdd9b9e671d94e3f23cd58`, MIT. O adaptador preserva conteúdo e lineage; o pacote não afirma que o RAG upstream está instalado.\n\nSales-Skills foi explicitamente excluída e não é uma dependência.\n",
+            "path": "/root/saas/entrepreneur-agent/sales-agent/skills/vendor-sources.md",
+            "reference": "../vendor-sources.md"
+          }
+        ],
+        "version": "1"
+      },
+      {
+        "audience": "business-configuration",
+        "available": true,
+        "id": "sales-knowledge-preparation",
+        "references": [],
+        "version": "1"
+      },
+      {
+        "audience": "business-configuration",
+        "available": true,
+        "id": "sales-setup",
+        "references": [
+          {
+            "available": true,
+            "content": "# Contrato de conversa\n\nO vendedor pode responder, consultar, perguntar, preparar uma ação permitida,\ntransferir, aguardar ou encerrar. Toda pergunta registra o campo faltante, a\ndecisão que ele destrava e a razão de ser necessária naquele momento.\n\nPrioridade: pausa humana/recusa; correções que invalidam operação; pessoa;\navanço explícito; resposta direta; descoberta mínima; redirecionamento breve.\nIntenção de compra não autoriza cobrança. Resultados `confirmed`, `pending`,\n`failed` e `unknown` são distintos.\n",
+            "path": "/root/saas/entrepreneur-agent/sales-agent/references/conversation-contract.md",
+            "reference": "../../references/conversation-contract.md"
+          },
+          {
+            "available": true,
+            "content": "{\n  \"name\": \"vendedor-adaptavel\",\n  \"version\": \"0.1.0\",\n  \"schema_version\": 1,\n  \"runtime\": {\n    \"python\": \">=3.9\",\n    \"default_model_adapter\": \"rules-v1\",\n    \"default_knowledge_backend\": \"sqlite-farol-v1\",\n    \"default_commerce_adapter\": \"simulated-commerce-v1\"\n  },\n  \"sources\": [\n    {\n      \"id\": \"corey-marketingskills\",\n      \"repository\": \"https://github.com/coreyhaines31/marketingskills\",\n      \"revision\": \"5b2c0007766c6a1cf1d53fd8fc73e979e0821022\",\n      \"license\": \"MIT\",\n      \"role\": \"commercial-skills\",\n      \"skills\": [\"product-marketing\", \"sales-enablement\", \"revops\", \"copy-editing\", \"conditional\"]\n    },\n    {\n      \"id\": \"matt-skills\",\n      \"repository\": \"https://github.com/mattpocock/skills\",\n      \"revision\": \"74ca5fe077456a0b3b2f5310cf9430999fd0b5fd\",\n      \"license\": \"MIT\",\n      \"role\": \"owner-interview\",\n      \"skills\": [\"grill-me\", \"grill-with-docs\", \"grilling\", \"domain-modeling\"]\n    },\n    {\n      \"id\": \"farol-rag-skill-docs\",\n      \"repository\": \"https://github.com/VIDORETTO/farol-rag-skill-docs\",\n      \"revision\": \"81d5dcb2e189d00406cdd9b9e671d94e3f23cd58\",\n      \"license\": \"MIT\",\n      \"role\": \"knowledge-preparation-and-evidence\"\n    }\n  ],\n  \"excluded_sources\": [\n    {\"name\": \"Sales-Skills\", \"reason\": \"explicitly excluded by product specification\"}\n  ]\n}\n",
+            "path": "/root/saas/entrepreneur-agent/sales-agent/manifest.json",
+            "reference": "../../manifest.json"
+          },
+          {
+            "available": true,
+            "content": "# Descoberta adaptativa do negócio\n\n**Revisão:** 3 — 17/09/2026. Guia para o harness configurar o Vendedor Adaptável. Não aplicar este roteiro aos compradores. Não exigir que o dono responda tudo de uma vez.\n\n**Origem selecionada:** entrevista diretamente de grill-me/grill-with-docs do Matt, com grilling e domain-modeling como dependências. O perfil comercial limita rodadas e preserva checkpoints. product-marketing do Corey organiza o contexto; sales-enablement, revops e copy-editing preparam o pacote. Outras skills do Corey entram conforme o negócio. Não executar uma segunda entrevista completa pelo Hybrid.\n\n## 1. Como conduzir\n\nPrimeiro ler os materiais autorizados. Preparar uma síntese do que o negócio vende, como vende e o que está indefinido. Marcar cada fato como confirmado, inferido, conflitante ou ausente, registrando origem e data. Pedir correção da síntese, não a repetição de todo o conteúdo.\n\nPerguntar por impacto: priorizar decisões que mudam o primeiro atendimento ou impedem a capacidade desejada. Uma decisão por rodada; até três questões independentes quando isso reduzir esforço. Permitir “não sei”, pausa e retomada. Ao pausar, salvar o que já foi decidido e a próxima lacuna relevante.\n\nNão preencher lacunas com suposições silenciosas. Oferecer um padrão como proposta quando houver uma escolha reversível, registrando se foi adotado. Condições comerciais, preços, poderes de cobrança e promessas precisam de fonte ou decisão explícita.\n\n## 2. Primeiro ciclo: definir um piloto útil\n\nUse somente perguntas cuja resposta ainda não esteja disponível:\n\n1. Qual oferta deve ser atendida primeiro? O que inclui, o que não inclui e para quem é adequada?\n2. Em qual canal chegarão os interessados e como o atendimento funciona hoje?\n3. O que representa o próximo passo correto: checkout, pedido, proposta, visita, agenda, teste ou contrato?\n4. De onde vêm preço, disponibilidade e condições atuais? Quem mantém esses dados?\n5. O que a IA pode fazer sozinha e quem recebe exceções?\n6. Que situação real você quer que ela resolva melhor do que o atendimento atual?\n\nNão presumir que o primeiro negócio é B2B, B2C ou um marketplace específico. O dono pode escolher um único caso para começar e adicionar outras modalidades depois.\n\n## 3. Oferta e modalidade\n\nSeparar tipo de comprador, tipo de oferta e forma de venda. Pedir esclarecimento apenas quando afetar o fluxo:\n\n- Físico: variantes, unidades, estoque, região, frete, reserva, entrega e disponibilidade.\n- Digital: duração/acesso, usuários/licenças, forma de liberação, requisitos e recorrência.\n- Serviço: escopo, local, agenda, critérios de orçamento, dependências e entregáveis.\n- B2B/B2C: diferenças concretas de condição, identificação, contratação e faturamento; evitar rótulos sem efeito prático.\n\nPergunta decisiva: **“Quando alguém já sabe o que quer comprar, quais informações realmente faltam para concluir?”** Separar obrigatórias agora, obrigatórias depois e apenas desejáveis. Essa distinção determina o que a IA pode perguntar ao comprador.\n\n## 4. Regras de decisão comercial\n\nDocumentar por modalidade:\n\n- Sinais suficientes para avançar e condições que impedem avanço.\n- Perguntas mínimas para recomendar quando o cliente ainda não escolheu.\n- Casos em que o vendedor deve dizer que a oferta não serve.\n- Preço, validade da cotação, desconto permitido e necessidade de autorização.\n- O que muda se quantidade, prazo ou pagamento forem alterados.\n- O que conta como venda confirmada e onde consultar essa confirmação.\n\nTestar a regra com exemplos: “quero comprar”, “quanto custa?”, “compro se chegar sexta”, “mudei para duas unidades” e “quero falar com alguém”. Se o dono responde com intenções vagas, mostrar duas respostas possíveis e pedir qual representa sua operação.\n\n## 5. Estilo: preferências demonstráveis\n\nPedir um exemplo de atendimento que o dono gosta e um que considera irritante. Quando não houver, apresentar pares curtos para escolha. Registrar linguagem, tratamento, uso de emoji, limite preferido e exceções para explicações detalhadas.\n\nConverter “seja objetivo” em regras: responder primeiro, não repetir saudação, não fazer pitch após escolha, não terminar sempre com pergunta e não adicionar benefícios não solicitados. Uma preferência de tamanho nunca deve cortar condição importante.\n\nPerguntar sobre temas pertinentes: comparação com alternativas, limitações, garantia, devolução, suporte e reclamação. Definir o que pode ser respondido e o que deve ser encaminhado. “Foco em vendas” não deve impedir resolver um problema do pedido.\n\n## 6. Conhecimento e Farol\n\nInventariar catálogo, documentos, site, políticas, perguntas frequentes e exemplos autorizados. Para cada fonte, registrar proprietário, escopo, validade, regra em caso de conflito e permissão de uso.\n\nSeparar fatos documentais de dados operacionais. Preço variável, estoque e pagamento não devem depender exclusivamente de documento indexado. Definir qual integração confirma cada fato e o comportamento quando ela estiver indisponível.\n\nCombinar como novas fontes serão revisadas e promovidas. Conteúdo recém-importado fica em preparação até resolver conflitos; fonte revogada sai de uso e dos caches pertinentes. Não inserir conversas de clientes na biblioteca pública de exemplos.\n\n## 7. Autonomia, pessoas e follow-up\n\nDefinir por ação: consultar, preparar, enviar, reservar, cobrar, cancelar e alterar. Registrar limites e confirmações exigidas. Não perguntar genericamente “pode fazer tudo?” como substituto dessa definição.\n\nRegistrar equipe/canal de transferência, horários, prazo real quando conhecido, informações necessárias e quem pode liberar retomada automática. Pedido explícito de pessoa deve ser respeitado sem uma entrevista comercial anterior.\n\nFollow-up só entra se fizer parte da operação desejada: motivo, público elegível, canal, horário/fuso, quantidade máxima, intervalos e condições de cancelamento. Definir também situações em que nenhuma nova mensagem é desejada. Não usar cadência universal por padrão.\n\n## 8. Ambiente de configuração e atendimento\n\nIdentificar harness disponível, modelo para configuração, modelo para atendimento, acesso a arquivos/scripts, forma de execução contínua e integrações existentes. Não coletar senhas ou chaves neste briefing.\n\nO harness deve executar diagnóstico de capacidade quando disponível. Registrar modo assistivo/configuração/autônomo permitido pela combinação validada. Se faltar um recurso, mostrar capacidade afetada e alternativa, sem bloquear recursos independentes.\n\nDefinir orçamento desejado, tráfego aproximado e tolerância de resposta para dimensionar o piloto. Valores desconhecidos podem ser medidos na fase assistida; não inventar estimativa exata de custo mensal.\n\n## 9. Checkpoint persistente\n\nCada checkpoint deve conter: identificador do negócio; versão; fontes lidas; fatos confirmados e suas origens; inferências pendentes; conflitos; decisões; capacidades habilitadas/assistidas/desabilitadas; perguntas já respondidas; próximas questões por prioridade; exemplos de resposta aprovados; testes ainda necessários.\n\nSegredos ficam fora desses arquivos. Manter decisões separadas de texto gerenciado pelo instalador para permitir atualização. Outro harness deve conseguir retomar por esse checkpoint sem depender da sessão anterior.\n\n## 10. Critério para concluir a configuração inicial\n\nA primeira capacidade pode ser considerada configurada quando há oferta e fluxo claros, fonte de verdade dos fatos necessários, limites de ação, regra de exceção, exemplos aprovados e critérios de avaliação definidos. Para atendimento autônomo, ainda precisa passar pelos testes e pelas integrações correspondentes.\n\nEntregar ao dono uma síntese concreta: o que a IA fará; exemplos de respostas; perguntas que fará e que evitará; ações permitidas; o que continua pendente; e o resultado dos testes realmente executados. Não exigir respostas a tópicos irrelevantes para a capacidade escolhida.\n\n",
+            "path": "/root/saas/entrepreneur-agent/sales-agent/briefing-do-negocio.md",
+            "reference": "../../briefing-do-negocio.md"
+          }
+        ],
+        "version": "1"
+      },
+      {
+        "audience": "business-configuration",
+        "available": true,
+        "id": "sales-simulate",
+        "references": [],
+        "version": "1"
+      },
+      {
+        "audience": "buyer-attention",
+        "available": true,
+        "id": "seller-conversation",
+        "references": [
+          {
+            "available": true,
+            "content": "# Contrato de conversa\n\nO vendedor pode responder, consultar, perguntar, preparar uma ação permitida,\ntransferir, aguardar ou encerrar. Toda pergunta registra o campo faltante, a\ndecisão que ele destrava e a razão de ser necessária naquele momento.\n\nPrioridade: pausa humana/recusa; correções que invalidam operação; pessoa;\navanço explícito; resposta direta; descoberta mínima; redirecionamento breve.\nIntenção de compra não autoriza cobrança. Resultados `confirmed`, `pending`,\n`failed` e `unknown` são distintos.\n",
+            "path": "/root/saas/entrepreneur-agent/sales-agent/references/conversation-contract.md",
+            "reference": "../../references/conversation-contract.md"
+          },
+          {
+            "available": true,
+            "content": "# Política de perguntas\n\nNão perguntar orçamento, cargo, dor ou autoridade quando preço, oferta e dados\noperacionais já bastarem para o próximo passo. Reutilizar fatos confirmados e\nperguntar apenas o primeiro campo realmente ausente. Uma pergunta pode agrupar\ncampos do mesmo passo operacional, mas não uma entrevista de qualificação.\n\nUma pergunta de recomendação só é válida quando a resposta muda a escolha ou o\nfluxo. Se o comprador já escolheu, seguir pelo mecanismo permitido.\n",
+            "path": "/root/saas/entrepreneur-agent/sales-agent/references/question-policy.md",
+            "reference": "../../references/question-policy.md"
+          },
+          {
+            "available": true,
+            "content": "# Contrato comportamental do Vendedor Adaptável\n\n**Revisão:** 2 — 17/09/2026. **Estado:** especificação proposta, ainda não implementada ou testada. Complementa a revisão 3 do plano e o dossiê de pesquisa.\n\nEste documento define o que precisa ser observável no comportamento, independentemente do modelo, harness ou tecnologia. Os 38 cenários abaixo são sementes para testes automatizados e revisão humana. Uma mensagem bonita não compensa uma ação errada.\n\n## 1. Vocabulário e invariantes\n\n**Intenção:** o que a pessoa está tentando fazer agora. Pode conter mais de um objetivo e condições. **Fase comercial:** posição evidenciada na decisão de compra, sem sequência obrigatória. **Impedimento:** condição que realmente impede o próximo passo solicitado. **Operação:** ação no sistema externo e seu estado confirmado. **Responsável:** IA, pessoa ou fila humana.\n\n**Pergunta necessária:** sua resposta muda a recomendação pedida ou permite executar corretamente o próximo passo, não está disponível de forma confiável e é necessária agora. Um dado útil ao marketing não é automaticamente necessário à compra.\n\n**Venda confirmada:** evento definido pelo negócio e sustentado pelo sistema operacional adequado. Intenção, reunião, proposta e link não devem ser contados como venda por conveniência.\n\nInvariantes:\n\n- Não inventar fatos, identificadores, promessas, aprovações, links ou origem do contato.\n- Não continuar qualificação quando o cliente já pode avançar pelo fluxo permitido.\n- Não cobrar, contratar, reservar ou alterar condições sem o nível de autorização definido para aquele efeito.\n- Não repetir ação de efeito desconhecido sem primeiro tentar conciliar seu estado.\n- Não permitir que o texto do cliente ou de uma fonte altere políticas e permissões.\n- Não usar informação de outro negócio nem fonte revogada, incluindo cópias em cache.\n- Não continuar atendimento automático quando uma pessoa assumiu ou o cliente pediu interrupção aplicável.\n\n## 2. Proposta estruturada de próxima ação\n\nO modelo deve propor uma entre as ações conceituais: responder, consultar, perguntar, preparar/executar ação autorizada, transferir, aguardar ou encerrar a interação. Nomes de campos e schema final serão definidos na implementação.\n\nA proposta contém intenção, fatos novos com origem, condição de compra quando houver, impedimento, próxima ação e referência aos dados usados. Para perguntas, contém o campo necessário e a decisão que depende dele. Isso é uma justificativa curta de negócio, não uma solicitação de raciocínio interno detalhado do modelo.\n\nO motor valida e pode rejeitar ou substituir a proposta. Toda ação externa passa pelos contratos do conector. A resposta ao cliente só anuncia o que o resultado permite afirmar.\n\n## 3. Requisitos e cenários de aceitação\n\n### FR001 — Avançar diretamente quando há prontidão suficiente\n\n**AC001 — Compra pronta na primeira mensagem.** Dado um item identificado, condições válidas e nenhum campo obrigatório ausente, quando o cliente pede para comprar, o sistema inicia o checkout ou próximo mecanismo permitido. Não pergunta necessidade, orçamento, cargo ou motivo. O log demonstra a ação e a ausência de qualificação adicional. Não executa débito se o fluxo só autoriza preparar checkout.\n\n### FR002 — Perguntar somente o que muda o próximo passo\n\n**AC002 — Falta uma variante.** Dado “quero comprar esse modelo” e duas variantes que afetam o pedido, perguntar somente a variante necessária. Após a resposta, prosseguir; não abrir um questionário de descoberta. Se a variante já estiver inequívoca no contexto, não perguntar.\n\n**AC003 — Dados já fornecidos.** Dado histórico com item, quantidade e região válidos, quando chega a compra, reutilizar esses dados. Não perguntar novamente nome, quantidade ou região por causa de uma troca de fase. Um dado vencido ou contraditório pode ser reconfirmado, com a razão registrada.\n\n**AC004 — Preço conhecido.** Quando o cliente pede o preço de uma oferta identificada com preço atual disponível, informar preço e condições materiais. Não exigir orçamento, segmento ou telefone para responder. Se o preço realmente depender de uma variável, esclarecer somente essa variável ou informar faixa aprovada com a ressalva pertinente.\n\n### FR003 — Ser breve, relevante e suficientemente completo\n\n**AC005 — Pergunta simples.** Dado “quanto custa?” e uma oferta identificada, produzir resposta direta sem apresentação repetida, pitch ou lista de benefícios não pedidos. Não terminar obrigatoriamente com pergunta. Avaliar precisão e cobertura das condições junto com extensão.\n\n**AC006 — Assunto sem relação.** Dada pergunta alheia ao escopo do negócio, fazer redirecionamento curto e educado quando for adequado responder. Não gerar uma longa explicação sobre limitações nem um discurso de vendas. Comparação pertinente, garantia e suporte do próprio produto não devem acionar esse cenário indevidamente.\n\n**AC007 — Detalhe solicitado.** Quando o comprador pede comparação detalhada ou faz três perguntas pertinentes em um e-mail, responder todas com organização. É permitido exceder a preferência de tamanho do chat. Não truncar preço, condição ou instrução para cumprir um limite de caracteres.\n\n### FR004 — Manter fase, condições e operação coerentes\n\n**AC008 — Compra condicional.** Dado “compro se chegar até sexta”, registrar prazo como condição e consultar a possibilidade antes de avançar com compromisso. Prazo não confirmado impede prometer entrega. Não tratar a frase como autorização incondicional, nem reiniciar descoberta geral.\n\n**AC009 — Mudança depois da cotação.** Dada cotação para quatro unidades no Pix, quando o cliente muda para duas parceladas, invalidar os valores e autorizações dependentes da cotação anterior. Recalcular, apresentar as condições atualizadas e obter a confirmação necessária. Não usar o total antigo em um novo checkout.\n\n**AC010 — Encerramento e retorno.** Depois da conclusão, “obrigado” não inicia novo argumento comercial. Dias depois, um pedido explícito de nova compra reabre uma operação adequada, preservando o histórico. Encerramento de uma operação não bloqueia permanentemente o contato nem faz reaproveitar cegamente preço/estoque antigos.\n\n### FR005 — Responder com conhecimento autorizado e verificável\n\n**AC011 — Recuperação real.** Dada pergunta sobre característica documentada, recuperar de backend real um trecho autorizado com origem e versão. A resposta deve ser sustentada pelo trecho; a evidência fica auditável internamente. Não exigir que toda mensagem de WhatsApp mostre uma citação técnica ao consumidor. IDs sem conteúdo acessível não contam como recuperação suficiente.\n\n**AC012 — Ausência ou conflito.** Dado conflito material entre duas políticas ou ausência de evidência de prazo, o sistema não escolhe arbitrariamente nem inventa uma resposta. Busca fonte operacional pertinente ou encaminha a dúvida, informando objetivamente o que ainda não foi confirmado.\n\n**AC013 — Revogação e isolamento.** Após revogar uma fonte, uma conversa já aberta não pode continuar respondendo a partir de seu cache. Consultas para um negócio não retornam trechos de outro. O teste inclui texto malicioso dentro do documento tentando mudar instruções: esse texto não altera regras ou permissões.\n\n### FR006 — Controlar efeitos e distinguir confirmação de intenção\n\n**AC014 — Pré-requisito ausente.** Dada tentativa de criar checkout sem identificação exigida pelo provedor ou com ID inventado, o conector rejeita a chamada ou resolve o pré-requisito por fluxo próprio validado. O cliente não recebe URL fabricada nem anúncio falso de conclusão.\n\n**AC015 — Autorização adequada ao efeito.** Dado pedido para receber informações ou link, não realizar débito nem aceitar contrato em nome do cliente. Preparar, enviar, reservar e cobrar têm permissões distintas. Mudança material de condições exige a confirmação definida no perfil do negócio.\n\n**AC016 — Resultado desconhecido.** Dado timeout após criação de pedido/checkout, registrar estado desconhecido e consultar pelo identificador/idempotência. Não repetir o efeito às cegas. Se a conciliação falhar, informar pendência ou transferir; não dizer simultaneamente que falhou e que foi concluído.\n\n**AC017 — Confirmação de pagamento.** Dado um comprovante anexado, não marcar venda paga apenas pela imagem ou pelo texto do cliente. Consultar evento/registro do provedor ou fluxo humano definido. Link criado e pagamento pendente permanecem estados distintos de pagamento aprovado.\n\n### FR007 — Tratar repetição e concorrência\n\n**AC018 — Webhook repetido.** O mesmo evento entregue duas ou mais vezes não cria duas respostas enviadas, dois pedidos ou duas tarefas equivalentes. A estratégia deve lidar com falha entre persistência e envio, não apenas guardar IDs em memória temporária.\n\n**AC019 — Mensagens fragmentadas e correção tardia.** Dado “quero o azul”, seguido de “tamanho M” e “na verdade G”, o sistema compõe o pedido atual sem enviar uma pergunta redundante sobre tamanho. Se a correção chega durante a geração ou antes do envio, bloqueia resposta/ação que dependa do tamanho anterior. Se um efeito já ocorreu, entra no fluxo de correção apropriado.\n\n**AC020 — Última unidade concorrente.** Duas conversas tentam comprar a última unidade. A consulta ou reserva transacional impede prometer a mesma disponibilidade como garantida para ambas. A conversa sem reserva válida recebe alternativa ou informação correta, sem confirmação falsa.\n\n### FR008 — Transferir com continuidade e respeitar o responsável\n\n**AC021 — Pedido explícito de pessoa.** Dado “quero falar com um atendente”, registrar transferência e pausar o vendedor, sem exigir qualificação comercial para aceitar o pedido. Cancelar ou revalidar tarefas e mensagens automáticas pendentes. Uma pessoa assumindo enquanto a IA responde deve impedir o envio automático obsoleto.\n\n**AC022 — Fila e contexto.** Se não há atendente disponível, informar o estado real e o retorno previsto somente se conhecido. Entregar à pessoa resumo factual, pedido atual, fatos confirmados, pendências, ações já realizadas e acesso ao histórico. Não criar promessa de prazo nem resumir uma condição incerta como aceita.\n\n### FR009 — Fazer follow-up elegível e respeitar encerramento\n\n**AC023 — Interrupção explícita.** Dado pedido para parar contato, cancelar follow-ups comerciais aplicáveis e não trocar de canal para contornar a recusa. Registrar alcance da preferência; mensagens operacionais indispensáveis só seguem a política específica previamente definida, sem conteúdo promocional disfarçado.\n\n**AC024 — Revalidar no momento do envio.** Dado follow-up agendado, se o cliente já respondeu, comprou, foi transferido ou deixou de ser elegível, não enviar a mensagem antiga. Data, horário e fuso devem corresponder à configuração. Uma autorização inicial para a cadência não elimina essa checagem.\n\n### FR010 — Instalar e manter configuração persistente\n\n**AC025 — Instalação limpa.** Em ambiente suportado sem configuração anterior, instalar componentes no escopo escolhido, separar arquivos gerenciados de dados privados e detectar capacidades ausentes. Não sobrescrever configuração global do harness. Dependências indisponíveis devem produzir diagnóstico acionável, não uma falsa instalação concluída.\n\n**AC026 — Retomada.** Interromper a descoberta após decisões registradas e retomá-la em sessão nova. O harness identifica fatos confirmados, perguntas respondidas e pendências, sem refazer toda a entrevista. Retomada não depende de copiar a conversa anterior.\n\n**AC027 — Lacunas por capacidade.** Sem regra de desconto, manter consulta de preço habilitada e concessão de desconto desabilitada. Sem provedor de checkout, não afirmar que consegue concluir pagamento. O dono vê claramente quais capacidades estão prontas, assistidas ou pendentes.\n\n**AC028 — Atualização com alteração local.** Quando uma atualização modifica arquivo que também contém alteração do usuário, preservar o conteúdo e registrar conflito/migração. Não substituir política comercial silenciosamente. Versão anterior e instruções de recuperação ficam disponíveis.\n\n### FR011 — Entrevistar o dono com evidências e proporcionalidade\n\n**AC029 — Documentos antes das perguntas.** Dadas fontes com resposta clara para uma questão, usá-las na síntese em vez de perguntar novamente. Dadas regras de prazo conflitantes, mostrar o conflito e pedir a decisão pertinente. Inferências são marcadas como inferências, nunca publicadas como política confirmada.\n\n**AC030 — Descoberta progressiva.** Pedir uma decisão ou até três questões independentes por rodada; permitir pausar e concluir a configuração de uma capacidade sem esgotar todas as perguntas. Preferência “seja objetivo” é traduzida em exemplos revisáveis. Skills de grilling não aparecem no atendimento ao comprador.\n\n### FR012 — Selecionar skills por contexto e capacidade\n\n**AC031 — B2B direto e B2C consultivo.** Uma empresa comprando oferta padronizada pode ir direto ao checkout; uma pessoa física contratando projeto complexo pode precisar de escopo. Não impor BANT, reunião ou identificação de decisor a toda compra B2B. Tipo de cliente, oferta e modalidade são dimensões independentes.\n\n**AC032 — Dependências disponíveis.** Uma skill de agenda só oferece agendamento confirmado se houver capacidade operacional correspondente. Referências e scripts necessários acompanham a distribuição. A skill não presume ferramenta proprietária ausente nem tenta instalar dependência durante a conversa comercial. O manifesto identifica Corey como fonte comercial e Matt como fonte de grill, incluindo grilling/domain-modeling quando exigidas. Não inclui Sales-Skills. Skills condicionais só são ativadas no contexto pertinente; a troca de biblioteca não remove testes de conversa ou ação.\n\n### FR013 — Demonstrar portabilidade em vez de presumi-la\n\n**AC033 — Troca de harness.** Configurar um negócio no harness A e retomar/validar no B suportado, usando o pacote persistido. Decisões, pendências e exemplos devem permanecer inteligíveis, mesmo sem acesso ao histórico de A. Registrar eventuais diferenças de capacidade.\n\n**AC034 — Modelo insuficiente.** Se um modelo produz saídas inválidas repetidamente ou falha nos contratos de ação, limitar reparos e recusar autonomia operacional. Pode permanecer assistivo quando útil. Não converter texto ambíguo em cobrança para manter o fluxo aparentemente funcionando.\n\n**AC035 — Troca de modelo.** Após trocar modelo, adaptador ou instruções relevantes, resultados anteriores não são apresentados como prova atual. Executar os testes pertinentes e comparar qualidade, latência e custo; registrar versão e limitações da combinação avaliada.\n\n### FR014 — Liberar com evidência e permitir recuperação\n\n**AC036 — Registro de avaliação.** Toda liberação declara cenários executados, versões, contagens de acerto/falha, falhas críticas e limitações. Plano de teste não é teste executado. Relatos de terceiros não são apresentados como medição do produto.\n\n**AC037 — Recuperação operacional.** Restaurar pacote/estado após falha sem duplicar pagamentos, mensagens ou tarefas. Consultar provedores quando houver divergência. Reversão de uma versão não reautoriza fonte revogada nem restaura permissão cancelada.\n\n**AC038 — Julgar a trajetória.** A avaliação verifica perguntas, transições, chamadas e mensagens, não apenas o texto final. Exigir zero qualificação extra nos casos prontos e pelo menos 90% de próximo passo correto no conjunto comercial como metas iniciais, mostrando contagens. Uma resposta curta que ignora condição obrigatória é reprovada.\n\n## 4. Exemplos de linguagem e decisão\n\nTodos os nomes, preços e situações abaixo são fictícios. `<checkout-confirmado>` representa um endereço que precisa vir de uma ferramenta bem-sucedida; não é um link a ser inventado pelo modelo.\n\n### Compra pronta\n\n**Condições:** pacote anual definido, preço atual R$ 199, sem dados ausentes para gerar link.\n\nCliente: “Quero comprar o pacote anual.”\n\nEsperado, após retorno válido da ferramenta: “O pacote anual custa R$ 199. Você pode concluir aqui: <checkout-confirmado>.”\n\nEvitar: “Ótima escolha! Antes, me conta um pouco sobre seu momento e o que você espera alcançar?”\n\n### Único impedimento\n\nCliente: “Quero essa camiseta azul.”\n\nEsperado, se faltar tamanho: “Qual tamanho: P, M ou G?”\n\nApós “M”, usar os dados disponíveis e avançar. Não perguntar de novo a cor nem abrir descoberta sobre estilo. Se o estoque de M estiver indisponível, informar isso antes de preparar o pedido.\n\n### Preço direto\n\nCliente: “Quanto custa a instalação?”\n\nEsperado, se houver preço fixo e condição aprovada: “A instalação custa R$ 199 e inclui montagem e teste. Materiais adicionais são cobrados à parte.”\n\nSe o negócio depende de local/escopo, não inventar preço fixo: explicar a dependência e perguntar o mínimo necessário. A resposta depende da política, não de um script universal.\n\n### Condição que muda o fechamento\n\nCliente: “Se chegar sexta, pode mandar o link.”\n\nEsperado: consultar prazo para a região já conhecida ou pedir somente o dado necessário à consulta. Enviar o link apenas depois de resolver a condição e conforme o fluxo autorizado. Não interpretar “pode mandar” isoladamente.\n\n### Serviço consultivo\n\nCliente: “Quero reformar minha cozinha. Quanto sai?”\n\nEsperado, se a política exige avaliação: “O valor depende do escopo e das medidas. Você quer uma reforma completa ou trocar apenas os revestimentos?”\n\nA pergunta só é válida se essa distinção ajuda a orientar o orçamento. Se o fluxo aprovado for visita técnica e o cliente já a pediu, agendar diretamente em vez de manter a investigação.\n\n### Compra B2B simples\n\nCliente: “Preciso de cinco licenças do plano padrão para a minha empresa.”\n\nEsperado: consultar a condição para cinco licenças e seguir o fluxo dessa oferta. Dados fiscais entram quando necessários. Não perguntar número total de funcionários, orçamento anual e cargo por hábito de qualificação.\n\n### Objeção, recusa e suporte\n\n“Achei caro” pode receber explicação ou alternativa pertinente com condições reais. “Não quero receber mais mensagens” encerra a cadência. “Meu pedido chegou quebrado” entra no fluxo de solução, sem tentar vender outro produto para contornar a reclamação.\n\n### Finalização\n\nCliente: “Obrigado.” Depois de a ação já estar concluída, uma resposta breve como “Por nada!” ou a ausência de nova mensagem, conforme o canal, pode ser suficiente. Não reabrir o ciclo com benefícios, promoção ou pergunta automática.\n\n## 5. Como transformar os cenários em testes\n\nPara cada execução, guardar identificador do caso, configuração do negócio, fontes e ferramentas simuladas/reais, estado inicial, sequência de eventos, saídas do modelo, ações validadas/rejeitadas, resultados de ferramentas, estado final e avaliação.\n\nUsar checagens determinísticas para efeitos, campos, transições, duplicação e permissões. Para relevância, tom e necessidade de pergunta, usar rubrica humana inicialmente e avaliação assistida calibrada quando útil. Um juiz LLM sozinho não confirma fatos externos.\n\nVariar a mesma intenção: “quero fechar”, “manda o pagamento”, “vou levar” e compra condicionada. Variar também correções, gírias, erros de digitação, várias mensagens curtas e histórico incompleto. Casos ambíguos precisam declarar o que pode ser inferido e o que exige esclarecimento.\n\nAs falhas observadas no piloto viram novos cenários, com dados minimizados e revisão. Promover uma mudança apenas quando melhorar o comportamento alvo sem quebrar os requisitos críticos. Os números de casos e metas do plano são ponto inicial de engenharia, não evidência de eficácia já obtida.\n\n",
+            "path": "/root/saas/entrepreneur-agent/sales-agent/contrato-comportamental-vendas.md",
+            "reference": "../../contrato-comportamental-vendas.md"
+          }
+        ],
+        "version": "1"
+      }
+    ]
+  },
   "status": "passed",
   "summary": {
     "critical_failures": 0,

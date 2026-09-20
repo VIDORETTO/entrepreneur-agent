@@ -1,6 +1,7 @@
 ---
 name: sales-knowledge-preparation
 description: Preparar fontes documentais com origem, vigência, versão e revogação.
+version: "1"
 ---
 
 # Conhecimento verificável

@@ -17,6 +17,7 @@ class Proposal:
     facts: Dict[str, Any] = field(default_factory=dict)
     condition: Optional[str] = None
     requested_action: Optional[str] = None
+    topics: List[str] = field(default_factory=list)
     model_name: str = "rules-v1"
     confidence: str = "deterministic"
     raw: Dict[str, Any] = field(default_factory=dict)
@@ -92,4 +93,12 @@ def empty_conversation(business_id: str, conversation_id: str, contact_id: str) 
         "last_event_id": None,
         "last_interaction": None,
         "summary": "",
+        "profile": "commercial",
+        "memory": {
+            "facts": {},
+            "fact_history": [],
+            "open_questions": [],
+            "answered_fields": [],
+            "objective": "unknown",
+        },
     }

@@ -1,6 +1,7 @@
 ---
 name: seller-conversation
 description: Aplicar política de conversa objetiva com estado e autorização explícitos.
+version: "1"
 ---
 
 # Conversa comercial

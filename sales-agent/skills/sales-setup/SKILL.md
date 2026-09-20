@@ -1,6 +1,7 @@
 ---
 name: sales-setup
 description: Diagnosticar instalação e declarar capacidades sem coletar segredos.
+version: "1"
 ---
 
 # Sales setup

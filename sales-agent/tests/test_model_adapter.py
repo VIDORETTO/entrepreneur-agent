@@ -85,6 +85,53 @@ def test_http_model_adapter_accepts_strict_json_contract(monkeypatch):
     assert proposal.confidence == "external-unverified"
 
 
+def test_http_model_adapter_preserves_declared_topics(monkeypatch):
+    monkeypatch.setattr(
+        "urllib.request.urlopen",
+        lambda request, timeout: FakeResponse(
+            _envelope(
+                {
+                    "intent": "knowledge",
+                    "offer_id": "curso-analise",
+                    "facts": {},
+                    "topics": ["guarantee", "return"],
+                }
+            )
+        ),
+    )
+    adapter = HTTPModelAdapter("https://models.example.test/v1/chat", "fictional-key", "fictional-model")
+
+    proposal = adapter.propose(
+        "Qual é a garantia e a devolução?",
+        example_package("digital"),
+        empty_conversation("curso-digital", "conversation", "verified:test"),
+    )
+
+    assert proposal.topics == ["guarantee", "return"]
+
+
+def test_http_model_adapter_receives_only_bounded_buyer_skill_context(monkeypatch):
+    captured = {}
+
+    def capture(request, timeout):
+        captured.update(json.loads(request.data.decode("utf-8")))
+        return FakeResponse(_envelope({"intent": "greeting", "facts": {}}))
+
+    monkeypatch.setattr("urllib.request.urlopen", capture)
+    adapter = HTTPModelAdapter("https://models.example.test/v1/chat", "fictional-key", "fictional-model")
+    package = example_package("digital")
+    package["_buyer_skill_context"] = [
+        {"id": "seller-conversation", "version": "1", "content": "buyer guidance"}
+    ]
+    package["_configuration_skill_context"] = [{"id": "sales-business-discovery", "content": "owner-only"}]
+
+    adapter.propose("Olá", package, empty_conversation("curso-digital", "conversation", "verified:test"))
+
+    prompt = json.loads(captured["messages"][0]["content"])
+    assert prompt["buyer_skill_context"] == package["_buyer_skill_context"]
+    assert "_configuration_skill_context" not in json.dumps(prompt)
+
+
 @pytest.mark.parametrize(
     "proposal",
     [

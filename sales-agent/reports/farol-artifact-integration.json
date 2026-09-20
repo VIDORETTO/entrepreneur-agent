@@ -1,24 +1,61 @@
 {
   "schema_version": 1,
   "generated_at": "2026-09-17",
-  "evidence_class": "real-upstream-farol-artifact-plus-local-import",
+  "evidence_class": "historical-upstream-artifact-plus-local-import",
   "farol": {
     "repository": "https://github.com/VIDORETTO/farol-rag-skill-docs",
     "revision": "81d5dcb2e189d00406cdd9b9e671d94e3f23cd58",
     "command": "python -m docops run documents/fixtures/acme-docs --output <artifact> --slug acme --license MIT --redistribution private-only",
     "exit_code": 0,
     "artifact_documents": 2,
-    "artifact_paths": ["rag/documents/guide.md", "rag/documents/release.md"]
+    "artifact_paths": [
+      "rag/documents/guide.md",
+      "rag/documents/release.md"
+    ],
+    "execution_scope": "historical synthetic fixture command; not the stable Farol contract",
+    "stable_contract": {
+      "status": "blocked",
+      "contract": "farol-stable-v1",
+      "reason": "stable version and executable client are not available",
+      "production_claim": false
+    }
   },
   "import": {
     "command": "vendedor farol import --business-id acme-demo <artifact>",
     "backend": "farol-artifact-v1",
     "imported_documents": 2,
     "query": "API",
-    "evidence": {"business_id": "acme-demo", "source_id": "guide.md", "source_version": "farol-artifact", "locator": "guide.md", "content_returned": true}
+    "evidence": {
+      "business_id": "acme-demo",
+      "source_id": "guide.md",
+      "source_version": null,
+      "locator": "guide.md",
+      "content_returned": true,
+      "source_version_note": "The historical record did not preserve a stable Farol revision; current legacy imports derive a legacy-sha256 revision."
+    },
+    "status": "historical-local-import-record",
+    "mode": "legacy-migration-not-reproduced"
   },
   "not_claimed": [
-    "the optional knowledge-rag/MCP backend was not installed or executed",
-    "this does not validate a network production deployment"
-  ]
+    "the optional knowledge-rag/MCP backend was not installed or executed in the current session",
+    "the recorded artifact run was not re-executed in the current session",
+    "this does not validate the published stable Farol contract or a network production deployment",
+    "the local sqlite-farol-v1 backend is not the upstream RAG backend"
+  ],
+  "verification_status": "historical-upstream-record-plus-current-local-governance-tests",
+  "current_local_verification": {
+    "verified_at": "2026-09-20",
+    "status": "passed",
+    "scope": "persistent sqlite backend and synthetic artifact governance",
+    "tests": [
+      "offset-aware dates normalized to UTC",
+      "new generation deactivates older generation",
+      "legacy reimport preserves explicit approval and revocation",
+      "invalid manifests fail before atomic promotion"
+    ],
+    "stable_adapter_status": "blocked",
+    "stable_contract_status": "unresolved",
+    "upstream_execution": "not-executed"
+  },
+  "production_claim": false
 }

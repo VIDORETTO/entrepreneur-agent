@@ -136,13 +136,23 @@ vendedor storage restore ./backup.sqlite3 --backup-current ./antes-da-restauraca
 
 Respostas ficam em uma outbox com lease, retry e dead-letter. Um worker deve
 usar `outbox claim`, entregar a mensagem e finalizar com `outbox ack`; falhas
-usam `outbox nack`. `outbox recover` devolve leases expirados à fila.
+comprovadamente transitórias usam `outbox nack`. `outbox recover` move leases
+expirados para `unknown`, pois o resultado no provedor é ambíguo e não deve ser
+reenviado automaticamente.
 
 ```bash
 vendedor outbox claim --limit 10 --lease-seconds 60
 vendedor outbox ack CHAVE
 vendedor outbox nack CHAVE --error "falha transitória"
 vendedor outbox recover
+```
+
+Depois de consultar o provedor, finalize um item `unknown` com
+`outbox reconcile` e uma justificativa estruturada:
+
+```bash
+vendedor outbox reconcile CHAVE --resolution sent \
+  --details '{"provider":{"provider_id":"message-exemplo"},"reason":"confirmado no provedor fictício"}'
 ```
 
 Efeitos `unknown` nunca são repetidos automaticamente. Depois de consultar o

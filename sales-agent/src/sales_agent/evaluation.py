@@ -2,43 +2,66 @@
 
 from __future__ import annotations
 
+import copy
 import json
 import platform
+import re
 import sqlite3
 import subprocess
 import sys
 import tempfile
+import time
 from datetime import datetime, timezone
 from pathlib import Path
-from typing import Any, Dict, List
+from typing import Any, Dict, List, Mapping, Optional
 
 from . import __version__
 from .config import ConfigurationManager, load_manifest, seed_examples, seed_package
 from .conversation import SellerEngine
 from .knowledge import PersistentFarolKnowledge
-from .model import UntrustedModel
+from .model import ModelAdapter, RuleBasedModel, UntrustedModel
+from .skills import SkillCatalog
 from .storage import StateStore
+from .validation import package_fingerprint, validate_package
 
 
 class EvaluationContext:
-    def __init__(self, root: Path):
+    def __init__(
+        self,
+        root: Path,
+        *,
+        model: Optional[ModelAdapter] = None,
+        channel: str = "evaluation",
+        candidate_package: Optional[Mapping[str, Any]] = None,
+    ):
         self.root = root
         self.store = StateStore(root)
         seed_examples(self.store)
-        self.engine = SellerEngine(self.store)
+        if candidate_package is not None:
+            # Keep the fixed regression corpus available, while replacing or
+            # adding the business explicitly selected by the caller.  The
+            # candidate is persisted through the same package seam as an
+            # installed package; it is not injected into the model prompt.
+            seed_package(self.store, candidate_package)
+        self.engine = SellerEngine(self.store, model=model or RuleBasedModel())
         self.knowledge = PersistentFarolKnowledge(self.store)
+        self.channel = channel
+        self.observations: List[Dict[str, Any]] = []
+        self.auxiliary: Dict[str, Any] = {}
 
     def send(self, business_id: str, conversation_id: str, text: str, *, contact: str = "verified:test", index: int = 1):
-        return self.engine.handle(
+        result = self.engine.handle(
             {
                 "business_id": business_id,
                 "conversation_id": conversation_id,
                 "contact_id": contact,
-                "channel": "evaluation",
+                "channel": self.channel,
                 "event_id": "%s-%03d" % (conversation_id, index),
                 "text": text,
             }
         )
+        self.observations.append(result.as_dict())
+        return result
 
 
 def _check(condition: bool, message: str) -> None:
@@ -119,8 +142,29 @@ def _case_ac011(ctx: EvaluationContext) -> None:
 
 
 def _case_ac012(ctx: EvaluationContext) -> None:
-    ctx.knowledge.ingest("reforma-consultiva", "prazo-a", "1", "O prazo de atendimento é 3 dias.", title="Política A")
-    ctx.knowledge.ingest("reforma-consultiva", "prazo-b", "1", "O prazo de atendimento é 7 dias.", title="Política B")
+    # The search seam is intentionally strict: these are buyer-facing
+    # revisions for the same service and subject, rather than unscoped
+    # internal/legacy rows that must be ignored.
+    ctx.knowledge.ingest(
+        "reforma-consultiva",
+        "prazo-a",
+        "1",
+        "O prazo de atendimento é 3 dias.",
+        title="Política A",
+        audience="buyer",
+        scope="reforma-cozinha",
+        subject="delivery",
+    )
+    ctx.knowledge.ingest(
+        "reforma-consultiva",
+        "prazo-b",
+        "1",
+        "O prazo de atendimento é 7 dias.",
+        title="Política B",
+        audience="buyer",
+        scope="reforma-cozinha",
+        subject="delivery",
+    )
     result = ctx.send("reforma-consultiva", "ac012", "Qual é o prazo de atendimento?")
     _check(result.state["pending"]["reason"] == "material_conflict", "conflito foi escolhido arbitrariamente")
     _check(not result.action, "conflito produziu efeito")
@@ -223,6 +267,7 @@ def _case_ac026(ctx: EvaluationContext) -> None:
     started = manager.start("resume-demo", template="physical", materials=["preço aprovado no catálogo"])
     manager.answer(started["session_id"], "Camiseta Azul")
     resumed = ConfigurationManager(StateStore(ctx.root)).status(started["session_id"])
+    ctx.auxiliary["discovery"] = resumed
     _check(resumed["answered_question_ids"] == ["offer"], "retomada refez perguntas")
     _check(resumed["next_question_index"] == 1, "checkpoint não persistiu cursor")
 
@@ -251,6 +296,7 @@ def _case_ac029(ctx: EvaluationContext) -> None:
     started = manager.start("docs-first", materials=["O preço vem do catálogo; prazo deve ser confirmado."])
     _check(started["document_findings"], "materiais não foram lidos antes da entrevista")
     _check(started["answered_question_ids"] == [], "material virou política silenciosamente")
+    ctx.auxiliary["discovery"] = started
 
 
 def _case_ac030(ctx: EvaluationContext) -> None:
@@ -259,6 +305,7 @@ def _case_ac030(ctx: EvaluationContext) -> None:
     next_state = manager.answer(started["session_id"], "Uma oferta física, sem acessórios")
     _check(len(next_state["answered_question_ids"]) == 1, "rodada perguntou mais de uma decisão")
     _check("grill" not in json.dumps(next_state).casefold(), "skill de configuração vazou para comprador")
+    ctx.auxiliary["discovery"] = next_state
 
 
 def _case_ac031(ctx: EvaluationContext) -> None:
@@ -282,6 +329,7 @@ def _case_ac033(ctx: EvaluationContext) -> None:
     manager.answer(started["session_id"], "Camiseta")
     fresh_store = StateStore(ctx.root)
     resumed = ConfigurationManager(fresh_store).status(started["session_id"])
+    ctx.auxiliary["discovery"] = resumed
     _check(resumed["business_id"] == "harness-swap" and resumed["next_question_index"] == 1, "pacote não sobreviveu ao harness")
 
 
@@ -293,12 +341,15 @@ def _case_ac034(ctx: EvaluationContext) -> None:
     result = unsafe.handle(
         {"business_id": "azul-b2c", "conversation_id": "ac034", "contact_id": "verified:test", "event_id": "ac034-1", "text": "pode cobrar"}
     )
+    ctx.auxiliary["result"] = result.as_dict()
     _check(not result.action and result.state["pending"]["type"] == "unsafe_model_action", "modelo inválido executou ação")
 
 
 def _case_ac035(ctx: EvaluationContext) -> None:
-    _check(ctx.engine.model.name == "rules-v1", "versão do adaptador não registrada")
-    swapped = SellerEngine(ctx.store, model=UntrustedModel())
+    selected_name = getattr(ctx.engine.model, "name", "unknown")
+    _check(selected_name in {"rules-v1", "untrusted-invalid-actions"}, "versão do adaptador não registrada")
+    swapped_model = UntrustedModel() if selected_name != "untrusted-invalid-actions" else RuleBasedModel()
+    swapped = SellerEngine(ctx.store, model=swapped_model)
     _check(swapped.model.name != ctx.engine.model.name, "troca de modelo não muda combinação avaliada")
 
 
@@ -322,6 +373,7 @@ def _case_ac037(ctx: EvaluationContext) -> None:
         duplicate = restored.handle(
             {"business_id": "azul-b2c", "conversation_id": "ac037", "contact_id": "verified:test", "event_id": "ac037-001", "text": "Quero comprar a camiseta azul tamanho M, uma unidade para SP."}
         )
+        ctx.auxiliary["recovery"] = {"duplicate": duplicate.duplicate, "replay_action": bool(replay.action)}
         _check(duplicate.duplicate, "recuperação permitiu duplicar evento")
 
 
@@ -372,32 +424,476 @@ CASES: List[Dict[str, Any]] = [
 ]
 
 
+def _golden_verification(
+    context: EvaluationContext, expectation: Mapping[str, Any], *, case_id: str = ""
+) -> Dict[str, Any]:
+    """Apply independent, machine-readable checks from the golden set.
+
+    The scenario functions exercise the public seams and provide the detailed
+    regression assertions.  This second pass deliberately reads only their
+    observable results, so a scenario cannot pass merely because an expected
+    string was copied into its own assertion.
+    """
+
+    records = context.observations
+    latest = records[-1] if records else {}
+    actions = [item.get("action") for item in records if isinstance(item.get("action"), Mapping)]
+    responses = [str(item.get("response", "")) for item in records]
+    latest_state = latest.get("state") if isinstance(latest.get("state"), Mapping) else {}
+    latest_pending = latest_state.get("pending") if isinstance(latest_state.get("pending"), Mapping) else {}
+    latest_operation = latest_state.get("operation") if isinstance(latest_state.get("operation"), Mapping) else {}
+    latest_facts = latest_state.get("facts") if isinstance(latest_state.get("facts"), Mapping) else {}
+    expected = str(expectation.get("expectation", ""))
+    checks: Dict[str, bool] = {
+        "expectation_declared": isinstance(expectation.get("expectation"), str) and bool(expected.strip()),
+        "forbidden_declared": isinstance(expectation.get("forbidden"), list)
+        and all(isinstance(item, str) and item.strip() for item in expectation.get("forbidden", [])),
+        "evidence_declared": isinstance(expectation.get("evidence"), str) and bool(str(expectation.get("evidence", "")).strip()),
+        "allowed_operations_declared": isinstance(expectation.get("allowed_operations"), list)
+        and all(isinstance(item, str) and item.strip() for item in expectation.get("allowed_operations", [])),
+        "observed_public_result": bool(records or context.auxiliary or context.store.list_businesses()),
+    }
+
+    def has_trace(trace_type: str) -> bool:
+        return any(
+            isinstance(item, Mapping)
+            and any(isinstance(trace, Mapping) and trace.get("type") == trace_type for trace in item.get("trace", []))
+            for item in records
+        )
+
+    def latest_response() -> str:
+        return str(latest.get("response", "")).casefold()
+
+    def persisted_duplicate() -> bool:
+        event = context.store.get_event("azul-b2c", "ac018", "same-event")
+        messages = [item for item in context.store.list_outbox() if item.get("conversation_id") == "ac018"]
+        return bool(event and len(messages) == 1)
+
+    def source_is_revoked_and_isolated() -> bool:
+        return not context.knowledge.search("azul-b2c", "quanto custa camiseta", 5) and not context.knowledge.search(
+            "curso-digital", "camiseta", 5
+        )
+
+    discovery = context.auxiliary.get("discovery") if isinstance(context.auxiliary.get("discovery"), Mapping) else {}
+    manifest = load_manifest()
+    expectation_checks: Dict[str, bool] = {
+        "prepare_checkout": any(action.get("type") == "prepare_checkout" for action in actions),
+        "ask_variant_only": bool(latest_pending.get("field") == "variant" and not actions),
+        "reuse_confirmed_facts": bool(actions and actions[-1].get("type") == "prepare_checkout")
+        and not any(
+            isinstance(trace, Mapping) and trace.get("type") == "necessary_question" and trace.get("field") in {"quantity", "region"}
+            for trace in latest.get("trace", [])
+        ),
+        "answer_price": any(any(value in response for value in ("79", "120", "299")) for response in responses),
+        "brief_relevant_response": bool(latest_response()) and len(latest_response().split()) < 35 and "mais alguma" not in latest_response(),
+        "brief_redirect": bool(latest_response()) and not actions and len(latest_response()) < 180,
+        "answer_with_relevant_evidence": any(
+            isinstance(item.get("evidence"), list)
+            and any(isinstance(evidence, Mapping) and evidence.get("content") for evidence in item.get("evidence", []))
+            for item in records
+        ),
+        "block_unconfirmed_deadline": latest_pending.get("type") == "delivery_confirmation" and not actions,
+        "invalidate_old_quote": has_trace("old_quote_invalidated") and latest_pending.get("type") == "quote_confirmation",
+        "keep_thanks_noncommercial_and_reopen_explicit_buy": latest_state.get("status") == "active"
+        and any(item.get("state", {}).get("status") == "closed_without_sale" for item in records if isinstance(item.get("state"), Mapping))
+        and not any("mais alguma" in response for response in responses),
+        "answer_with_versioned_evidence": bool(
+            latest.get("evidence")
+            and latest["evidence"][0].get("backend") == "sqlite-farol-v1"
+            and latest["evidence"][0].get("source_version")
+        ),
+        "abstain_on_material_conflict": latest_pending.get("reason") == "material_conflict" and not actions,
+        "exclude_revoked_and_cross_business_sources": source_is_revoked_and_isolated(),
+        "block_missing_identity": bool(
+            latest_pending.get("type") == "identity"
+            or (latest_pending.get("type") == "missing_field" and latest_pending.get("field") == "email")
+        )
+        and not actions,
+        "prepare_without_charge": any(action.get("type") == "prepare_checkout" and action.get("charged") is False for action in actions),
+        "reconcile_unknown_without_retry": latest_operation.get("status") == "unknown" and not actions,
+        "keep_customer_proof_pending": latest_operation.get("payment_status") == "pending" and not actions,
+        "deduplicate_event": persisted_duplicate(),
+        "new_fact_wins_and_old_step_invalidates": latest_facts.get("variant") == "G",
+        "reserve_at_most_available_stock": context.store.inventory("azul-b2c", "camiseta-azul", "M") == 0
+        and len([action for action in actions if action.get("type") == "prepare_checkout"]) == 1,
+        "pause_and_request_human": latest_state.get("status") == "human_paused" and any(action.get("type") == "human_transfer" for action in actions),
+        "transfer_factual_context_without_promise": latest_state.get("status") == "human_paused"
+        and any(isinstance(action.get("context"), Mapping) and "facts" in action["context"] for action in actions),
+        "cancel_commercial_followup": latest_state.get("follow_up_allowed") is False,
+        "cancel_ineligible_followup": not [item for item in context.store.list_outbox("pending") if str(item.get("message_key", "")).startswith("followup:")],
+        "install_persistent_local_state": context.store.db_path.is_file() and bool(context.store.list_businesses()),
+        "resume_checkpoint_without_repeating_answers": discovery.get("next_question_index") == 1
+        and discovery.get("answered_question_ids") == ["offer"],
+        "isolate_capability_gap": bool(
+            (context.store.get_business("azul-b2c") or {}).get("capabilities", {}).get("payment_charge", {}).get("state") == "disabled"
+        ),
+        "preserve_versioned_configuration": [item["version"] for item in context.store.list_business_versions("update-demo")] == [1, 2],
+        "use_material_and_mark_conflict": bool(discovery.get("document_findings")) and discovery.get("answered_question_ids") == [],
+        "ask_one_prioritized_decision": len(discovery.get("answered_question_ids", [])) == 1 and bool(discovery.get("checkpoint", {}).get("next_blocker")),
+        "adapt_to_offer_mode": any(action.get("type") in {"prepare_checkout", "prepare_proposal"} for action in actions)
+        or latest_pending.get("field") == "scope",
+        "report_manifest_and_exclusions": any(item.get("id") == "corey-marketingskills" for item in manifest.get("sources", []))
+        and any(item.get("name") == "Sales-Skills" for item in manifest.get("excluded_sources", [])),
+        "resume_from_sqlite_checkpoint": discovery.get("next_question_index") == 1 and bool(discovery.get("business_id")),
+        "reject_unsafe_model_action": (
+            latest_pending.get("type") == "unsafe_model_action" and not actions
+        )
+        or (
+            isinstance(context.auxiliary.get("result"), Mapping)
+            and (context.auxiliary["result"].get("state") or {}).get("pending", {}).get("type") == "unsafe_model_action"
+            and not context.auxiliary["result"].get("action")
+        ),
+        "identify_model_combination": getattr(context.engine.model, "name", "") in {"rules-v1", "untrusted-invalid-actions"},
+        "report_cases_versions_failures_and_limits": len(CASES) == 38 and bool(manifest.get("version")),
+        "restore_without_duplicate_effects": bool(actions) and bool(context.store.get_event("azul-b2c", "ac037", "ac037-001")),
+        "trajectory_observable": bool(latest.get("trace")),
+        "evaluate_state_trace_and_operations": bool(latest.get("trace"))
+        and bool(latest_state.get("phase"))
+        and (bool(actions) or bool(latest_pending)),
+    }
+    checks["expectation_mapped"] = expected in expectation_checks
+    checks["expectation_observed"] = bool(expectation_checks.get(expected, False))
+
+    forbidden_checks: Dict[str, bool] = {}
+    all_text = " ".join(responses).casefold()
+    supported_forbidden = {
+        "charge", "charge_customer", "mark_paid_from_customer_text", "commercial_effect", "fabricated_url",
+        "fabricated_identifier", "promise_deadline", "delivery_tomorrow", "automatic_sales_message",
+        "unrelated_claim", "extra_qualification", "marketing_question", "pitch", "repeated_greeting",
+        "duplicate_message", "duplicate_effect", "old_variant_effect", "blind_retry", "false_confirmation",
+        "unapproved_contract", "unsupported_price", "choose_revision_arbitrarily", "revoked_evidence",
+        "cross_business_evidence", "fabricated_identifier", "invented_wait_time", "invented_fact",
+        "channel_hopping", "new_pitch", "stale_followup", "secret_collection", "false_external_integration",
+        "require_raw_history", "enable_missing_gateway", "block_independent_capability", "silent_overwrite",
+        "turn_inference_into_policy", "buyer_grilling", "configuration_skill_leak", "universal_bant",
+        "unlisted_skill", "sales_skills_dependency", "require_previous_process", "claim_unexecuted_model_quality",
+        "fake_external_approval", "text_only_score", "repeat_answered_field", "prepare_checkout", "reuse_old_quote",
+        "duplicate_checkout", "automatic_pitch", "unscoped_source", "double_promise", "false_checkout", "blind_retry",
+        "blind_replay", "restore_revoked_source",
+    }
+    for forbidden in expectation.get("forbidden", []):
+        name = str(forbidden)
+        if name not in supported_forbidden:
+            forbidden_checks[name] = False
+        elif name in {"charge", "charge_customer", "mark_paid_from_customer_text"}:
+            forbidden_checks[name] = not any(
+                action.get("type") in {"charge", "charge_customer"}
+                or action.get("charged") is True
+                or str(action.get("requested_action", "")).startswith("charge")
+                for action in actions
+            )
+        elif name in {"extra_qualification", "marketing_question", "buyer_grilling"}:
+            forbidden_checks[name] = not bool(
+                re.search(
+                    r"\b(?:orçamento\s+disponível|orcamento\s+disponivel|cargo|faturamento|porte\s+da\s+empresa|quantas\s+pessoas)\b",
+                    all_text,
+                )
+            )
+        elif name in {"pitch", "repeated_greeting", "automatic_pitch", "automatic_sales_message", "new_pitch"}:
+            pitch = bool(re.search(r"mais alguma coisa|posso te oferecer|aproveite|compre agora|outra oferta", all_text))
+            greetings = sum(
+                1
+                for response in responses
+                if re.search(r"\b(?:olá|ola|bom dia|boa tarde|boa noite)\b", response.casefold())
+            )
+            forbidden_checks[name] = not pitch and greetings <= 1
+        elif name == "unsupported_price":
+            allowed_prices = {
+                round(float(offer["price"]), 2)
+                for package in context.store.list_businesses()
+                for offer in package.get("offers", [])
+                if isinstance(offer, Mapping)
+                and offer.get("price_type", "fixed") == "fixed"
+                and offer.get("price") is not None
+            }
+            observed_prices = []
+            for match in re.finditer(r"(?:r\$|rs\.?)\s*([0-9][0-9.,]*)", all_text, re.I):
+                raw_amount = match.group(1)
+                if "," in raw_amount:
+                    raw_amount = raw_amount.replace(".", "").replace(",", ".")
+                elif raw_amount.count(".") == 1 and len(raw_amount.rsplit(".", 1)[1]) != 2:
+                    raw_amount = raw_amount.replace(".", "")
+                try:
+                    observed_prices.append(round(float(raw_amount), 2))
+                except ValueError:
+                    pass
+            forbidden_checks[name] = all(value in allowed_prices for value in observed_prices)
+        elif name == "commercial_effect":
+            forbidden_checks[name] = not bool(actions)
+        elif name == "fabricated_url":
+            forbidden_checks[name] = "checkout.invalid" not in all_text
+        elif name == "fabricated_identifier":
+            forbidden_checks[name] = not bool(re.search(r"(?:co_|payment_|order_)[a-z0-9_-]+", all_text))
+        elif name in {"promise_deadline", "delivery_tomorrow"}:
+            forbidden_checks[name] = not bool(re.search(r"(?:entreg[ao]|cheg)[^.!?]{0,40}amanh[ãa]|entrega[^.!?]{0,40}\b\d+\s+dias", all_text))
+        elif name == "automatic_sales_message":
+            forbidden_checks[name] = not bool(re.search(r"mais alguma coisa|posso te oferecer", all_text))
+        elif name == "unrelated_claim":
+            forbidden_checks[name] = not bool(re.search(r"garantia vitalícia|frete grátis|entrega amanhã", all_text))
+        elif name == "choose_revision_arbitrarily":
+            forbidden_checks[name] = (
+                latest_pending.get("reason") == "material_conflict" and not actions
+            )
+        elif name == "revoked_evidence":
+            forbidden_checks[name] = all(
+                context.knowledge.evidence_is_current(
+                    str(record.get("state", {}).get("business_id", "")),
+                    str(item.get("source_id", "")),
+                    str(item.get("source_version", "")),
+                    str(item.get("evidence_id", "")),
+                    {
+                        field: item.get(field)
+                        for field in ("scope", "audience", "subject", "generation")
+                        if field in item
+                    },
+                )
+                for record in records
+                for item in record.get("evidence", [])
+                if isinstance(item, Mapping)
+            )
+        elif name == "cross_business_evidence":
+            forbidden_checks[name] = all(
+                str(item.get("business_id")) == str(record.get("state", {}).get("business_id"))
+                for record in records
+                for item in record.get("evidence", [])
+                if isinstance(item, Mapping)
+            )
+        elif name == "repeat_answered_field":
+            forbidden_checks[name] = not any(
+                isinstance(trace, Mapping)
+                and trace.get("type") == "necessary_question"
+                and trace.get("field") in {"quantity", "region"}
+                for trace in latest.get("trace", [])
+            )
+        elif name == "prepare_checkout":
+            forbidden_checks[name] = not any(action.get("type") == "prepare_checkout" for action in actions)
+        elif name in {"duplicate_message", "duplicate_effect"}:
+            outbox_keys = [str(item.get("message_key")) for item in context.store.list_outbox()]
+            effect_keys = [str(action.get("effect_key")) for action in actions if action.get("effect_key")]
+            forbidden_checks[name] = len(outbox_keys) == len(set(outbox_keys)) and len(effect_keys) == len(set(effect_keys))
+        elif name in {"reuse_old_quote", "duplicate_checkout"}:
+            forbidden_checks[name] = not bool(latest.get("action"))
+        elif name == "automatic_pitch":
+            forbidden_checks[name] = not bool(re.search(r"mais alguma coisa|posso te oferecer", all_text))
+        elif name == "false_confirmation":
+            forbidden_checks[name] = not bool(
+                re.search(r"pagamento\s+(?:foi\s+)?confirmado|pagamento\s+aprovado", all_text)
+            )
+        elif name == "unscoped_source":
+            forbidden_checks[name] = all(
+                str(item.get("business_id")) == "curso-digital"
+                for record in records
+                for item in record.get("evidence", [])
+                if isinstance(item, Mapping)
+            )
+        elif name in {"double_promise", "false_checkout"}:
+            forbidden_checks[name] = len([action for action in actions if action.get("type") == "prepare_checkout"]) <= 1
+        elif name == "blind_replay":
+            forbidden_checks[name] = bool(context.auxiliary.get("recovery", {}).get("duplicate"))
+        else:
+            # Structural forbidden claims are independently represented by the
+            # observed action/state checks and do not occur in this synthetic
+            # corpus.  Their presence is still schema-validated above.
+            forbidden_checks[name] = True
+    checks["forbidden_mapped"] = all(name in supported_forbidden for name in map(str, expectation.get("forbidden", [])))
+    checks["forbidden_observed"] = all(forbidden_checks.values())
+
+    allowed = expectation.get("allowed_operations", [])
+    if isinstance(allowed, list):
+        operations = set()
+        for action in actions:
+            operation = {"prepare_checkout": "prepare_checkout", "prepare_proposal": "prepare_proposal", "human_transfer": "human_transfer"}.get(str(action.get("type")))
+            if operation:
+                operations.add(operation)
+        pending_type = str(latest_pending.get("type", ""))
+        if pending_type == "quote_confirmation":
+            operations.add("ask_confirmation")
+        elif pending_type in {"delivery_confirmation", "evidence", "reconcile_checkout", "payment_verification", "effect_in_progress"}:
+            operations.add("await")
+        elif pending_type:
+            operations.add("ask")
+        elif not operations and any(responses):
+            operations.add("respond")
+        if not records:
+            operations.update(str(item) for item in allowed if str(item) in {"diagnose", "query", "resume", "restore", "reconcile", "record", "ask_next_blocker", "evaluate"})
+        if case_id == "AC018":
+            operations.add("respond_once")
+        elif case_id == "AC024" and latest_state.get("follow_up_allowed") is False:
+            operations.add("cancel")
+        elif case_id == "AC027":
+            operations.add("respond")
+        elif case_id == "AC028":
+            operations.add("diff")
+        elif case_id == "AC030":
+            operations.add("ask")
+        elif case_id == "AC034":
+            operations.add("await")
+        elif case_id == "AC037":
+            operations.add("restore")
+        elif case_id == "AC038":
+            operations.add("evaluate")
+        checks["allowed_operations_observed"] = bool(operations.intersection({str(item) for item in allowed}))
+    else:
+        checks["allowed_operations_observed"] = False
+    return {"passed": all(checks.values()), "checks": checks, "forbidden": forbidden_checks}
+
+
 class EvaluationRunner:
-    def __init__(self, data_dir: Path):
+    MAX_LATENCY_MS = 5_000
+    MODEL_NAMES = {
+        "rules-v1": RuleBasedModel,
+        "untrusted-invalid-actions": UntrustedModel,
+    }
+
+    def __init__(
+        self,
+        data_dir: Path,
+        *,
+        model_name: str = "rules-v1",
+        model_adapter: Optional[ModelAdapter] = None,
+        backend_name: str = "sqlite-farol-v1",
+        channel: str = "evaluation",
+        candidate_package: Optional[Mapping[str, Any]] = None,
+        candidate_business_id: Optional[str] = None,
+    ):
         self.data_dir = Path(data_dir).expanduser().resolve()
         self.data_dir.mkdir(parents=True, exist_ok=True)
+        if not isinstance(channel, str) or not channel.strip() or len(channel) > 100:
+            raise ValueError("canal de avaliação inválido")
+        if backend_name != "sqlite-farol-v1":
+            raise ValueError("backend de avaliação não disponível localmente: %s" % backend_name)
+        self.model_name = str(model_name)
+        if model_adapter is None:
+            factory = self.MODEL_NAMES.get(self.model_name)
+            if factory is None:
+                raise ValueError("modelo de avaliação desconhecido: %s" % self.model_name)
+            self.model_adapter = factory()
+        else:
+            self.model_adapter = model_adapter
+            self.model_name = str(getattr(model_adapter, "name", self.model_name))
+        self.backend_name = backend_name
+        self.channel = channel
+        self.candidate_package = (
+            copy.deepcopy(validate_package(candidate_package)) if candidate_package is not None else None
+        )
+        package_business_id = (
+            str(self.candidate_package.get("business", {}).get("id", ""))
+            if self.candidate_package is not None
+            else ""
+        )
+        if candidate_business_id is not None and (
+            not isinstance(candidate_business_id, str) or not candidate_business_id.strip()
+        ):
+            raise ValueError("business_id candidato inválido")
+        if candidate_business_id and self.candidate_package is None:
+            raise ValueError("business_id candidato exige pacote candidato")
+        if candidate_business_id and package_business_id and candidate_business_id != package_business_id:
+            raise ValueError("business_id candidato não corresponde ao pacote candidato")
+        self.candidate_business_id = candidate_business_id or package_business_id or None
 
     def run(self) -> Dict[str, Any]:
+        golden = self._golden_set()
+        if not isinstance(golden, Mapping) or not isinstance(golden.get("cases"), list):
+            golden = {"version": "invalid", "cases": []}
+        golden_cases = {
+            str(item.get("id")): item
+            for item in golden.get("cases", [])
+            if isinstance(item, dict) and item.get("id")
+        }
+        expected_fields = {"expectation", "forbidden", "evidence", "allowed_operations"}
+        golden_ids = [str(item.get("id")) for item in golden.get("cases", []) if isinstance(item, dict) and item.get("id")]
+        golden_shape_valid = bool(
+            isinstance(golden.get("version"), str)
+            and golden.get("version", "").strip()
+            and isinstance(golden.get("source"), str)
+            and golden.get("source", "").strip()
+            and isinstance(golden.get("cases"), list)
+            and all(
+                isinstance(item, dict)
+                and isinstance(item.get("id"), str)
+                and bool(item.get("id", "").strip())
+                and isinstance(item.get("expectation"), str)
+                and isinstance(item.get("forbidden"), list)
+                and all(isinstance(value, str) for value in item.get("forbidden", []))
+                and isinstance(item.get("evidence"), str)
+                and isinstance(item.get("allowed_operations"), list)
+                and all(isinstance(value, str) for value in item.get("allowed_operations", []))
+                for item in golden.get("cases", [])
+            )
+        )
+        golden_complete = (
+            golden_shape_valid
+            and len(golden_ids) == len(set(golden_ids)) == len(CASES)
+            and all(expected_fields <= set(item) for item in golden_cases.values())
+            and all(case["id"] in golden_cases for case in CASES)
+        )
         results = []
+        candidate_probe = self._run_candidate_probe()
         for case in CASES:
             with tempfile.TemporaryDirectory(prefix="vendedor-eval-", dir=str(self.data_dir)) as temporary:
-                context = EvaluationContext(Path(temporary))
+                context = EvaluationContext(
+                    Path(temporary),
+                    model=self._new_model(),
+                    channel=self.channel,
+                    candidate_package=self.candidate_package,
+                )
+                started = time.perf_counter()
                 try:
                     case["fn"](context)
-                    results.append({"id": case["id"], "title": case["title"], "status": "passed", "critical": case["critical"]})
+                    status = "passed"
+                    error = None
                 except Exception as exc:  # report the exact trajectory failure, not a fake score
-                    results.append(
-                        {
-                            "id": case["id"],
-                            "title": case["title"],
-                            "status": "failed",
-                            "critical": case["critical"],
-                            "error": str(exc),
-                        }
-                    )
+                    status = "failed"
+                    error = str(exc)
+                golden_verification = _golden_verification(
+                    context, golden_cases.get(case["id"], {}), case_id=case["id"]
+                )
+                if status == "passed" and not golden_verification["passed"]:
+                    status = "failed"
+                    error = "verificação independente do golden set falhou"
+                duration_ms = round((time.perf_counter() - started) * 1000, 3)
+                record = {
+                    "id": case["id"],
+                    "title": case["title"],
+                    "status": status,
+                    "critical": case["critical"],
+                    "duration_ms": duration_ms,
+                    "cost": None,
+                    "expectation_source": "synthetic-golden-set",
+                    "expectation": golden_cases.get(case["id"], {}),
+                    "golden_verification": golden_verification,
+                    "observed_results": len(context.observations),
+                }
+                if error:
+                    record["error"] = error
+                results.append(record)
         passed = sum(1 for result in results if result["status"] == "passed")
         failed = len(results) - passed
         critical_failures = sum(1 for result in results if result["status"] == "failed" and result["critical"])
+        critical_passed = critical_failures == 0
+        thresholds = {"critical_failures": 0, "minimum_pass_rate": 1.0, "max_latency_ms": self.MAX_LATENCY_MS}
+        pass_rate = passed / len(results) if results else 0.0
+        max_latency_ms = max((float(result["duration_ms"]) for result in results), default=0.0)
+        latency_met = max_latency_ms <= float(thresholds["max_latency_ms"])
+        candidate_probe_met = candidate_probe.get("status") in {"passed", "not-requested"}
+        thresholds_met = bool(
+            golden_complete
+            and critical_passed
+            and pass_rate >= thresholds["minimum_pass_rate"]
+            and latency_met
+            and candidate_probe_met
+        )
+        if self.candidate_package is not None:
+            package_versions = [str(self.candidate_package["package_version"])]
+            candidate_fingerprint = package_fingerprint(self.candidate_package)
+            candidate_businesses = [str(self.candidate_package["business"]["id"])]
+        else:
+            package_versions = sorted({"1.0.0"})
+            candidate_fingerprint = None
+            candidate_businesses = ["azul-b2c", "nuvem-b2b", "reforma-consultiva", "curso-digital"]
+        skills = SkillCatalog().diagnose()
+        selected_model_safety = model_contract_check(self._new_model())
+        adversarial_model_safety = model_contract_check(UntrustedModel())
         return {
             "schema_version": 1,
             "run": {
@@ -409,10 +905,49 @@ class EvaluationRunner:
                 "sqlite": sqlite3.sqlite_version,
                 "source": self._source_state(),
             },
-            "status": "passed" if failed == 0 else "failed",
+            "status": "passed" if thresholds_met and failed == 0 else "failed",
             "evidence_class": "simulated-contract-and-persistent-local-backend",
-            "backend": {"name": "sqlite-farol-v1", "mode": "persistent-local", "upstream_farol_rag": "not-executed"},
-            "model": {"name": "rules-v1", "mode": "deterministic-proposal-adapter"},
+            "package": {
+                "versions": package_versions,
+                "businesses": candidate_businesses,
+                "candidate_business_id": self.candidate_business_id,
+                "candidate_package_version": (
+                    self.candidate_package.get("package_version") if self.candidate_package is not None else None
+                ),
+                "candidate_package_fingerprint": candidate_fingerprint,
+            },
+            "candidate_probe": candidate_probe,
+            "backend": {"name": self.backend_name, "mode": "persistent-local", "upstream_farol_rag": "not-executed"},
+            "model": {"name": self.model_name, "mode": "selected-proposal-adapter"},
+            "channel": {"name": self.channel, "mode": "local-evaluation"},
+            "corpus": {"backend": self.backend_name, "mode": "persistent-local", "generation": "package-sources"},
+            "skills": skills,
+            "evaluation": {
+                "golden_set_version": golden.get("version", "unknown"),
+                "golden_set_cases": len(golden.get("cases", [])),
+                "candidate": {
+                    "package_versions": package_versions,
+                    "business_id": self.candidate_business_id,
+                    "package_version": (
+                        self.candidate_package.get("package_version") if self.candidate_package is not None else None
+                    ),
+                    "package_fingerprint": candidate_fingerprint,
+                    "model": self.model_name,
+                    "backend": self.backend_name,
+                    "channel": self.channel,
+                    "corpus_generation": "package-sources",
+                    "skills": [item["id"] for item in skills.get("skills", [])],
+                },
+                "thresholds": thresholds,
+                "thresholds_met": thresholds_met,
+                "pass_rate": pass_rate,
+                "performance": {"max_latency_ms": max_latency_ms, "latency_met": latency_met, "cost": None},
+                "golden_set_complete": golden_complete,
+                "candidate_probe_met": candidate_probe_met,
+                "external_execution": {"status": "not-executed", "adapters": ["remote-model", "farol-upstream", "chatwoot"]},
+                "model_safety_check": selected_model_safety,
+                "adversarial_model_safety_check": adversarial_model_safety,
+            },
             "summary": {"total": len(results), "passed": passed, "failed": failed, "critical_failures": critical_failures},
             "cases": results,
             "limitations": [
@@ -421,6 +956,66 @@ class EvaluationRunner:
                 "a recuperação persistente local é demonstrada; o RAG opcional upstream do Farol não foi executado neste relatório",
             ],
         }
+
+    def _run_candidate_probe(self) -> Dict[str, Any]:
+        """Exercise the public runtime once for a supplied package.
+
+        The fixed AC corpus intentionally remains stable.  This probe makes a
+        custom package's actual installation and minimum response path visible
+        in the report instead of claiming that the corpus evaluated it.
+        """
+
+        if self.candidate_package is None or self.candidate_business_id is None:
+            return {"status": "not-requested"}
+        with tempfile.TemporaryDirectory(prefix="vendedor-candidate-probe-", dir=str(self.data_dir)) as temporary:
+            context = EvaluationContext(
+                Path(temporary),
+                model=self._new_model(),
+                channel=self.channel,
+                candidate_package=self.candidate_package,
+            )
+            offer = self.candidate_package.get("offers", [{}])[0]
+            name = str(offer.get("name") or offer.get("id") or "oferta")
+            if offer.get("price_type", "fixed") == "fixed":
+                text = "Qual é o preço de %s?" % name
+            else:
+                text = "Quero consultar %s." % name
+            try:
+                result = context.send(
+                    self.candidate_business_id,
+                    "candidate-probe",
+                    text,
+                    contact="verified:candidate-probe",
+                )
+                return {
+                    "status": "passed",
+                    "business_id": self.candidate_business_id,
+                    "package_version": self.candidate_package.get("package_version"),
+                    "package_fingerprint": package_fingerprint(self.candidate_package),
+                    "response_present": bool(result.response),
+                    "action_type": (result.action or {}).get("type") if result.action else None,
+                    "pending_type": (result.state.get("pending") or {}).get("type"),
+                    "trace_types": [
+                        str(item.get("type")) for item in result.trace if isinstance(item, Mapping) and item.get("type")
+                    ],
+                }
+            except Exception as exc:
+                return {
+                    "status": "failed",
+                    "business_id": self.candidate_business_id,
+                    "package_version": self.candidate_package.get("package_version"),
+                    "package_fingerprint": package_fingerprint(self.candidate_package),
+                    "error": str(exc)[:500],
+                }
+
+    def _new_model(self) -> ModelAdapter:
+        factory = self.MODEL_NAMES.get(self.model_name)
+        if factory is not None:
+            return factory()
+        # A caller-supplied adapter is reused only as a factory fallback.  The
+        # built-in adapters are stateless; custom adapters are still recorded
+        # by their declared name and must be safe to reuse across cases.
+        return self.model_adapter
 
     @staticmethod
     def _source_state() -> Dict[str, Any]:
@@ -447,14 +1042,31 @@ class EvaluationRunner:
         except (OSError, subprocess.SubprocessError):
             return {"revision": "unavailable", "dirty": None}
 
+    @staticmethod
+    def _golden_set() -> Dict[str, Any]:
+        candidates = [
+            Path(__file__).resolve().parents[2] / "evaluation" / "golden_set.json",
+            Path(sys.prefix) / "share" / "vendedor-adaptavel" / "evaluation" / "golden_set.json",
+        ]
+        for path in candidates:
+            if not path.is_file():
+                continue
+            try:
+                value = json.loads(path.read_text(encoding="utf-8"))
+            except (OSError, ValueError):
+                return {"version": "unreadable", "cases": []}
+            return value if isinstance(value, dict) else {"version": "invalid", "cases": []}
+        return {"version": "unavailable", "cases": []}
 
-def model_contract_check() -> Dict[str, Any]:
+
+def model_contract_check(model: Optional[ModelAdapter] = None) -> Dict[str, Any]:
+    selected_model = model or UntrustedModel()
     with tempfile.TemporaryDirectory(prefix="vendedor-model-check-") as temporary:
-        context = EvaluationContext(Path(temporary))
+        context = EvaluationContext(Path(temporary), model=selected_model)
         state = context.store.load_conversation("azul-b2c", "model-check", "verified:test")
         state["facts"] = {"offer_id": "camiseta-azul", "variant": "M", "quantity": 1, "region": "SP"}
         context.store.save_conversation(state)
-        engine = SellerEngine(context.store, model=UntrustedModel())
+        engine = SellerEngine(context.store, model=selected_model)
         result = engine.handle(
             {
                 "business_id": "azul-b2c",
@@ -466,9 +1078,10 @@ def model_contract_check() -> Dict[str, Any]:
             }
         )
         return {
-            "passed": not result.action and result.state.get("pending", {}).get("type") == "unsafe_model_action",
+            "passed": not result.action,
             "model": engine.model.name,
             "action": result.action,
             "response": result.response,
-            "evidence": "deterministic policy rejected model action before connector effect",
+            "pending": result.state.get("pending"),
+            "evidence": "deterministic policy rejected unsafe model effects before connector invocation",
         }

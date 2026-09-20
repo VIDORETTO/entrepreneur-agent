@@ -1,6 +1,7 @@
 ---
 name: sales-business-discovery
 description: Entrevista adaptativa do dono com perguntas por impacto e checkpoint.
+version: "1"
 ---
 
 # Descoberta do negócio

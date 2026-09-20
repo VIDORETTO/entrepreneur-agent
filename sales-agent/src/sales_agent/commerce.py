@@ -105,6 +105,7 @@ class SimulatedCommerce:
         business_id: str,
         conversation_id: str,
         contact_id: str,
+        identity_verified: bool = False,
     ) -> Dict[str, Any]:
         if not quote or quote.get("status") != "valid":
             raise CommerceError("quote_required", "cotação válida é obrigatória")
@@ -117,7 +118,10 @@ class SimulatedCommerce:
                 raise CommerceError("quote_invalid", "validade da cotação não pôde ser verificada")
         if not facts.get("quantity"):
             raise CommerceError("quantity_required", "quantidade é obrigatória")
-        if not contact_id.startswith("verified:"):
+        # The contact string is an identifier, not an authentication proof.
+        # Synthetic ``verified:*`` values are interpreted by the channel seam
+        # and passed here only as the structured flag.
+        if not identity_verified:
             raise CommerceError("identity_not_verified", "identificação do comprador ainda não foi verificada", "pending")
         effect_key = durable_key("checkout", business_id, conversation_id, str(quote["id"]))
         effect_payload = {"business_id": business_id, "conversation_id": conversation_id, "quote_id": quote["id"]}
@@ -137,9 +141,30 @@ class SimulatedCommerce:
         else:
             created, existing = self.store.reserve_effect(effect_key, "checkout", effect_payload)
         if not created:
-            if existing.get("status") in {"unknown", "reserved"}:
-                if existing.get("status") == "reserved":
-                    self.store.update_effect(effect_key, "unknown", {**existing, "reason": "interrupted before confirmation"})
+            if existing.get("status") == "reserved":
+                # A second worker observing a live reservation must not turn
+                # the first worker's in-flight operation into an unknown
+                # result.  Only an expired reservation is recoverable as
+                # interrupted; the owner/provider may still be completing it.
+                if existing.get("reservation_expired") is True:
+                    self.store.update_effect(
+                        effect_key,
+                        "unknown",
+                        {"reason": "reservation lease expired before confirmation"},
+                    )
+                    raise CommerceError(
+                        "effect_unknown",
+                        "checkout anterior expirou durante a confirmação",
+                        "unknown",
+                        {"effect_key": effect_key},
+                    )
+                raise CommerceError(
+                    "effect_in_progress",
+                    "checkout anterior ainda está em andamento; não vou duplicá-lo",
+                    "pending",
+                    {"effect_key": effect_key, "reservation_id": existing.get("reservation_id")},
+                )
+            if existing.get("status") == "unknown":
                 raise CommerceError(
                     "effect_unknown",
                     "checkout anterior tem resultado desconhecido",
@@ -185,6 +210,35 @@ class SimulatedCommerce:
         key = durable_key("proposal", business_id, conversation_id, _hash(dict(facts)))
         created, existing = self.store.reserve_effect(key, "proposal", {"offer_id": offer_id})
         if not created:
+            if existing.get("status") == "reserved":
+                if existing.get("reservation_expired") is True:
+                    self.store.update_effect(
+                        key,
+                        "unknown",
+                        {"reason": "reservation lease expired before proposal confirmation"},
+                    )
+                    raise CommerceError(
+                        "effect_unknown",
+                        "a proposta anterior expirou durante a confirmação",
+                        "unknown",
+                        {"effect_key": key},
+                    )
+                raise CommerceError(
+                    "effect_in_progress",
+                    "a proposta anterior ainda está em andamento; não vou duplicá-la",
+                    "pending",
+                    {"effect_key": key, "reservation_id": existing.get("reservation_id")},
+                )
+            if existing.get("status") == "unknown":
+                raise CommerceError(
+                    "effect_unknown",
+                    "a proposta anterior tem resultado desconhecido",
+                    "unknown",
+                    {"effect_key": key},
+                )
+            if existing.get("status") == "failed":
+                reason = existing.get("reason", "failed")
+                raise CommerceError(str(reason), "a proposta anterior falhou: %s" % reason)
             return existing
         proposal_id = "pr_%s" % _hash({"key": key, "facts": dict(facts)})
         result = {"status": "prepared", "proposal_id": proposal_id, "sent": False, "effect_key": key}

@@ -1,6 +1,7 @@
 ---
 name: sales-simulate
 description: Executar cenários observáveis e registrar trajetória, ações e limitações.
+version: "1"
 ---
 
 # Simulação e avaliação

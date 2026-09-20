@@ -14,9 +14,10 @@ from typing import Any, Callable, Dict, List, Mapping, Optional
 from .commerce import CommerceError, SimulatedCommerce
 from .knowledge import KnowledgeBackend, PersistentFarolKnowledge
 from .model import ModelAdapter, RuleBasedModel
+from .skills import SkillCatalog
 from .storage import StateStore, durable_key
 from .types import EngineResult, Proposal
-from .validation import package_capability
+from .validation import package_capability, package_fingerprint
 
 
 class ConversationError(ValueError):
@@ -38,12 +39,16 @@ class SellerEngine:
         knowledge: Optional[KnowledgeBackend] = None,
         commerce: Optional[SimulatedCommerce] = None,
         before_send: Optional[Callable[[Mapping[str, Any], EngineResult], None]] = None,
+        skill_catalog: Optional[SkillCatalog] = None,
+        supervisor: Any = None,
     ):
         self.store = store
         self.model = model or RuleBasedModel()
         self.knowledge = knowledge or PersistentFarolKnowledge(store)
         self.commerce = commerce or SimulatedCommerce(store)
         self.before_send = before_send
+        self.skill_catalog = skill_catalog or SkillCatalog()
+        self.supervisor = supervisor
         self._lock = threading.RLock()
 
     def handle(self, event: Mapping[str, Any]) -> EngineResult:
@@ -77,6 +82,8 @@ class SellerEngine:
             starting_version = int(state.get("version", 0))
             result = self._decide(package, state, event)
             state = result.state
+            if event.get("turn"):
+                state["turn"] = dict(event["turn"])
             state["version"] = int(state.get("version", 0)) + 1
             state["last_event_id"] = event_id
             state["last_interaction"] = event.get("text", "")
@@ -92,6 +99,115 @@ class SellerEngine:
             result.state = state
             if self.before_send:
                 self.before_send(event, result)
+            if self.supervisor is not None:
+                try:
+                    review = self.supervisor.observe(event, result.as_dict(), package)
+                    supervisor_mode = getattr(self.supervisor, "mode", "off")
+                    supervisor_policy = getattr(self.supervisor, "policy", "optional")
+                    if supervisor_policy == "mandatory" and supervisor_mode != "selective":
+                        # A mandatory policy has no safe meaning in
+                        # observation/off mode: no correction-capable review
+                        # gate exists.  Fail closed instead of treating the
+                        # policy label as permission to deliver.
+                        result.response = ""
+                        result.action = None
+                        result.state["pending"] = {
+                            "type": "supervisor_review_required",
+                            "reason": "mandatory_policy_requires_selective_mode",
+                        }
+                        result.trace.append(
+                            {
+                                "type": "supervisor_delivery_blocked",
+                                "policy": "mandatory",
+                                "reason": "mandatory_policy_requires_selective_mode",
+                            }
+                        )
+                    elif supervisor_mode == "selective":
+                        reviewer_info = review.get("reviewer", {}) if isinstance(review, Mapping) else {}
+                        reviewer_result = reviewer_info.get("result", {}) if isinstance(reviewer_info, Mapping) else {}
+                        revised = None
+                        correction = (
+                            reviewer_result.get("correction")
+                            if isinstance(reviewer_result, Mapping)
+                            and reviewer_info.get("status") == "completed"
+                            and not reviewer_info.get("timed_out")
+                            else None
+                        )
+                        if isinstance(correction, Mapping):
+                            revised = self.supervisor.apply_selective(
+                                event, result.as_dict(), package, review, correction
+                            )
+                            if revised.get("applied") and isinstance(revised.get("result"), Mapping):
+                                candidate = revised["result"]
+                                result.response = str(candidate.get("response", result.response))
+                                result.action = candidate.get("action")
+                                result.evidence = list(candidate.get("evidence", result.evidence))
+                                result.trace = list(candidate.get("trace", result.trace))
+                            elif revised.get("reason"):
+                                result.trace.append(
+                                    {
+                                        "type": "supervisor_correction_blocked",
+                                        "reason": revised["reason"],
+                                        "claims": revised.get("claims", []),
+                                    }
+                                )
+                        if getattr(self.supervisor, "policy", "optional") == "mandatory":
+                            reviewer_failed = reviewer_info.get("status") != "completed" or bool(reviewer_info.get("timed_out"))
+                            rejected_without_valid_correction = (
+                                isinstance(reviewer_result, Mapping)
+                                and reviewer_result.get("status") == "rejected"
+                                and not (isinstance(revised, Mapping) and revised.get("applied"))
+                            )
+                            if reviewer_failed or rejected_without_valid_correction:
+                                result.response = ""
+                                result.action = None
+                                result.state["pending"] = {
+                                    "type": "supervisor_review_required",
+                                    "reason": "mandatory_policy_reviewer_unavailable"
+                                    if reviewer_failed
+                                    else "mandatory_policy_rejected_candidate",
+                                }
+                                result.trace.append(
+                                    {
+                                        "type": "supervisor_delivery_blocked",
+                                        "policy": "mandatory",
+                                        "reason": result.state["pending"]["reason"],
+                                    }
+                                )
+                    result.trace.append(
+                        {
+                            "type": "supervisor_observed",
+                            "status": review.get("status"),
+                            "candidate_id": review.get("candidate_id"),
+                        }
+                    )
+                except Exception as exc:
+                    # Optional observation is auxiliary. A mandatory policy
+                    # must fail closed even if the supervisor itself cannot
+                    # produce a review record.
+                    if getattr(self.supervisor, "policy", "optional") == "mandatory":
+                        result.response = ""
+                        result.action = None
+                        result.state["pending"] = {
+                            "type": "supervisor_review_required",
+                            "reason": "mandatory_policy_supervisor_error",
+                        }
+                        result.trace.append(
+                            {
+                                "type": "supervisor_delivery_blocked",
+                                "policy": "mandatory",
+                                "reason": "mandatory_policy_supervisor_error",
+                            }
+                        )
+                    else:
+                        result.trace.append({"type": "supervisor_error", "error": str(exc)[:300]})
+            # The supervisor may replace or suppress the candidate after the
+            # initial history entry was prepared.  Persist the delivered
+            # outcome, rather than leaving a blocked or corrected response in
+            # conversation memory as if it had been sent.
+            if state.get("history") and state["history"][-1].get("event_id") == event_id:
+                state["history"][-1]["response"] = result.response
+                state["history"][-1]["action"] = result.action
             payload = result.as_dict()
             commit_status, replay = self.store.commit_event(
                 state,
@@ -99,7 +215,20 @@ class SellerEngine:
                 dict(event),
                 payload,
                 durable_key("event", business_id, conversation_id, event_id),
-                {"event_id": event_id, "response": result.response, "action": result.action},
+                {
+                    "event_id": event_id,
+                    "channel": event.get("channel", "cli"),
+                    "contact_id": event.get("contact_id"),
+                    "response": result.response,
+                    "action": result.action,
+                    "state_version": state.get("version"),
+                    "package_version": package.get("package_version"),
+                    "package_fingerprint": package_fingerprint(package),
+                    "evidence": result.evidence,
+                    "candidate_id": durable_key("candidate", business_id, conversation_id, event_id),
+                    "required_capabilities": self._required_capabilities(result),
+                    "defer_delivery": (result.state.get("pending") or {}).get("type") == "effect_in_progress",
+                },
             )
             if commit_status == "duplicate":
                 replay = replay or payload
@@ -129,26 +258,71 @@ class SellerEngine:
                     if stale_action is not None:
                         effect_key = stale_action.get("effect_key")
                         quote_id = stale_action.get("quote_id")
-                        latest["pending"] = {
-                            "type": "post_effect_correction",
-                            "reason": "correction arrived after external effect",
-                            "effect": stale_action,
-                            "effect_key": effect_key,
-                        }
-                        latest["operation"] = {
-                            "type": "checkout" if stale_action.get("type") == "prepare_checkout" else stale_action.get("type"),
-                            "status": "unknown",
-                            "effect_key": effect_key,
-                            "quote_id": quote_id,
-                            "effect": stale_action,
-                        }
+                        current_effect = self.commerce.query_effect(str(effect_key)) if effect_key else None
+                        effect_status = str((current_effect or {}).get("status", "unknown"))
+                        operation_type = "checkout" if stale_action.get("type") == "prepare_checkout" else stale_action.get("type")
                         latest["phase"] = "action_in_progress"
+                        if effect_status == "confirmed":
+                            # The stale worker lost the conversation CAS after
+                            # its idempotent effect was already confirmed.  Do
+                            # not manufacture an unknown operation or enqueue a
+                            # second checkout.
+                            effect_conflicts = self._confirmed_effect_conflicts_with_state(current_effect or {}, latest)
+                            latest["pending"] = (
+                                {
+                                    "type": "post_effect_correction",
+                                    "reason": "correction conflicts with confirmed external effect",
+                                    "effect": stale_action,
+                                    "effect_key": effect_key,
+                                }
+                                if effect_conflicts
+                                else None
+                            )
+                            if effect_conflicts:
+                                latest["follow_up_allowed"] = False
+                            latest["operation"] = {
+                                "type": operation_type,
+                                **dict(current_effect or {}),
+                                "status": "confirmed",
+                                "effect_key": effect_key,
+                            }
+                        elif effect_status == "reserved":
+                            latest["pending"] = {
+                                "type": "effect_in_progress",
+                                "effect_key": effect_key,
+                                "reason": "idempotent effect is still being completed",
+                            }
+                            latest["operation"] = {
+                                "type": operation_type,
+                                "status": "pending",
+                                "effect_key": effect_key,
+                                "quote_id": quote_id,
+                            }
+                        else:
+                            latest["pending"] = {
+                                "type": "post_effect_correction",
+                                "reason": "correction arrived after external effect",
+                                "effect": stale_action,
+                                "effect_key": effect_key,
+                            }
+                            latest["operation"] = {
+                                "type": operation_type,
+                                "status": "unknown",
+                                "effect_key": effect_key,
+                                "quote_id": quote_id,
+                                "effect": stale_action,
+                            }
                         latest["version"] = latest_version + 1
                         reconciled_state = latest
-                        result.response = (
-                            "A condição mudou enquanto eu processava. A operação foi registrada para conciliação "
-                            "antes de qualquer novo passo."
-                        )
+                        if effect_status == "confirmed":
+                            result.response = (
+                                "A operação já foi preparada, mas a correção conflita com o efeito confirmado. "
+                                "Vou manter o pedido bloqueado até a conciliação; não vou duplicar o checkout."
+                                if reconciled_state and reconciled_state.get("pending")
+                                else "A operação já foi preparada e permanece registrada sem duplicação."
+                            )
+                        else:
+                            result.response = "A condição mudou enquanto eu processava. A operação foi registrada para conciliação antes de qualquer novo passo."
                     result.trace = original_trace + [
                         {
                             "type": "stale_response_suppressed",
@@ -156,11 +330,27 @@ class SellerEngine:
                             "current_version": latest.get("version"),
                         }
                     ]
+                    stale_message_key = durable_key("event", business_id, conversation_id, event_id)
                     stale_status, stale_replay = self.store.commit_stale_event(
                         dict(event),
                         result.as_dict(),
                         reconciled_state=reconciled_state,
                         expected_version=latest_version if reconciled_state is not None else None,
+                        message_key=stale_message_key,
+                        outbox_payload={
+                            "event_id": event_id,
+                            "channel": event.get("channel", "cli"),
+                            "contact_id": event.get("contact_id"),
+                            "response": result.response,
+                            "action": result.action,
+                            "state_version": result.state.get("version"),
+                            "package_version": package.get("package_version"),
+                            "package_fingerprint": package_fingerprint(package),
+                            "evidence": result.evidence,
+                            "candidate_id": durable_key("candidate", business_id, conversation_id, event_id),
+                            "required_capabilities": self._required_capabilities(result),
+                            "defer_delivery": (result.state.get("pending") or {}).get("type") == "effect_in_progress",
+                        },
                     )
                     if stale_status == "committed":
                         return result
@@ -178,6 +368,44 @@ class SellerEngine:
                         )
                 raise ConversationError("a conversa mudou repetidamente durante a conciliação; tente novamente")
             return result
+
+    def resume(
+        self,
+        business_id: str,
+        conversation_id: str,
+        *,
+        contact_id: str,
+        authority: str,
+        reason: str,
+    ) -> Dict[str, Any]:
+        """Release a human pause only through an explicit operator action."""
+
+        for name, value in (("business_id", business_id), ("conversation_id", conversation_id), ("contact_id", contact_id), ("authority", authority), ("reason", reason)):
+            if not isinstance(value, str) or not value.strip():
+                raise ConversationError("retomada sem campo obrigatório: %s" % name)
+        with self._lock:
+            state = self.store.load_conversation(business_id, conversation_id, contact_id)
+            if state.get("responsible") != "human" and state.get("status") != "human_paused":
+                return {"resumed": False, "reason": "conversation_not_human_paused", "state": state}
+            expected_version = int(state.get("version", 0))
+            state["responsible"] = "ai"
+            state["status"] = "active"
+            state["pending"] = None
+            state["phase"] = "action_in_progress" if (state.get("operation") or {}).get("status") in {"pending", "unknown"} else "exploring"
+            state["follow_up_allowed"] = (state.get("operation") or {}).get("status") not in {"unknown", "pending"}
+            state["resume_control"] = {
+                "authority": authority,
+                "reason": reason,
+                "explicit": True,
+            }
+            state.setdefault("history", []).append(
+                {"type": "human_pause_resumed", "authority": authority, "reason": reason}
+            )
+            state["history"] = state["history"][-40:]
+            state["version"] = expected_version + 1
+            if not self.store.save_conversation_if_version(state, expected_version):
+                raise ConversationError("a conversa mudou durante a retomada; tente novamente")
+            return {"resumed": True, "reason": "explicit_authorization", "state": state}
 
     def schedule_follow_up(self, business_id: str, conversation_id: str, task_id: str, message: str) -> Dict[str, Any]:
         """Queue a follow-up intent; sending is revalidated at the call site."""
@@ -233,18 +461,78 @@ class SellerEngine:
         trace: List[Dict[str, Any]] = []
         evidence: List[Dict[str, Any]] = []
         action: Optional[Dict[str, Any]] = None
+        objection_response: Optional[str] = None
+        state.setdefault(
+            "memory",
+            {"facts": {}, "fact_history": [], "open_questions": [], "answered_fields": [], "objective": state.get("intent", "unknown")},
+        )
+
+        # Chatwoot events must come from the authenticated admission ledger
+        # for every response, not only for checkout.  A forged event must not
+        # be able to ask the model to disclose catalog/knowledge or pause a
+        # real conversation.  The safe result is audited locally without an
+        # outbox intent.
+        if str(event.get("channel", "")) == "chatwoot" and not self._identity_verified(event):
+            state["pending"] = {
+                "type": "channel_authentication_required",
+                "reason": "evento Chatwoot não foi admitido pela entrada autenticada",
+            }
+            return self._result(
+                event,
+                state,
+                "",
+                trace=[{"type": "channel_event_rejected", "reason": "authentication_required"}],
+            )
 
         # A human owner has precedence over every model proposal.
         if state.get("responsible") == "human" or state.get("status") == "human_paused":
             return EngineResult(
                 event_id=str(event["event_id"]),
                 conversation_id=str(event["conversation_id"]),
-                response="A conversa está aguardando atendimento humano. Não vou enviar novas mensagens automáticas.",
+                response="",
                 state=state,
                 trace=[{"type": "human_pause_respected"}],
             )
 
-        proposal = self.model.propose(text, package, state)
+        skill_selection = self.skill_catalog.select(package, text, state)
+        skill_trace = {
+            "type": "skills_selected",
+            "declared": skill_selection["declared"],
+            "available": skill_selection["available"],
+            "selected": skill_selection["selected"],
+            "context_prepared": skill_selection["context_prepared"],
+            "applied": skill_selection["applied"],
+            "sent_to_model": skill_selection["sent_to_model"],
+            # The runtime can only report this after an adapter explicitly
+            # returns the observation; preparation is not evidence of model
+            # application.
+            "model_observed_applied": None,
+            "unavailable": skill_selection["unavailable"],
+            "budget": skill_selection["budget"],
+        }
+        trace.append(skill_trace)
+        if skill_selection["unavailable"]:
+            trace.append(
+                {
+                    "type": "skills_degraded",
+                    "reasons": skill_selection["unavailable"],
+                    "model_mode": getattr(self.model, "name", "unknown"),
+                }
+            )
+        runtime_package = dict(package)
+        runtime_package["_buyer_skill_context"] = self.skill_catalog.context(skill_selection)
+        try:
+            proposal = self.model.propose(text, runtime_package, state)
+        except Exception:
+            state["pending"] = {"type": "model_unavailable", "reason": "proposal_failed"}
+            trace.append({"type": "model_error", "model": getattr(self.model, "name", "unknown")})
+            return self._result(
+                event,
+                state,
+                "Não consegui validar esta mensagem agora. Não vou inventar uma condição nem executar uma operação; tente novamente ou peça atendimento humano.",
+                trace=trace,
+            )
+        skill_trace["model_observed_applied"] = self._model_observed_skills(proposal)
         trace.append(
             {
                 "type": "model_proposal",
@@ -252,6 +540,7 @@ class SellerEngine:
                 "intent": proposal.intent,
                 "offer_id": proposal.offer_id,
                 "requested_action": proposal.requested_action,
+                "topics": list(proposal.topics),
             }
         )
         offer = self._offer(package, proposal.offer_id)
@@ -269,9 +558,165 @@ class SellerEngine:
                 "Existe uma operação com resultado pendente de conciliação. Não vou alterar o pedido nem iniciar outro checkout antes de resolvê-la.",
                 trace=trace + [{"type": "effect_reconciliation_required"}],
             )
-        self._merge_safe_facts(state, proposal, offer, trace)
+        self._merge_safe_facts(state, proposal, offer, trace, event_id=str(event["event_id"]))
+
+        # A profile is a durable scope decision, not a hint for the model.
+        # A later bare update such as "tamanho M" must not turn a support,
+        # financial, post-sale, or informational conversation back into a
+        # checkout. Only an explicit commercial resumption can leave one of
+        # those profiles.
+        limited_profiles = {"support", "post_sale", "financial", "informational"}
+        current_profile = str(state.get("profile", "commercial"))
+        if current_profile in limited_profiles and proposal.intent in {"buy", "update"}:
+            if self._explicit_commercial_resume(text, proposal, state):
+                state["profile"] = "commercial"
+                state["pending"] = None
+                state["memory"]["objective"] = "commercial"
+                trace.append(
+                    {
+                        "type": "profile_commercial_resume",
+                        "from": current_profile,
+                        "source": "explicit_buyer_request",
+                    }
+                )
+            else:
+                state["pending"] = {
+                    "type": "profile_scope",
+                    "profile": current_profile,
+                    "reason": "commercial_resume_required",
+                }
+                trace.append(
+                    {
+                        "type": "profile_limit_enforced",
+                        "profile": current_profile,
+                        "intent": proposal.intent,
+                        "reason": "commercial_resume_required",
+                    }
+                )
+                return self._result(
+                    event,
+                    state,
+                    "Este atendimento está no perfil %s. Não vou abrir checkout a partir de uma atualização isolada; diga explicitamente que quer retomar a compra se isso for o que deseja."
+                    % current_profile.replace("_", "-"),
+                    trace=trace,
+                )
+
+        if proposal.intent in {"post_sale", "support", "financial"}:
+            previous_profile = state.get("profile", "commercial")
+            state["profile"] = (
+                "post_sale" if proposal.intent == "post_sale" else "financial" if proposal.intent == "financial" else "support"
+            )
+            state["intent"] = proposal.intent
+            state["memory"]["objective"] = proposal.intent
+            state["pending"] = {
+                "type": "financial_scope" if proposal.intent == "financial" else "support_scope",
+                "reason": "profile_limits_commercial_actions",
+            }
+            trace.append(
+                {
+                    "type": "profile_transition",
+                    "from": previous_profile,
+                    "to": state["profile"],
+                    "source": "buyer_intent",
+                }
+            )
+            return self._result(
+                event,
+                state,
+                (
+                    "Entendi. Vou tratar esta conversa como financeira e não vou abrir checkout, confirmar pagamento ou prometer estorno sem o provedor."
+                    if proposal.intent == "financial"
+                    else "Entendi. Vou tratar esta conversa como suporte/pós-venda e manter o atendimento dentro desse escopo. Posso registrar o problema e consultar a documentação aprovada."
+                ),
+                trace=trace,
+            )
+
+        if proposal.intent == "preference":
+            conversation_policy = package.get("policies", {}).get("conversation", {})
+            transitions = conversation_policy.get("preference_transitions", []) if isinstance(conversation_policy, Mapping) else []
+            normalized_text = text.casefold()
+            selected = next(
+                (
+                    item
+                    for item in transitions
+                    if isinstance(item, Mapping)
+                    and any(str(term).casefold() in normalized_text for term in item.get("terms", []))
+                ),
+                None,
+            )
+            if selected is None:
+                state["pending"] = {"type": "preference_review", "reason": "preference_not_configured"}
+                return self._result(
+                    event,
+                    state,
+                    "Registrei sua preferência, mas ela ainda não está configurada para mudar o atendimento automaticamente.",
+                    trace=trace + [{"type": "preference_unconfigured"}],
+                )
+            previous_profile = state.get("profile", "commercial")
+            profile = str(selected.get("profile", "commercial"))
+            source = str(selected.get("source", "package-policy"))
+            state["profile"] = profile
+            state["intent"] = str(selected.get("objective", "information"))
+            state["pending"] = None
+            state["memory"]["objective"] = state["intent"]
+            state["memory"]["preference"] = {
+                "id": str(selected.get("id", "configured-preference")),
+                "value": proposal.facts.get("preference", text),
+                "source": source,
+                "event_id": str(event["event_id"]),
+            }
+            trace.append(
+                {
+                    "type": "preference_transition",
+                    "from": previous_profile,
+                    "to": profile,
+                    "preference_id": state["memory"]["preference"]["id"],
+                    "source": source,
+                }
+            )
+            return self._result(
+                event,
+                state,
+                "Entendi. Vou manter o atendimento no modo informativo configurado, sem preparar uma operação de compra automaticamente.",
+                trace=trace,
+            )
+
+        if proposal.intent == "objection":
+            state["intent"] = "objection"
+            if offer and offer.get("price_type", "fixed") == "fixed" and "price" in proposal.topics:
+                amount = float(offer["price"])
+                suffix = " por unidade" if offer.get("kind") == "physical" else ""
+                trace.append(
+                    {
+                        "type": "objection_handled",
+                        "conditions_source": "approved_package",
+                        "offer_id": offer["id"],
+                    }
+                )
+                trace.append(
+                    {
+                        "type": "unsupported_objection_claim_blocked",
+                        "claims": ["discount", "urgency"],
+                    }
+                )
+                objection_response = (
+                    "Entendo a preocupação. A condição aprovada é R$ %.2f%s. "
+                    "Não há desconto aprovado nesta configuração; não vou inventar uma condição comercial."
+                    % (amount, suffix)
+                )
+                if len(proposal.topics) <= 1:
+                    return self._result(event, state, objection_response, trace=trace)
+                # Price is already answered by the structured offer.  Keep all
+                # other requested topics for the evidence path instead of
+                # letting the objection short-circuit the buyer's question.
+                proposal.topics = [topic for topic in proposal.topics if topic != "price"]
+            trace.append({"type": "objection_handled", "conditions_source": "approved-evidence"})
+            proposal.intent = "knowledge"
 
         if proposal.intent == "stop":
+            self.store.cancel_pending_deliveries(
+                str(package["business"]["id"]), str(state["conversation_id"]), "cancelled by buyer refusal"
+            )
             self.store.cancel_followups(str(package["business"]["id"]), str(state["conversation_id"]))
             state["follow_up_allowed"] = False
             state["responsible"] = "ai"
@@ -281,6 +726,9 @@ class SellerEngine:
             return self._result(event, state, "Entendido. Não vou enviar novas mensagens comerciais.", trace=trace)
 
         if proposal.intent == "human":
+            self.store.cancel_pending_deliveries(
+                str(package["business"]["id"]), str(state["conversation_id"]), "cancelled by human takeover"
+            )
             self.store.cancel_followups(str(package["business"]["id"]), str(state["conversation_id"]))
             pending_context = state.get("pending")
             state["responsible"] = "human"
@@ -358,30 +806,85 @@ class SellerEngine:
                 )
             if not offer:
                 offer = self._offer(package, state.get("facts", {}).get("offer_id"))
-            query = text
-            hits = self.knowledge.search(str(package["business"]["id"]), query, 5)
-            evidence = [dict(hit) for hit in hits]
-            if not hits:
-                state["pending"] = {"type": "evidence", "reason": "no_authorized_source"}
+            business_id = str(package["business"]["id"])
+            declared_topics = list(proposal.topics)
+            # A generic fallback is not evidence. If an adapter omitted the
+            # requested topic (or returned only the legacy ``general``
+            # placeholder), fail closed and record the ambiguity explicitly.
+            topics = [topic for topic in declared_topics if topic != "general"]
+            if not topics:
+                state["pending"] = {
+                    "type": "evidence",
+                    "reason": "no_authorized_source",
+                    "missing_topics": [],
+                }
                 return self._result(
                     event,
                     state,
-                    "Não encontrei uma fonte aprovada para confirmar isso agora. Vou encaminhar a dúvida sem inventar uma resposta.",
-                    trace=trace + [{"type": "evidence_missing"}],
-                    evidence=evidence,
+                    "Não consegui identificar uma condição específica para consultar. Vou registrar a lacuna sem usar uma fonte genérica ou inventar uma resposta.",
+                    trace=trace + [{"type": "evidence_topic_missing", "declared_topics": declared_topics}],
                 )
-            if self._material_conflict(hits):
-                state["pending"] = {"type": "evidence", "reason": "material_conflict"}
+            responses: List[str] = [objection_response] if objection_response else []
+            missing_topics: List[str] = []
+            conflict_topics: List[str] = []
+            used_trace = list(trace)
+            for topic in topics:
+                if topic == "price":
+                    if offer and offer.get("price_type", "fixed") == "fixed":
+                        amount = float(offer["price"])
+                        suffix = " por unidade" if offer.get("kind") == "physical" else ""
+                        responses.append("O %s custa R$ %.2f%s." % (offer["name"], amount, suffix))
+                    else:
+                        missing_topics.append(topic)
+                    continue
+                query = "%s %s" % (topic, text)
+                search_kwargs = {"audience": "buyer"}
+                if offer:
+                    search_kwargs["scope"] = str(offer.get("id", ""))
+                hits = [
+                    hit
+                    for hit in self.knowledge.search(business_id, query, 5, **search_kwargs)
+                    if not hit.get("subject") or str(hit.get("subject")) == topic
+                    if self._evidence_covers_topic(topic, hit)
+                ]
+                if not hits:
+                    missing_topics.append(topic)
+                    continue
+                if self._material_conflict(hits):
+                    conflict_topics.append(topic)
+                    continue
+                chosen = hits[0]
+                evidence.append(dict(chosen))
+                responses.append(self._evidence_answer(text, chosen["content"]))
+                used_trace.append({"type": "evidence_used", "topic": topic, "evidence_id": chosen["evidence_id"]})
+            if conflict_topics:
+                state["pending"] = {"type": "evidence", "reason": "material_conflict", "topics": conflict_topics}
                 return self._result(
                     event,
                     state,
                     "Encontrei condições conflitantes e não vou escolher uma arbitrariamente. Preciso confirmar qual política está vigente.",
-                    trace=trace + [{"type": "evidence_conflict", "hits": len(hits)}],
+                    trace=used_trace + [{"type": "evidence_conflict", "topics": conflict_topics}],
                     evidence=evidence,
                 )
-            content = hits[0]["content"]
-            response = self._evidence_answer(text, content)
-            return self._result(event, state, response, trace=trace + [{"type": "evidence_used", "evidence_id": hits[0]["evidence_id"]}], evidence=evidence)
+            if missing_topics:
+                state["pending"] = {
+                    "type": "evidence",
+                    "reason": "partial_coverage" if responses else "no_authorized_source",
+                    "missing_topics": missing_topics,
+                }
+                labels = ", ".join(self._topic_label(topic) for topic in missing_topics)
+                if responses:
+                    response = " ".join(responses) + " Sobre %s, não encontrei uma condição documentada e aprovada agora." % labels
+                else:
+                    response = "Não encontrei uma fonte aprovada para confirmar %s agora. Vou registrar a lacuna sem inventar uma resposta." % labels
+                return self._result(
+                    event,
+                    state,
+                    response,
+                    trace=used_trace + [{"type": "evidence_missing", "topics": missing_topics}],
+                    evidence=evidence,
+                )
+            return self._result(event, state, " ".join(responses), trace=used_trace, evidence=evidence)
 
         if proposal.intent == "payment_proof":
             state["pending"] = {"type": "payment_verification", "reason": "customer-provided proof is not provider confirmation"}
@@ -467,7 +970,13 @@ class SellerEngine:
                 )
             state["facts"]["delivery"] = delivery
 
-        missing = self._missing_for_offer(offer, state["facts"], str(event["contact_id"]))
+        identity_verified = self._identity_verified(event)
+        missing = self._missing_for_offer(
+            offer,
+            state["facts"],
+            str(event["contact_id"]),
+            identity_verified=identity_verified,
+        )
         if missing:
             reason = self._reason_for_field(missing, offer)
             return self._ask(event, state, offer, missing, reason, trace)
@@ -475,16 +984,50 @@ class SellerEngine:
         if offer.get("mode") in {"consultative", "proposal", "appointment"} or offer.get("price_type") == "on_request":
             if (state.get("pending") or {}).get("type") == "quote_confirmation" and not state["facts"].get("confirmation"):
                 return self._result(event, state, "O escopo está pronto. Confirma que posso preparar a proposta?", trace=trace)
-            result = self.commerce.prepare_proposal(
-                package,
-                offer["id"],
-                state["facts"],
-                business_id=package["business"]["id"],
-                conversation_id=state["conversation_id"],
-            )
+            try:
+                result = self.commerce.prepare_proposal(
+                    package,
+                    offer["id"],
+                    state["facts"],
+                    business_id=package["business"]["id"],
+                    conversation_id=state["conversation_id"],
+                )
+            except CommerceError as exc:
+                trace.append({"type": "proposal_result", "status": exc.status, "code": exc.code})
+                if exc.status == "pending" and exc.code == "effect_in_progress":
+                    state["operation"] = {
+                        "type": "proposal",
+                        "status": "pending",
+                        "effect_key": exc.details.get("effect_key"),
+                        "reservation_id": exc.details.get("reservation_id"),
+                    }
+                    state["pending"] = {"type": "effect_in_progress", "effect_key": exc.details.get("effect_key")}
+                    state["phase"] = "action_in_progress"
+                    return self._result(
+                        event,
+                        state,
+                        "Já existe uma proposta em preparação. Não vou duplicá-la; aguarde a confirmação ou peça a conciliação.",
+                        trace=trace + [{"type": "proposal_in_progress", "effect_key": exc.details.get("effect_key")}],
+                    )
+                if exc.status == "unknown":
+                    state["operation"] = {
+                        "type": "proposal",
+                        "status": "unknown",
+                        **exc.details,
+                    }
+                    state["pending"] = {"type": "reconcile_proposal", "effect_key": exc.details.get("effect_key")}
+                    state["phase"] = "action_in_progress"
+                    return self._result(
+                        event,
+                        state,
+                        "O resultado da proposta não foi confirmado. Não vou repetir a operação; preciso conciliá-la antes de informar um resultado.",
+                        trace=trace,
+                    )
+                return self._result(event, state, "Não consegui preparar a proposta: %s" % str(exc), trace=trace)
             state["operation"] = {"type": "proposal", **result, "status": "confirmed"}
             state["phase"] = "action_in_progress"
             state["pending"] = None
+            state.setdefault("memory", {})["open_questions"] = []
             action = {"type": "prepare_proposal", **result}
             return self._result(
                 event,
@@ -526,12 +1069,28 @@ class SellerEngine:
                 business_id=package["business"]["id"],
                 conversation_id=state["conversation_id"],
                 contact_id=str(event["contact_id"]),
+                identity_verified=identity_verified,
             )
         except CommerceError as exc:
             trace.append({"type": "checkout_result", "status": exc.status, "code": exc.code})
             if exc.status == "pending" and exc.code == "identity_not_verified":
                 state["pending"] = {"type": "identity", "reason": "checkout requires verified contact"}
                 return self._result(event, state, "Para preparar o checkout, preciso confirmar a identificação do comprador. Qual e-mail devo usar?", trace=trace)
+            if exc.status == "pending" and exc.code == "effect_in_progress":
+                state["operation"] = {
+                    "type": "checkout",
+                    "status": "pending",
+                    "effect_key": exc.details.get("effect_key"),
+                    "reservation_id": exc.details.get("reservation_id"),
+                }
+                state["pending"] = {"type": "effect_in_progress", "effect_key": exc.details.get("effect_key")}
+                state["phase"] = "action_in_progress"
+                return self._result(
+                    event,
+                    state,
+                    "Já existe um checkout em preparação. Não vou duplicá-lo; aguarde a confirmação ou peça a conciliação.",
+                    trace=trace + [{"type": "checkout_in_progress", "effect_key": exc.details.get("effect_key")}],
+                )
             if exc.status == "unknown":
                 state["operation"] = {
                     "type": "checkout",
@@ -547,10 +1106,47 @@ class SellerEngine:
         state["phase"] = "action_in_progress"
         state["pending"] = None
         state["facts"].pop("confirmation", None)
+        state.setdefault("memory", {})["open_questions"] = []
         action = {"type": "prepare_checkout", **checkout}
         response = "O %s custa R$ %.2f. Você pode concluir aqui: %s" % (offer["name"], new_quote["amount"], checkout["url"])
         trace.append({"type": "checkout_prepared", "charged": checkout.get("charged", False)})
         return self._result(event, state, response, action, trace)
+
+    @staticmethod
+    def _required_capabilities(result: EngineResult) -> List[str]:
+        action = result.action or {}
+        action_capabilities = {
+            "prepare_checkout": "checkout_prepare",
+            "prepare_proposal": "quote",
+            "human_transfer": "human_transfer",
+        }
+        required = []
+        if action.get("type") in action_capabilities:
+            required.append(action_capabilities[str(action["type"])])
+        for item in result.trace:
+            if not isinstance(item, Mapping) or item.get("type") != "model_proposal":
+                continue
+            intent_capabilities = {"price": "catalog_query", "knowledge": "knowledge_query"}
+            capability = intent_capabilities.get(str(item.get("intent")))
+            if capability and capability not in required:
+                required.append(capability)
+        return required
+
+    @staticmethod
+    def _model_observed_skills(proposal: Proposal) -> Optional[List[Dict[str, Any]]]:
+        """Return only an adapter-declared observation, never infer it locally."""
+
+        raw = proposal.raw if isinstance(proposal.raw, Mapping) else {}
+        values = raw.get("skills_applied")
+        if not isinstance(values, list):
+            return None
+        observed = []
+        for value in values[:32]:
+            if isinstance(value, Mapping) and isinstance(value.get("id"), str):
+                observed.append({"id": value["id"], "version": value.get("version")})
+            elif isinstance(value, str) and value.strip():
+                observed.append({"id": value})
+        return observed
 
     @staticmethod
     def _offer(package: Mapping[str, Any], offer_id: Optional[str]) -> Optional[Dict[str, Any]]:
@@ -564,7 +1160,12 @@ class SellerEngine:
 
     @staticmethod
     def _merge_safe_facts(
-        state: Dict[str, Any], proposal: Proposal, offer: Optional[Mapping[str, Any]], trace: List[Dict[str, Any]]
+        state: Dict[str, Any],
+        proposal: Proposal,
+        offer: Optional[Mapping[str, Any]],
+        trace: List[Dict[str, Any]],
+        *,
+        event_id: str = "",
     ) -> None:
         text_fields = {
             "variant",
@@ -576,6 +1177,7 @@ class SellerEngine:
             "scope",
             "site",
             "deadline_condition",
+            "preference",
         }
         changed = {}
         for key, value in proposal.facts.items():
@@ -594,13 +1196,26 @@ class SellerEngine:
                 trace.append({"type": "fact_rejected", "field": str(key), "reason": "invalid_name_or_value"})
                 continue
             if state["facts"].get(key) != value:
-                changed[key] = {"old": state["facts"].get(key), "new": value}
+                old_value = state["facts"].get(key)
+                changed[key] = {"old": old_value, "new": value}
                 state["facts"][key] = value
+                memory = state.setdefault("memory", {})
+                memory.setdefault("fact_history", []).append(
+                    {"field": key, "old": old_value, "new": value, "event_id": event_id, "source": "buyer"}
+                )
+                memory["fact_history"] = memory["fact_history"][-100:]
         if proposal.offer_id and offer:
             if state["facts"].get("offer_id") != offer["id"]:
                 changed["offer_id"] = {"old": state["facts"].get("offer_id"), "new": offer["id"]}
             state["facts"]["offer_id"] = offer["id"]
         if changed:
+            memory = state.setdefault("memory", {})
+            memory["facts"] = dict(state["facts"])
+            memory["answered_fields"] = sorted(
+                key for key in state["facts"] if not str(key).startswith("_")
+            )
+            open_questions = [str(item) for item in memory.get("open_questions", [])]
+            memory["open_questions"] = [item for item in open_questions if item not in changed]
             trace.append({"type": "facts_updated", "changed": changed})
 
     @staticmethod
@@ -610,12 +1225,44 @@ class SellerEngine:
         fields = ("offer_id", "quantity", "variant", "payment_method", "region", "amount")
         return any(old.get(field) != new.get(field) for field in fields)
 
+    def _identity_verified(self, event: Mapping[str, Any]) -> bool:
+        """Accept a channel identity only after its authenticated admission."""
+
+        contact_id = str(event.get("contact_id", ""))
+        channel = str(event.get("channel", ""))
+        # ``verified:*`` is a synthetic identity reserved for CLI/tests.  It
+        # must never authenticate a real-shaped channel event.
+        if channel != "chatwoot":
+            return contact_id.startswith("verified:")
+        if contact_id.startswith("verified:"):
+            return False
+        context = event.get("channel_context")
+        if not isinstance(context, Mapping) or context.get("identity_verified") is not True:
+            return False
+        return self.store.is_admitted_channel_event(
+            "chatwoot",
+            context,
+            business_id=str(event.get("business_id", "")),
+            conversation_id=str(event.get("conversation_id", "")),
+            contact_id=contact_id,
+        )
+
     @staticmethod
-    def _missing_for_offer(offer: Mapping[str, Any], facts: Mapping[str, Any], contact_id: str) -> Optional[str]:
+    def _missing_for_offer(
+        offer: Mapping[str, Any],
+        facts: Mapping[str, Any],
+        contact_id: str,
+        *,
+        identity_verified: bool = False,
+    ) -> Optional[str]:
         for field in offer.get("required_fields", []):
             if not facts.get(field):
                 return str(field)
-        if offer.get("mode") == "direct" and not contact_id.startswith("verified:") and not facts.get("email"):
+        if (
+            offer.get("mode") == "direct"
+            and not identity_verified
+            and not facts.get("email")
+        ):
             return "email"
         return None
 
@@ -649,6 +1296,9 @@ class SellerEngine:
     ) -> EngineResult:
         state["pending"] = {"type": "missing_field", "field": field, "reason": reason, "offer_id": offer["id"]}
         state["answered_fields"] = sorted(set(state.get("answered_fields", [])) | set(state["facts"].keys()))
+        memory = state.setdefault("memory", {})
+        memory["open_questions"] = [field]
+        memory["answered_fields"] = list(state["answered_fields"])
         prompts = {
             "variant": "Qual tamanho: %s?" % ", ".join(str(item) for item in offer.get("stock", {}).keys()),
             "quantity": "Quantas unidades você quer?",
@@ -661,20 +1311,150 @@ class SellerEngine:
         return self._result(event, state, prompts.get(field, "Preciso confirmar %s para continuar." % field), trace=trace)
 
     @staticmethod
+    def _explicit_commercial_resume(text: str, proposal: Proposal, state: Mapping[str, Any]) -> bool:
+        """Require a buyer-authored commercial signal to leave a limited profile."""
+
+        value = " ".join(str(text).casefold().split())
+        if proposal.intent == "buy":
+            return bool(
+                re.search(
+                    r"\b(?:comprar|compra|contratar|fechar|finalizar|checkout|manda(?:r)? o link|vou levar|quero levar|retomar)\b",
+                    value,
+                )
+                or re.search(r"\bquero\s+(?:o|a|esse|essa)\b", value)
+            )
+        if proposal.intent == "update":
+            # A bare correction is deliberately insufficient. A confirmation
+            # can resume only an already established commercial operation.
+            has_operation = bool(state.get("quote") or (state.get("operation") or {}).get("type") == "checkout")
+            return has_operation and bool(
+                re.search(r"\b(?:retomar|continuar|voltar|confirmo|pode seguir|fechar|finalizar)\b", value)
+            )
+        return False
+
+    @staticmethod
+    def _confirmed_effect_conflicts_with_state(effect: Mapping[str, Any], state: Mapping[str, Any]) -> bool:
+        """Detect a new buyer fact that no longer describes a confirmed effect."""
+
+        reservation = effect.get("inventory_reservation")
+        facts = state.get("facts") if isinstance(state.get("facts"), Mapping) else {}
+        if isinstance(reservation, Mapping):
+            for fact_name, effect_name in (("offer_id", "offer_id"), ("variant", "variant"), ("quantity", "quantity")):
+                fact_value = facts.get(fact_name)
+                effect_value = reservation.get(effect_name)
+                if fact_value is not None and effect_value is not None and str(fact_value) != str(effect_value):
+                    return True
+        quote = state.get("quote")
+        if isinstance(quote, Mapping) and effect.get("quote_id") and quote.get("id"):
+            if str(quote.get("id")) != str(effect.get("quote_id")):
+                return True
+        return False
+
+    @staticmethod
     def _material_conflict(hits: List[Mapping[str, Any]]) -> bool:
+        if not hits:
+            return False
         if len(hits) < 2:
             return False
-        sources = {str(hit.get("source_id")) for hit in hits}
         combined = " ".join(str(hit.get("content", "")) for hit in hits)
         prices = set(re.findall(r"r\$\s*([\d.,]+)", combined, re.I))
         durations = set(re.findall(r"\b(\d+)\s*(?:dias?|meses?|semanas?)\b", combined, re.I))
-        return len(sources) > 1 and (len(prices) > 1 or len(durations) > 1)
+        revisions = {(str(hit.get("source_id")), str(hit.get("source_version"))) for hit in hits}
+        # Keep policy subjects separate. A guarantee, an exchange and a
+        # return are different answers even when they occur in the same
+        # source. A single document may also state both covered and excluded
+        # cases; that is not a source conflict, so only opposite *exclusive*
+        # statements across hits count.
+        policy_patterns = {
+            "guarantee": (
+                r"garant(?:ia|ias)",
+                r"(?:não|nao)\s+(?:cobre|inclui|abrange|oferece)|sem\s+garantia|(?:não|nao)\s+há\s+garantia",
+                r"(?:cobre|inclui|abrange|oferece|vale|válida|valida)",
+            ),
+            "exchange": (
+                r"troca",
+                r"(?:não|nao)\s+(?:aceita|permite|cobre).*troca|sem\s+troca",
+                r"(?:aceita|permite|cobre).*troca|troca.*(?:aceita|permitida|disponível|disponivel)",
+            ),
+            "return": (
+                r"devoluç(?:ão|ao)|reembolso",
+                r"(?:não|nao)\s+(?:aceita|permite|faz|há).*?(?:devoluç(?:ão|ao)|reembolso)|sem\s+(?:devoluç(?:ão|ao)|reembolso)",
+                r"(?:aceita|permite|faz|há|disponível|disponivel).*?(?:devoluç(?:ão|ao)|reembolso)|(?:devoluç(?:ão|ao)|reembolso).*?(?:aceita|permitida|disponível|disponivel)",
+            ),
+            "payment": (
+                r"(?:pix|cart(?:ão|ao)|boleto)",
+                r"(?:não|nao)\s+(?:aceita|permite|disponibiliza).*?(?:pix|cart(?:ão|ao)|boleto)",
+                r"(?:aceita|permite|disponibiliza).*?(?:pix|cart(?:ão|ao)|boleto)",
+            ),
+            "delivery": (
+                r"entrega|envio|entregamos",
+                r"(?:não|nao)\s+(?:entrega|enviamos|entregamos)|não\s+há\s+entrega|nao\s+ha\s+entrega",
+                r"(?:entrega|envio|entregamos).*?(?:disponível|disponivel|realizado|em\s+\d+)|(?:fazemos|realizamos).*?entrega",
+            ),
+            "availability": (
+                r"estoque|dispon(?:ível|ivel)|disponibilidade",
+                r"(?:não|nao)\s+(?:tem|há|ha|está|esta).*?(?:estoque|dispon)|esgotad",
+                r"(?:tem|há|ha|está|esta).*?(?:estoque|dispon)|dispon(?:ível|ivel)",
+            ),
+        }
+        semantic_conflict = False
+        for keyword, negative_pattern, positive_pattern in policy_patterns.values():
+            positive_only = False
+            negative_only = False
+            for content in (str(hit.get("content", "")) for hit in hits):
+                value = content.casefold()
+                if not re.search(keyword, value):
+                    continue
+                negative = bool(re.search(negative_pattern, value))
+                # Positive verbs such as "cobre" or "aceita" also occur
+                # inside a negated clause ("não cobre"). Do not classify
+                # that same hit as a positive-only policy.
+                positive = bool(re.search(positive_pattern, value)) and not negative
+                positive_only = positive_only or (positive and not negative)
+                negative_only = negative_only or (negative and not positive)
+            if positive_only and negative_only:
+                semantic_conflict = True
+                break
+        return bool(
+            semantic_conflict
+            or (len(revisions) > 1 and (len(prices) > 1 or len(durations) > 1))
+        )
 
     @staticmethod
     def _evidence_answer(question: str, content: str) -> str:
         if "acesso" in question.casefold() or "acesso" in content.casefold():
             return content
         return content
+
+    @staticmethod
+    def _topic_label(topic: str) -> str:
+        return {
+            "guarantee": "a garantia",
+            "exchange": "a política de troca",
+            "return": "a política de devolução",
+            "price": "o preço",
+            "access": "o acesso",
+            "delivery": "a entrega",
+            "payment": "o pagamento",
+            "availability": "a disponibilidade",
+            "general": "essa condição",
+        }.get(topic, topic)
+
+    @staticmethod
+    def _evidence_covers_topic(topic: str, evidence: Mapping[str, Any]) -> bool:
+        content = str(evidence.get("content", "")).casefold()
+        terms = {
+            "guarantee": ("garantia",),
+            "exchange": ("troca",),
+            "return": ("devolu", "reembolso"),
+            "access": ("acesso", "libera", "dura", "meses"),
+            "delivery": ("entrega", "prazo", "envio", "chegar"),
+            "payment": ("pagamento", "pix", "cartao", "cartão", "parcel"),
+            "availability": ("estoque", "dispon", "tamanho", "unidade"),
+            "price": ("preço", "preco", "custa", "valor", "r$"),
+            "general": ("",),
+        }.get(topic, (topic,))
+        return any(term in content for term in terms)
 
     @staticmethod
     def _result(

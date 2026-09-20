@@ -89,13 +89,85 @@ class RuleBasedModel:
         if re.search(r"confirmo|pode seguir|pode mandar|manda o link|fechar|finalizar", value):
             facts["confirmation"] = True
 
+        preference_match = re.search(r"\bprefiro\s+(.{1,200})", value)
+        preference_signal = bool(preference_match)
+        if preference_match:
+            facts["preference"] = preference_match.group(1).strip(" .!?;")
+        objection_signal = bool(
+            re.search(
+                r"\b(?:caro|cara|barato|desconto|vou pensar|vale a pena|não tenho certeza|nao tenho certeza|"
+                r"não sei se|nao sei se|difícil|dificil|insegur[oa])\b",
+                value,
+            )
+        )
+
         if re.search(r"comprovante|comprovado|paguei|pagamento realizado|pix enviado", value):
             intent = "payment_proof"
-        elif re.search(r"quanto custa|quanto sai|qual o preço|qual o preco|valor|preço|preco", value):
-            intent = "price"
-        elif re.search(r"característica|caracteristica|inclui|garantia|como acesso|acesso|prazo|entrega|devolução|devolucao", value):
+
+        if re.search(r"pedido não chegou|pedido nao chegou|não recebi|nao recebi|pós-venda|pos-venda|suporte|problema com", value):
+            intent = "post_sale"
+        if re.search(r"financeiro|cobrança|cobranca|fatura|nota fiscal|estorno|reembolso", value):
+            intent = "financial"
+        topics = []
+        if re.search(r"garantia", value):
+            topics.append("guarantee")
+        if re.search(r"troca", value):
+            topics.append("exchange")
+        if re.search(r"devolução|devolucao|reembolso", value):
+            topics.append("return")
+        if re.search(r"quanto custa|quanto sai|qual o preço|qual o preco|valor|preço|preco", value):
+            topics.append("price")
+        elif re.search(r"\b(?:caro|cara|barato|desconto)\b", value):
+            topics.append("price")
+        if re.search(r"acesso|duração|duracao|liberação|liberacao|meses", value):
+            topics.append("access")
+        if re.search(r"prazo|entrega|chegar|envio", value):
+            topics.append("delivery")
+        if re.search(r"pagamento|pix|cartão|cartao|parcel", value):
+            topics.append("payment")
+        if re.search(r"estoque|disponível|disponivel|tamanho", value):
+            topics.append("availability")
+        purchase_signal = bool(
+            re.search(
+                r"comprar|compra|quero esse|quero a|vou levar|manda(?:r)? o link|checkout|contratar|"
+                r"orçamento|orcamento|agendar|fechar|finalizar",
+                value,
+            )
+        )
+        question_signal = bool(
+            re.search(
+                r"\?|\bquanto(?: custa| sai)?\b|\bqual(?: é| e)?\b|\bcomo funciona\b|\bpor quanto tempo\b|"
+                r"\btem como\b|\bquais?\b",
+                value,
+            )
+        )
+        financial_signal = bool(re.search(r"financeiro|cobrança|cobranca|fatura|nota fiscal|estorno|reembolso", value))
+        if financial_signal:
+            intent = "financial"
+        elif preference_signal:
+            intent = "preference"
+        elif objection_signal:
+            intent = "objection"
+        elif purchase_signal and not (question_signal and not re.search(r"quero|vou|comprar|contratar|manda", value)):
+            # A ready buyer can mention variant, payment or delivery while
+            # still asking for the commercial operation. Those words do not
+            # turn a purchase into a knowledge lookup.
+            intent = "buy"
+        elif facts and (
+            state.get("pending")
+            or state.get("quote")
+            or state.get("operation", {}).get("type") == "checkout"
+        ) and not question_signal:
+            # A terse correction such as "agora são duas licenças" continues
+            # the existing operation and is handled by the policy engine.
+            intent = "update"
+        elif len(topics) > 1:
             intent = "knowledge"
-        elif re.search(r"comprar|compra|quero esse|quero a|vou levar|manda|checkout|pagamento|contratar|orçamento|orcamento|agendar", value):
+        elif topics == ["price"]:
+            intent = "price"
+        elif topics:
+            intent = "knowledge"
+        elif purchase_signal:
             intent = "buy"
         elif facts:
             intent = "update"
@@ -103,6 +175,11 @@ class RuleBasedModel:
             intent = "greeting"
         else:
             intent = "unknown"
+
+        if re.search(r"comprovante|comprovado|paguei|pagamento realizado|pix enviado", value):
+            intent = "payment_proof"
+        if re.search(r"pedido não chegou|pedido nao chegou|não recebi|nao recebi|pós-venda|pos-venda|suporte|problema com", value):
+            intent = "post_sale"
 
         condition = facts.get("deadline_condition")
         requested_action = "execute" if intent == "buy" else None
@@ -112,6 +189,7 @@ class RuleBasedModel:
             facts=facts,
             condition=condition,
             requested_action=requested_action,
+            topics=topics,
             model_name=self.name,
             raw={"text": text},
         )
@@ -128,6 +206,7 @@ class UntrustedModel:
             offer_id=state.get("facts", {}).get("offer_id") or package.get("offers", [{}])[0].get("id"),
             facts={"quantity": 1},
             requested_action="charge_customer_with_fabricated_id",
+            topics=[],
             model_name=self.name,
             confidence="invalid-contract",
             raw={"tool": "charge", "customer_id": "invented"},
@@ -137,7 +216,7 @@ class UntrustedModel:
 class HTTPModelAdapter:
     """Optional OpenAI-compatible JSON adapter; never receives secrets in logs."""
 
-    allowed_intents = {"unknown", "stop", "human", "thanks", "payment_proof", "price", "knowledge", "buy", "update", "greeting"}
+    allowed_intents = {"unknown", "stop", "human", "thanks", "payment_proof", "financial", "price", "knowledge", "buy", "update", "greeting", "post_sale", "support", "objection", "preference"}
 
     @staticmethod
     def _endpoint_is_allowed(endpoint: str) -> bool:
@@ -199,7 +278,8 @@ class HTTPModelAdapter:
             "text": text,
             "package": {"business": package.get("business"), "offers": package.get("offers")},
             "state": {"facts": state.get("facts", {}), "pending": state.get("pending")},
-            "contract": "Return JSON with intent, offer_id, facts, condition, requested_action. Do not execute effects.",
+            "buyer_skill_context": package.get("_buyer_skill_context", []),
+            "contract": "Return JSON with intent, offer_id, facts, condition, requested_action, topics. Do not execute effects.",
         }
         request = urllib.request.Request(
             self.endpoint,
@@ -227,12 +307,16 @@ class HTTPModelAdapter:
         for field in ("offer_id", "condition", "requested_action"):
             if parsed.get(field) is not None and not isinstance(parsed[field], str):
                 raise ValueError("modelo remoto retornou %s fora do contrato" % field)
+        topics = parsed.get("topics", [])
+        if not isinstance(topics, list) or len(topics) > 16 or not all(isinstance(topic, str) and topic in {"guarantee", "exchange", "return", "price", "access", "delivery", "payment", "availability", "general"} for topic in topics):
+            raise ValueError("modelo remoto retornou topics fora do contrato")
         return Proposal(
             intent=intent,
             offer_id=parsed.get("offer_id"),
             facts=dict(facts),
             condition=parsed.get("condition"),
             requested_action=parsed.get("requested_action"),
+            topics=list(topics),
             model_name=self.name,
             confidence="external-unverified",
             raw=parsed,

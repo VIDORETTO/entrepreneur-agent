@@ -1,3 +1,5 @@
+import threading
+
 import pytest
 
 from sales_agent.config import ConfigurationManager, seed_package
@@ -30,6 +32,56 @@ def test_changed_consultative_scope_prepares_a_new_idempotent_proposal(app):
     assert second.action["type"] == "prepare_proposal"
     assert first.action["effect_key"] != second.action["effect_key"]
     assert first.action["proposal_id"] != second.action["proposal_id"]
+
+
+def test_live_proposal_reservation_is_not_reported_as_prepared(app, monkeypatch):
+    store, engine = app
+    original_reserve = store.reserve_effect
+
+    def reserve_but_leave_in_flight(effect_key, kind, payload):
+        created, existing = original_reserve(effect_key, kind, payload)
+        return (False, existing) if created else (created, existing)
+
+    monkeypatch.setattr(store, "reserve_effect", reserve_but_leave_in_flight)
+    result = engine.handle(
+        event("reforma-consultiva", "proposal-in-flight", "e1", "Quero orçamento para reforma completa da cozinha em SP.")
+    )
+
+    assert result.action is None
+    assert result.state["operation"]["status"] == "pending"
+    assert result.state["pending"]["type"] == "effect_in_progress"
+    assert store.list_effects("reserved")
+
+
+def test_expired_proposal_reservation_becomes_unknown_until_reconciled(app, monkeypatch):
+    store, engine = app
+    original_reserve = store.reserve_effect
+
+    def reserve_then_expire(effect_key, kind, payload):
+        created, existing = original_reserve(effect_key, kind, payload)
+        if created:
+            expired = {
+                **existing,
+                "reservation_expires_at": "2000-01-01T00:00:00+00:00",
+                "reservation_expired": True,
+            }
+            with store.connect() as db:
+                db.execute(
+                    "UPDATE effects SET payload = ? WHERE effect_key = ?",
+                    (store.dumps({key: value for key, value in expired.items() if key != "status"}), effect_key),
+                )
+            return False, expired
+        return created, existing
+
+    monkeypatch.setattr(store, "reserve_effect", reserve_then_expire)
+    result = engine.handle(
+        event("reforma-consultiva", "proposal-expired", "e1", "Quero orçamento para reforma completa da cozinha em SP.")
+    )
+
+    assert result.action is None
+    assert result.state["operation"]["status"] == "unknown"
+    assert result.state["pending"]["type"] == "reconcile_proposal"
+    assert store.list_effects("unknown")
 
 
 def test_only_missing_variant_is_asked_and_previous_facts_are_reused(app):
@@ -73,6 +125,56 @@ def test_duplicate_event_replays_once(app):
     assert first.action["type"] == "prepare_checkout"
     assert second.duplicate is True
     assert len([item for item in store.list_outbox() if item["conversation_id"] == "duplicate"]) == 1
+
+
+def test_concurrent_same_event_does_not_lose_confirmed_checkout_outbox(app, monkeypatch):
+    store, _ = app
+    first_started_confirmation = threading.Event()
+    second_committed = threading.Event()
+    original_update_effect = store.update_effect
+    original_handle = SellerEngine(store).handle
+    first_result = {}
+
+    def block_first_confirmation(effect_key, status, payload):
+        if status == "confirmed" and not first_started_confirmation.is_set():
+            first_started_confirmation.set()
+            assert second_committed.wait(timeout=5)
+        return original_update_effect(effect_key, status, payload)
+
+    monkeypatch.setattr(store, "update_effect", block_first_confirmation)
+
+    message = event(
+        "azul-b2c",
+        "concurrent-checkout",
+        "same-event",
+        "Quero comprar a camiseta azul tamanho M, uma unidade para SP.",
+    )
+
+    def first_worker():
+        first_result["value"] = original_handle(message)
+
+    thread = threading.Thread(target=first_worker)
+    thread.start()
+    assert first_started_confirmation.wait(timeout=5)
+
+    second = SellerEngine(store).handle(message)
+    second_committed.set()
+    thread.join(timeout=5)
+    assert not thread.is_alive()
+
+    effect_key = "checkout:"
+    effects = store.list_effects("confirmed")
+    assert len(effects) == 1
+    assert effects[0]["effect_key"].startswith(effect_key)
+    assert store.inventory("azul-b2c", "camiseta-azul", "M") == 0
+    outbox = [item for item in store.list_outbox() if item["conversation_id"] == "concurrent-checkout"]
+    assert len(outbox) == 1
+    assert outbox[0]["action"]["type"] == "prepare_checkout"
+    assert first_result["value"].action and first_result["value"].action["type"] == "prepare_checkout"
+    assert second.action is None
+    replay = SellerEngine(store).handle(message)
+    assert replay.duplicate is True
+    assert replay.action and replay.action["type"] == "prepare_checkout"
 
 
 def test_same_event_id_in_different_conversations_has_distinct_delivery_keys(app):
@@ -123,8 +225,17 @@ def test_correction_after_effect_enters_reconciliation(app):
     assert first.action["type"] == "prepare_checkout"
     assert result.action is None
     assert result.state["pending"]["type"] == "post_effect_correction"
-    assert result.state["operation"]["status"] == "unknown"
+    # The checkout effect was already confirmed.  The conversation remains
+    # blocked for reconciliation instead of rewriting a real effect as
+    # unknown.
+    assert result.state["operation"]["status"] == "confirmed"
     assert "conciliação" in result.response
+    stale_messages = [
+        item
+        for item in store.list_outbox()
+        if item["conversation_id"] == "post-effect" and item.get("event_id") == "e2"
+    ]
+    assert stale_messages and stale_messages[0]["response"]
 
     reconciled = store.reconcile_effect(
         result.state["operation"]["effect_key"],
@@ -221,6 +332,70 @@ def test_human_request_pauses_automatic_seller(app):
     assert result.action["type"] == "human_transfer"
     assert later.action is None
     assert later.state["status"] == "human_paused"
+
+
+def test_human_pause_cancels_pending_delivery_and_keeps_later_events_silent(app):
+    store, engine = app
+
+    prepared = engine.handle(event("azul-b2c", "silent-pause", "e1", "Quanto custa a camiseta azul?"))
+    assert prepared.response
+    assert [item for item in store.list_outbox(status="pending") if item["conversation_id"] == "silent-pause"]
+
+    takeover = engine.handle(event("azul-b2c", "silent-pause", "e2", "Quero falar com uma pessoa."))
+    assert takeover.action and takeover.action["type"] == "human_transfer"
+    assert not [
+        item
+        for item in store.list_outbox(status="pending")
+        if item["conversation_id"] == "silent-pause" and item.get("event_id") == "e1"
+    ]
+
+    later = engine.handle(event("azul-b2c", "silent-pause", "e3", "Também quero o tamanho M."))
+    assert later.response == ""
+    assert later.action is None
+    assert later.state["status"] == "human_paused"
+    assert not [item for item in store.list_outbox() if item["conversation_id"] == "silent-pause" and item.get("event_id") == "e3"]
+
+
+def test_human_pause_requires_explicit_resume_before_automatic_service_returns(app):
+    store, engine = app
+    engine.handle(event("azul-b2c", "explicit-resume", "e1", "Quero falar com uma pessoa."))
+
+    thanks = engine.handle(event("azul-b2c", "explicit-resume", "e2", "Obrigado."))
+    greeting = engine.handle(event("azul-b2c", "explicit-resume", "e3", "Olá."))
+    assert thanks.response == ""
+    assert greeting.response == ""
+
+    resumed = engine.resume(
+        "azul-b2c",
+        "explicit-resume",
+        contact_id="verified:test",
+        authority="operator",
+        reason="fila humana liberou a conversa",
+    )
+    assert resumed["resumed"] is True
+    assert resumed["state"]["responsible"] == "ai"
+    assert resumed["state"]["status"] == "active"
+
+    after_resume = engine.handle(
+        event("azul-b2c", "explicit-resume", "e4", "Quero comprar a camiseta azul tamanho M, uma unidade para SP.")
+    )
+    assert after_resume.response
+    assert after_resume.state["responsible"] == "ai"
+
+
+def test_refusal_cancels_already_queued_commercial_reply(app):
+    store, engine = app
+
+    engine.handle(event("azul-b2c", "silent-refusal", "e1", "Quanto custa a camiseta azul?"))
+    stopped = engine.handle(event("azul-b2c", "silent-refusal", "e2", "Não quero receber mais mensagens."))
+
+    assert stopped.state["status"] == "closed_without_sale"
+    cancelled = [
+        item
+        for item in store.list_outbox(status="cancelled")
+        if item["conversation_id"] == "silent-refusal" and item.get("event_id") == "e1"
+    ]
+    assert cancelled and "refusal" in (cancelled[0]["last_error"] or "")
 
 
 def test_refusal_cancels_follow_up_and_does_not_restart_sale(app):

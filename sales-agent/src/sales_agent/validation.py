@@ -2,13 +2,33 @@
 
 from __future__ import annotations
 
+import hashlib
+import json
 import math
+from datetime import datetime
 from numbers import Real
 from typing import Any, Dict, Mapping
 
 
 class PackageError(ValueError):
     """A business package cannot be activated safely."""
+
+
+def package_fingerprint(package: Mapping[str, Any]) -> str:
+    """Return a stable digest for the complete persisted package.
+
+    ``package_version`` is an owner-facing label and is not required to be
+    unique.  Pilot admission therefore also records this content digest so a
+    material edit with a reused label cannot inherit an older evaluation.
+    """
+
+    canonical = json.dumps(
+        package,
+        ensure_ascii=False,
+        sort_keys=True,
+        separators=(",", ":"),
+    ).encode("utf-8")
+    return "sha256:%s" % hashlib.sha256(canonical).hexdigest()
 
 
 CAPABILITY_STATES = {"enabled", "assisted", "disabled", "pending"}
@@ -56,6 +76,27 @@ def validate_package(package: Mapping[str, Any]) -> Dict[str, Any]:
         raise PackageError("business.buyer_types contém valores duplicados")
     if not isinstance(package["policies"], Mapping):
         raise PackageError("policies deve ser um objeto")
+    conversation_policy = package["policies"].get("conversation", {})
+    if conversation_policy and not isinstance(conversation_policy, Mapping):
+        raise PackageError("policies.conversation deve ser um objeto")
+    if isinstance(conversation_policy, Mapping):
+        preference_transitions = conversation_policy.get("preference_transitions", [])
+        if not isinstance(preference_transitions, list):
+            raise PackageError("policies.conversation.preference_transitions deve ser uma lista")
+        preference_ids = set()
+        for index, transition in enumerate(preference_transitions):
+            path = "policies.conversation.preference_transitions[%d]" % index
+            if not isinstance(transition, Mapping):
+                raise PackageError("%s deve ser um objeto" % path)
+            for field in ("id", "profile", "objective", "source"):
+                if not isinstance(transition.get(field), str) or not transition[field].strip():
+                    raise PackageError("%s.%s deve ser texto não vazio" % (path, field))
+            terms = transition.get("terms", [])
+            if not isinstance(terms, list) or not terms or not all(isinstance(term, str) and term.strip() for term in terms):
+                raise PackageError("%s.terms deve ser uma lista de textos" % path)
+            if transition["id"] in preference_ids:
+                raise PackageError("preferência duplicada: %s" % transition["id"])
+            preference_ids.add(transition["id"])
     offers = package["offers"]
     if not isinstance(offers, list) or not offers:
         raise PackageError("offers deve ser uma lista não vazia")
@@ -120,6 +161,17 @@ def validate_package(package: Mapping[str, Any]) -> Dict[str, Any]:
             raise PackageError("capability %s precisa explicar sua lacuna" % name)
         if "reason" in entry and not isinstance(entry["reason"], str):
             raise PackageError("capability %s precisa de reason textual" % name)
+    settings = package.get("settings", {})
+    if not isinstance(settings, Mapping):
+        raise PackageError("settings deve ser um objeto")
+    skill_context_budget = settings.get("skill_context_budget", 8_000)
+    if (
+        isinstance(skill_context_budget, bool)
+        or not isinstance(skill_context_budget, int)
+        or skill_context_budget <= 0
+        or skill_context_budget > 64_000
+    ):
+        raise PackageError("settings.skill_context_budget deve ser inteiro entre 1 e 64000")
     lifecycle = package.get("lifecycle", "active")
     if lifecycle not in {"draft", "active"}:
         raise PackageError("lifecycle deve ser draft ou active")
@@ -158,9 +210,65 @@ def validate_package(package: Mapping[str, Any]) -> Dict[str, Any]:
             raise PackageError("fonte aprovada precisa de origin")
         if "origin" in source and not isinstance(source["origin"], str):
             raise PackageError("origin da fonte deve ser texto")
+        for field in ("locator", "scope", "audience", "subject", "generation"):
+            if field in source and source[field] is not None and not isinstance(source[field], str):
+                raise PackageError("sources[%d].%s deve ser texto" % (index, field))
+        parsed_validity = {}
+        for field in ("valid_from", "valid_until"):
+            if field in source and source[field] is not None:
+                if not isinstance(source[field], str):
+                    raise PackageError("sources[%d].%s deve ser texto ISO" % (index, field))
+                try:
+                    parsed = datetime.fromisoformat(source[field].replace("Z", "+00:00"))
+                except ValueError as exc:
+                    raise PackageError("sources[%d].%s não é data ISO" % (index, field)) from exc
+                parsed_validity[field] = parsed
+        if parsed_validity.get("valid_from") and parsed_validity.get("valid_until"):
+            start = parsed_validity["valid_from"]
+            end = parsed_validity["valid_until"]
+            if (start.tzinfo is None and end.tzinfo is not None) or (start.tzinfo is not None and end.tzinfo is None):
+                raise PackageError("sources[%d].valid_from e valid_until precisam usar o mesmo tipo de fuso" % index)
+            if start >= end:
+                raise PackageError("sources[%d].vigência tem intervalo inválido" % index)
+        if "active" in source and not isinstance(source["active"], bool):
+            raise PackageError("sources[%d].active deve ser booleano" % index)
     skills = package["skills"]
     if not isinstance(skills, list) or not all(isinstance(item, Mapping) for item in skills):
         raise PackageError("skills deve ser uma lista de objetos")
+    # A declared skill is metadata, not a permission, but an unknown or
+    # unavailable reference must never be reported as loaded.  Import lazily
+    # to keep the validation module independent from the catalog at import
+    # time.
+    from .skills import SkillCatalog
+
+    catalog = {item["id"]: item for item in SkillCatalog().list_skills()}
+    seen_skill_ids = set()
+    for index, skill in enumerate(skills):
+        if not isinstance(skill.get("id"), str) or not skill["id"].strip():
+            raise PackageError("skills[%d].id deve ser texto não vazio" % index)
+        skill_id = str(skill["id"])
+        record = catalog.get(skill_id)
+        if record is None:
+            raise PackageError("skill desconhecida: %s" % skill_id)
+        if record.get("audience") != "buyer-attention":
+            raise PackageError("skill %s não é compatível com atendimento comprador: %s" % (skill_id, record.get("audience")))
+        if not record.get("available"):
+            raise PackageError("skill indisponível: %s" % skill_id)
+        for field in ("version", "when"):
+            if field in skill and (not isinstance(skill[field], str) or not skill[field].strip()):
+                raise PackageError("skills[%d].%s deve ser texto não vazio" % (index, field))
+        if "version" in skill and str(skill["version"]) != str(record["version"]):
+            raise PackageError("versão incompatível da skill: %s" % skill_id)
+        if "context_chars" in skill and (
+            isinstance(skill["context_chars"], bool)
+            or not isinstance(skill["context_chars"], int)
+            or skill["context_chars"] <= 0
+            or skill["context_chars"] > skill_context_budget
+        ):
+            raise PackageError("skills[%d].context_chars excede o orçamento" % index)
+        if skill_id in seen_skill_ids:
+            raise PackageError("skill duplicada: %s" % skill_id)
+        seen_skill_ids.add(skill_id)
     copied = {key: value for key, value in package.items()}
     return copied
 
