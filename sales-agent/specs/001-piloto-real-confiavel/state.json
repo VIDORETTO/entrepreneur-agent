@@ -1,5 +1,5 @@
 {
-  "active_ticket": "TK-006",
+  "active_ticket": "TK-007",
   "authorization_refs": [],
   "baseline": {
     "kind": "git",
@@ -26,22 +26,22 @@
       "revision": 2
     }
   },
-  "last_evidence": "EV-022",
+  "last_evidence": "EV-035",
   "last_invalidation": {
     "evidence": [
-      "EV-016",
-      "EV-017",
-      "EV-018"
+      "EV-030",
+      "EV-031",
+      "EV-032"
     ],
     "inputs": {},
-    "timestamp": "2026-09-28T15:00:30+00:00"
+    "timestamp": "2026-09-28T15:20:07+00:00"
   },
   "mode": "standard",
-  "next_action": "Executar TK-006 (janela WhatsApp de 24 h); TK-002 segue com AC-003 sem CI por proibição de git push",
+  "next_action": "Executar TK-007 (mensagens não textuais); TK-002 mantém AC-003 sem CI por proibição de git push",
   "pending_questions": [],
   "phase": "implementation",
-  "revision": 13,
+  "revision": 17,
   "schema_version": "1.0",
   "status": "active",
-  "updated_at": "2026-09-28T15:03:29+00:00"
+  "updated_at": "2026-09-28T15:21:24+00:00"
 }

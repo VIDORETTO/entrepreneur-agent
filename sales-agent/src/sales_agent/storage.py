@@ -18,7 +18,7 @@ from .clock import Clock, SystemClock
 from .types import empty_conversation
 
 DATABASE_SCHEMA_VERSION = 11
-OUTBOX_STATUSES = {"pending", "processing", "sent", "cancelled", "dead_letter", "unknown", "observed"}
+OUTBOX_STATUSES = {"pending", "processing", "sent", "cancelled", "dead_letter", "unknown", "observed", "window_closed"}
 EFFECT_TRANSITIONS = {
     "reserved": {"unknown", "confirmed", "failed"},
     "unknown": {"confirmed", "failed"},
@@ -1587,6 +1587,36 @@ class StateStore:
             cursor = db.execute(query, parameters)
             return cursor.rowcount == 1
 
+    def close_outbox_window(self, item: Mapping[str, Any], *, lease_owner: str) -> bool:
+        """Close one public intent and queue its attendant note in one transaction."""
+        key = str(item["message_key"])
+        now = self.clock.now()
+        note_key = "window-note:%s" % key
+        note = {
+            "channel": "chatwoot",
+            "channel_kind": "whatsapp",
+            "response": "Resposta não enviada: janela de 24 h encerrada",
+            "action": {"type": "private_note"},
+            "private": True,
+        }
+        with self._lock, self.connect() as db:
+            db.execute("BEGIN IMMEDIATE")
+            closed = db.execute(
+                "UPDATE outbox SET status = 'window_closed', leased_until = NULL, lease_owner = NULL, "
+                "last_error = 'window_closed', updated_at = ? "
+                "WHERE message_key = ? AND status = 'processing' AND lease_owner = ?",
+                (now, key, lease_owner),
+            )
+            if closed.rowcount != 1:
+                return False
+            db.execute(
+                "INSERT OR IGNORE INTO outbox(message_key, business_id, conversation_id, payload, status, created_at, "
+                "attempts, available_at, leased_until, last_error, updated_at) "
+                "VALUES (?, ?, ?, ?, 'pending', ?, 0, ?, NULL, NULL, ?)",
+                (note_key, item["business_id"], item["conversation_id"], self.dumps(note), now, now, now),
+            )
+            return True
+
     def mark_outbox_unknown(
         self, message_key: str, provider_result: Mapping[str, Any], *, lease_owner: Optional[str] = None
     ) -> bool:
@@ -2224,6 +2254,25 @@ class StateStore:
             }
             for row in rows
         ]
+
+    def latest_buyer_message(self, business_id: str, conversation_id: str) -> Optional[Dict[str, Any]]:
+        """Return the latest durably admitted Chatwoot buyer message for a conversation."""
+        with self.connect() as db:
+            row = db.execute(
+                "SELECT received_at, event_payload FROM inbound_messages "
+                "WHERE business_id = ? AND conversation_id = ? AND channel = 'chatwoot' "
+                "ORDER BY received_at DESC, rowid DESC LIMIT 1",
+                (business_id, conversation_id),
+            ).fetchone()
+        return {"received_at": row["received_at"], "event": self.loads(row["event_payload"])} if row else None
+
+    def buyer_window_open(self, business_id: str, conversation_id: str) -> bool:
+        latest = self.latest_buyer_message(business_id, conversation_id)
+        if latest is None:
+            return False
+        received_at = datetime.fromisoformat(str(latest["received_at"]).replace("Z", "+00:00"))
+        now = datetime.fromisoformat(self.clock.now().replace("Z", "+00:00"))
+        return 0 <= (now - received_at).total_seconds() <= 86400
 
     def pause_conversation_for_human(
         self,

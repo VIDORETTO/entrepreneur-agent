@@ -269,8 +269,16 @@ class PilotController:
     def _decide(self, item: Mapping[str, Any], *, reserve: bool) -> Dict[str, Any]:
         business_id = str(item.get("business_id", ""))
         channel = str(item.get("channel", "cli"))
+        action = item.get("action") if isinstance(item.get("action"), Mapping) else {}
+        window_notice = (
+            channel == "chatwoot"
+            and str(item.get("message_key", "")).startswith("window-note:")
+            and action.get("type") == "private_note"
+        )
         config = self.store.get_operating_mode(scope_key(business_id, channel))
         if config is None:
+            if window_notice and self.store.get_business(business_id):
+                return {"send": True, "mode": "observation", "reason": "internal_window_notice"}
             # The safe default is observation. It is returned as a decision so
             # the worker can audit why no public message was sent.
             return {"send": False, "mode": "observation", "reason": "default_observation", "scope_key": scope_key(business_id, channel)}
@@ -279,6 +287,8 @@ class PilotController:
         package = self.store.get_business(business_id)
         if not package:
             return {"send": False, "mode": config["mode"], "reason": "business_missing", "scope_key": config["scope_key"]}
+        if window_notice:
+            return {"send": True, "mode": config["mode"], "reason": "internal_window_notice"}
         if config["mode"] == "pilot" and (
             config.get("evaluated_package_version") != package.get("package_version")
             or config.get("evaluated_package_fingerprint") != package_fingerprint(package)

@@ -1,19 +1,27 @@
 ---
 schema: hybrid/ticket
-schema_version: "1.0"
+schema_version: 1.0
 id: TK-006
 effort: 001-piloto-real-confiavel
 type: delivery
-status: ready
-ticket_revision: 1
-requires: [TK-004]
-requirement_refs: [FR-006]
-acceptance_refs: [AC-013, AC-014, AC-015]
+status: done
+ticket_revision: 8
+requires: ["TK-004"]
+requirement_refs: ["FR-006"]
+acceptance_refs: ["AC-013", "AC-014", "AC-015"]
 spec_revision: 2
 plan_revision: 2
-owned_areas: [src/sales_agent/delivery.py, src/sales_agent/channel.py, src/sales_agent/conversation.py, tests/test_channel_window.py]
-verification_status: not_run
+owned_areas: ["src/sales_agent/delivery.py", "src/sales_agent/channel.py", "src/sales_agent/conversation.py", "tests/test_channel_window.py"]
+verification_status: passed
+last_update: EV-033–EV-035 passaram; revisão Standards/Spec em findings/TK-006-review.md sem achados bloqueantes
 ---
+
+
+
+
+
+
+
 
 # TK-006 — Respeitar a janela de 24 h do WhatsApp na entrega e no follow-up
 
@@ -66,12 +74,12 @@ Oráculo: valores literais de `spec.md` e `tdd.md` (casos com expectativa litera
 
 Depende de: TK-004 (status `done`).
 
-- [ ] TK-006.1 Escrever o primeiro caso (AC-013) na seam indicada em `plan.md`; observar red pelo motivo previsto em `tdd.md`.
-- [ ] TK-006.2 Implementar o mínimo para green de AC-013; próximo caso só após green.
-- [ ] TK-006.3 Implementar o mínimo para green de AC-014; próximo caso só após green.
-- [ ] TK-006.4 Implementar o mínimo para green de AC-015; próximo caso só após green.
-- [ ] TK-006.5 Executar regressão completa (`python -m pytest -q`, `ruff check src tests`) e atualizar documentação da interface.
-- [ ] TK-006.6 Registrar evidência (`hybrid.py evidence add --executed`) e checkpoint; não marcar checklist de reviewer.
+- [x] TK-006.1 Escrever o primeiro caso (AC-013) na seam indicada em `plan.md`; observar red pelo motivo previsto em `tdd.md`.
+- [x] TK-006.2 Implementar o mínimo para green de AC-013; próximo caso só após green.
+- [x] TK-006.3 Implementar o mínimo para green de AC-014; próximo caso só após green.
+- [x] TK-006.4 Implementar o mínimo para green de AC-015; próximo caso só após green.
+- [x] TK-006.5 Executar regressão completa (`python -m pytest -q`, `ruff check src tests`) e atualizar documentação da interface.
+- [x] TK-006.6 Registrar evidência (`hybrid.py evidence add --executed`) e checkpoint; não marcar checklist de reviewer.
 
 ## Validação
 

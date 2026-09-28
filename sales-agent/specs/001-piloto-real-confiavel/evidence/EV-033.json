@@ -1,0 +1,36 @@
+{
+  "acceptance_refs": [
+    "AC-013"
+  ],
+  "environment": "OS=Linux-5.14.0-687.36.1.el9_8.x86_64-x86_64-with-glibc2.34; Python=3.9.25",
+  "evidence_refs": [],
+  "execution_status": "executed",
+  "id": "EV-033",
+  "input_fingerprints": {
+    "specs/001-piloto-real-confiavel/plan.md": "a069d7b1d149ba604d47c2cb8035b6bfe0e9dc7471acd4eb697cbcab209ab66e",
+    "specs/001-piloto-real-confiavel/spec.md": "057aed7c1e1360d8f71167caca6af45c61c0ddf7114ce1d2eb8ce7d6dd5858ba",
+    "src/sales_agent/channel.py": "93d4b289564953d9faffe1731df01b2d70117dc12652b52581a7f5ead903fdd1",
+    "src/sales_agent/conversation.py": "a55cad4956d46ab98439f75607848fec7692450fb2f93c686d9da3f36243cd03",
+    "src/sales_agent/delivery.py": "3be45fc2cdc6b7056263ea7e505d3365c31a1e3aa8f79a742330d9ade52df135",
+    "src/sales_agent/governance.py": "f76be5e0d494c1479f929e5a50fd074764bff1a0762dbc068ad54506f218704c",
+    "src/sales_agent/storage.py": "68ce1d1d41c7a39df0d3a31705685f8351674aacc12659165890e8642297b74c",
+    "tests/test_channel_window.py": "b084efbe7e3fbf73587f286944dcbbb4b9f86a7c92e75cfb1f970eb6a2530f81"
+  },
+  "input_paths": [
+    "src/sales_agent/channel.py",
+    "src/sales_agent/conversation.py",
+    "src/sales_agent/delivery.py",
+    "src/sales_agent/governance.py",
+    "src/sales_agent/storage.py",
+    "tests/test_channel_window.py",
+    "specs/001-piloto-real-confiavel/spec.md",
+    "specs/001-piloto-real-confiavel/plan.md"
+  ],
+  "limitations": "",
+  "observations": "At 23:59:59 and 24:00:00 after buyer admission, public delivery succeeded.",
+  "procedure": ".venv/bin/python -m pytest -q tests/test_channel_window.py tests/test_delivery_and_governance.py",
+  "result": "passed",
+  "tested_revision": "local:ca685b7a73d9eab23e1fb0ac5119c719caba228ffaf8e00f29a803824d39ceb4",
+  "ticket": "TK-006",
+  "timestamp": "2026-09-28T15:20:26+00:00"
+}

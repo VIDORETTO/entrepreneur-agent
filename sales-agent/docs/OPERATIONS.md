@@ -98,7 +98,8 @@ O arquivo contém apenas referências aos segredos:
 {
   "bindings": [{
     "business_id": "minha-loja", "account_id": "11", "inbox_id": "13",
-    "secret": "env:CHATWOOT_WEBHOOK_SECRET", "signature_mode": "timestamped"
+    "secret": "env:CHATWOOT_WEBHOOK_SECRET", "signature_mode": "timestamped",
+    "channel_kind": "whatsapp"
   }],
   "transport": {
     "base_url": "https://chatwoot.example.invalid",
@@ -146,6 +147,14 @@ No proxy reverso, encaminhe somente o caminho `/webhook` ao endereço local e
 preserve os cabeçalhos `X-Chatwoot-Timestamp` e `X-Chatwoot-Signature` e o corpo
 bruto. Exponha `/readyz` e `/healthz` apenas à rede de monitoramento. O proxy
 deve aplicar TLS e limites de corpo e de taxa adequados à instalação.
+
+Para inbox WhatsApp, declare `channel_kind: "whatsapp"` no binding. O padrão
+`other` não aplica a janela. Uma resposta pública só é enviada até 24 h após
+a última mensagem admitida do comprador, no instante da entrega. Depois disso,
+o item termina em `window_closed` e uma nota privada idempotente avisa o
+atendente, inclusive em modo de observação; uma interrupção do canal bloqueia
+esse envio. Follow-ups são revalidados na mesma janela; sem instante confiável
+o envio público falha fechado. Templates HSM não fazem parte deste serviço.
 
 Na entrega pública, o trabalhador registra um hash do conteúdo como envio em
 curso antes de chamar o transporte. Ao receber o ID da mensagem do Chatwoot,

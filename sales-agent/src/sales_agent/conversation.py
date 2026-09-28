@@ -208,6 +208,8 @@ class SellerEngine:
             if state.get("history") and state["history"][-1].get("event_id") == event_id:
                 state["history"][-1]["response"] = result.response
                 state["history"][-1]["action"] = result.action
+            context = event.get("channel_context")
+            channel_kind = context.get("channel_kind", "other") if isinstance(context, Mapping) else "other"
             payload = result.as_dict()
             commit_status, replay = self.store.commit_event(
                 state,
@@ -218,6 +220,7 @@ class SellerEngine:
                 {
                     "event_id": event_id,
                     "channel": event.get("channel", "cli"),
+                    "channel_kind": channel_kind,
                     "contact_id": event.get("contact_id"),
                     "response": result.response,
                     "action": result.action,
@@ -340,6 +343,7 @@ class SellerEngine:
                         outbox_payload={
                             "event_id": event_id,
                             "channel": event.get("channel", "cli"),
+                            "channel_kind": channel_kind,
                             "contact_id": event.get("contact_id"),
                             "response": result.response,
                             "action": result.action,
@@ -413,11 +417,16 @@ class SellerEngine:
         package = self.store.get_business(business_id) or {}
         capability_allowed = package_capability(package, "follow_up") in {"enabled", "assisted"}
         eligible = capability_allowed and self._follow_up_eligible(state)
+        latest = self.store.latest_buyer_message(business_id, conversation_id)
+        context = (latest or {}).get("event", {}).get("channel_context", {})
+        payload = {"task_id": task_id, "message": message, "status": "scheduled"}
+        if latest is not None:
+            payload.update({"channel": "chatwoot", "channel_kind": context.get("channel_kind", "other"), "response": message})
         scheduled = self.store.enqueue_message(
             durable_key("followup", business_id, conversation_id, task_id),
             business_id,
             conversation_id,
-            {"task_id": task_id, "message": message, "status": "scheduled"},
+            payload,
         ) if eligible else False
         reason = "eligible" if eligible else ("capability disabled" if not capability_allowed else "conversation not eligible")
         return {"scheduled": scheduled, "task_id": task_id, "eligible_now": eligible, "reason": reason}
@@ -429,6 +438,12 @@ class SellerEngine:
         capability_allowed = package_capability(package, "follow_up") in {"enabled", "assisted"}
         eligible = capability_allowed and self._follow_up_eligible(state)
         reason = "eligible" if eligible else ("capability disabled" if not capability_allowed else "conversation no longer eligible")
+        if eligible:
+            latest = self.store.latest_buyer_message(business_id, conversation_id)
+            context = (latest or {}).get("event", {}).get("channel_context", {})
+            if context.get("channel_kind") == "whatsapp" and not self.store.buyer_window_open(business_id, conversation_id):
+                eligible = False
+                reason = "window_closed"
         if not eligible:
             self.store.cancel_followup(business_id, conversation_id, task_id)
         return {"task_id": task_id, "send": eligible, "reason": reason, "responsible": state.get("responsible")}

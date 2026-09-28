@@ -85,6 +85,15 @@ class DeliveryProcessor:
         invalid = self._invalid_evidence(business_id, evidence)
         if invalid:
             return {"send": False, "reason": "evidence_invalidated", "invalid_evidence": invalid, "state": state}
+        if (
+            item.get("channel") == "chatwoot"
+            and item.get("channel_kind") == "whatsapp"
+            and not item.get("private")
+            and action.get("type") not in {"private_note", "internal_note", "human_transfer"}
+            and item.get("response")
+        ):
+            if not self.store.buyer_window_open(business_id, str(item["conversation_id"])):
+                return {"send": False, "reason": "window_closed", "state": state}
         return {"send": True, "reason": "eligible", "state": state}
 
     def process_claimed(self, provider: DeliveryProvider, item: Mapping[str, Any]) -> Dict[str, Any]:
@@ -112,6 +121,15 @@ class DeliveryProcessor:
                 self._record_pilot(item, outcome, pilot_decision)
                 return outcome
         if not check["send"]:
+            if check["reason"] == "window_closed":
+                closed = self.store.close_outbox_window(item, lease_owner=str(owner))
+                outcome = {
+                    "message_key": key,
+                    "status": "window_closed" if closed else "unknown",
+                    "reason": "window_closed" if closed else "lease_lost_before_window_closure",
+                }
+                self._record_pilot(item, outcome, pilot_decision)
+                return outcome
             cancelled = self.store.cancel_outbox_message(key, str(check["reason"]), lease_owner=owner)
             outcome = {
                 "message_key": key,

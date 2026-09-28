@@ -79,12 +79,15 @@ class ChatwootBinding:
     enabled: bool = True
     signature_mode: str = "timestamped"
     timestamp_tolerance_seconds: int = 300
+    channel_kind: str = "other"
 
     def __post_init__(self) -> None:
         if self.signature_mode not in {"timestamped", "legacy-body"}:
             raise ValueError("modo de assinatura Chatwoot inválido")
         if not 60 <= self.timestamp_tolerance_seconds <= 900:
             raise ValueError("tolerância de timestamp Chatwoot inválida")
+        if self.channel_kind not in {"whatsapp", "other"}:
+            raise ValueError("tipo de canal Chatwoot inválido")
 
 
 def _header(headers: Mapping[str, Any], name: str) -> str:
@@ -157,6 +160,7 @@ class ChatwootReceiver:
             enabled=bool(item.get("enabled", True)),
             signature_mode=str(item.get("signature_mode", "timestamped")),
             timestamp_tolerance_seconds=int(item.get("timestamp_tolerance_seconds", 300)),
+            channel_kind=str(item.get("channel_kind", "other")),
         )
 
     @staticmethod
@@ -379,6 +383,7 @@ class ChatwootReceiver:
             "channel_context": {
                 "account_id": account_id,
                 "inbox_id": inbox_id,
+                "channel_kind": binding.channel_kind,
                 "external_message_id": external_id,
                 "identity_verified": True,
             },

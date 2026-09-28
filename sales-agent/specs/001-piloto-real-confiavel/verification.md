@@ -171,7 +171,7 @@
 - Evidence refs: none
 - Limitations: Evidence invalidated because an input changed.
 
-## EV-014 — passed
+## EV-014 — stale
 
 - Ticket: `TK-001`
 - Acceptance: `AC-001`
@@ -182,9 +182,9 @@
 - Timestamp: `2026-09-28T14:46:42+00:00`
 - Observations: Fixed-clock Farol validity test still passes after outbound ledger lease check
 - Evidence refs: none
-- Limitations: none recorded
+- Limitations: Evidence invalidated because an input changed.
 
-## EV-015 — passed
+## EV-015 — stale
 
 - Ticket: `TK-004`
 - Acceptance: `AC-007`, `AC-008`, `AC-009`
@@ -195,7 +195,7 @@
 - Timestamp: `2026-09-28T14:46:43+00:00`
 - Observations: Local HTTP server contract verifies ID correlation, human takeover, synchronous echo race and 120-second bound after lease check; 37 passed
 - Evidence refs: none
-- Limitations: none recorded
+- Limitations: Evidence invalidated because an input changed.
 
 ## EV-016 — stale
 
@@ -236,7 +236,7 @@
 - Evidence refs: none
 - Limitations: Evidence invalidated because an input changed.
 
-## EV-019 — passed
+## EV-019 — stale
 
 - Ticket: `TK-003`
 - Acceptance: `AC-004`, `AC-005`, `AC-006`
@@ -247,7 +247,7 @@
 - Timestamp: `2026-09-28T15:02:27+00:00`
 - Observations: After serve CLI addition, HMAC, legacy opt-in, stale timestamp and pilot channel contracts remain green; 43 passed.
 - Evidence refs: none
-- Limitations: none recorded
+- Limitations: Evidence invalidated because an input changed.
 
 ## EV-020 — passed
 
@@ -285,5 +285,174 @@
 - Tested revision: `local:d7f69e5f92a8498d760cd196a185b77b93bb4b425bbfeba8eff0f14a969de427`
 - Timestamp: `2026-09-28T15:02:28+00:00`
 - Observations: SIGTERM during a held provider POST, followed by restart, produced one POST and outbox sent or unknown.
+- Evidence refs: none
+- Limitations: none recorded
+
+## EV-023 — passed
+
+- Ticket: `TK-001`
+- Acceptance: `AC-001`
+- Procedure: `.venv/bin/python -m pytest -q tests/test_knowledge_and_configuration.py::test_farol_manifest_normalizes_offset_dates_and_replaces_previous_generation`
+- Execution: `executed`
+- Environment: OS=Linux-5.14.0-687.36.1.el9_8.x86_64-x86_64-with-glibc2.34; Python=3.9.25
+- Tested revision: `local:db257a7000f9072e660136d5078da709cfc24de8230c663b4e8b4aaae4f4f0c3`
+- Timestamp: `2026-09-28T15:14:36+00:00`
+- Observations: Farol clock test remained green after the added inbound timestamp read; 1 passed.
+- Evidence refs: none
+- Limitations: none recorded
+
+## EV-024 — passed
+
+- Ticket: `TK-004`
+- Acceptance: `AC-007`, `AC-008`, `AC-009`
+- Procedure: `.venv/bin/python -m pytest -q tests/test_chatwoot_contract.py tests/test_conversation_contract.py`
+- Execution: `executed`
+- Environment: OS=Linux-5.14.0-687.36.1.el9_8.x86_64-x86_64-with-glibc2.34; Python=3.9.25
+- Tested revision: `local:6247dc072e7ac2818fb42acec3d7a88582cd8a81b275f6ac8fa5e5d50d582c04`
+- Timestamp: `2026-09-28T15:14:36+00:00`
+- Observations: Echo correlation and human takeover remained green after WhatsApp binding and delivery changes; 37 passed.
+- Evidence refs: none
+- Limitations: none recorded
+
+## EV-025 — passed
+
+- Ticket: `TK-003`
+- Acceptance: `AC-004`, `AC-005`, `AC-006`
+- Procedure: `.venv/bin/python -m pytest -q tests/test_chatwoot_contract.py tests/test_channel_pilot_supervisor.py`
+- Execution: `executed`
+- Environment: OS=Linux-5.14.0-687.36.1.el9_8.x86_64-x86_64-with-glibc2.34; Python=3.9.25
+- Tested revision: `local:dcde3f4f9acb655478d5f101d2920f6669bb017927ccc130728c31f8de1a4488`
+- Timestamp: `2026-09-28T15:14:36+00:00`
+- Observations: Timestamped and legacy webhook signature contracts remained green after binding change; 43 passed.
+- Evidence refs: none
+- Limitations: none recorded
+
+## EV-026 — passed
+
+- Ticket: `TK-005`
+- Acceptance: `AC-010`, `AC-011`, `AC-012`
+- Procedure: `.venv/bin/python -m pytest -q tests/test_service.py`
+- Execution: `executed`
+- Environment: OS=Linux-5.14.0-687.36.1.el9_8.x86_64-x86_64-with-glibc2.34; Python=3.9.25
+- Tested revision: `local:3ff463f4b7fcdf23afd4ab291974342284df170b42ec1cd056f69cdf126da44f`
+- Timestamp: `2026-09-28T15:14:37+00:00`
+- Observations: Service HTTP, readiness and SIGTERM restart contracts remained green after window change; 4 passed.
+- Evidence refs: none
+- Limitations: none recorded
+
+## EV-027 — stale
+
+- Ticket: `TK-006`
+- Acceptance: `AC-013`
+- Procedure: `.venv/bin/python -m pytest -q tests/test_channel_window.py tests/test_delivery_and_governance.py`
+- Execution: `executed`
+- Environment: OS=Linux-5.14.0-687.36.1.el9_8.x86_64-x86_64-with-glibc2.34; Python=3.9.25
+- Tested revision: `local:face85e3832e954de086b71673d207efa4d9a5bae0383aa0ea954e65a5835212`
+- Timestamp: `2026-09-28T15:14:37+00:00`
+- Observations: WhatsApp inbound at 23:59:59 and exactly 24:00:00 before delivery produced one public send.
+- Evidence refs: none
+- Limitations: Evidence invalidated because an input changed.
+
+## EV-028 — stale
+
+- Ticket: `TK-006`
+- Acceptance: `AC-014`
+- Procedure: `.venv/bin/python -m pytest -q tests/test_channel_window.py tests/test_delivery_and_governance.py`
+- Execution: `executed`
+- Environment: OS=Linux-5.14.0-687.36.1.el9_8.x86_64-x86_64-with-glibc2.34; Python=3.9.25
+- Tested revision: `local:face85e3832e954de086b71673d207efa4d9a5bae0383aa0ea954e65a5835212`
+- Timestamp: `2026-09-28T15:14:37+00:00`
+- Observations: Inbound at 24:00:01 before delivery produced terminal window_closed and exactly one private attendant note; missing buyer timestamp also closed.
+- Evidence refs: none
+- Limitations: Evidence invalidated because an input changed.
+
+## EV-029 — stale
+
+- Ticket: `TK-006`
+- Acceptance: `AC-015`
+- Procedure: `.venv/bin/python -m pytest -q tests/test_channel_window.py tests/test_delivery_and_governance.py`
+- Execution: `executed`
+- Environment: OS=Linux-5.14.0-687.36.1.el9_8.x86_64-x86_64-with-glibc2.34; Python=3.9.25
+- Tested revision: `local:face85e3832e954de086b71673d207efa4d9a5bae0383aa0ea954e65a5835212`
+- Timestamp: `2026-09-28T15:14:37+00:00`
+- Observations: Scheduled follow-up revalidation after the WhatsApp window returned send false, reason window_closed, and cancelled the pending task.
+- Evidence refs: none
+- Limitations: Evidence invalidated because an input changed.
+
+## EV-030 — stale
+
+- Ticket: `TK-006`
+- Acceptance: `AC-013`
+- Procedure: `.venv/bin/python -m pytest -q tests/test_channel_window.py tests/test_delivery_and_governance.py`
+- Execution: `executed`
+- Environment: OS=Linux-5.14.0-687.36.1.el9_8.x86_64-x86_64-with-glibc2.34; Python=3.9.25
+- Tested revision: `local:dfe90dfa54285cecf80ecbc78b8da51d34437127e9b05368cf2600877d8b2412`
+- Timestamp: `2026-09-28T15:17:23+00:00`
+- Observations: At 23:59:59 and exactly 24:00:00 after last buyer message, one public Chatwoot send was observed.
+- Evidence refs: none
+- Limitations: Evidence invalidated because an input changed.
+
+## EV-031 — stale
+
+- Ticket: `TK-006`
+- Acceptance: `AC-014`
+- Procedure: `.venv/bin/python -m pytest -q tests/test_channel_window.py tests/test_delivery_and_governance.py`
+- Execution: `executed`
+- Environment: OS=Linux-5.14.0-687.36.1.el9_8.x86_64-x86_64-with-glibc2.34; Python=3.9.25
+- Tested revision: `local:dfe90dfa54285cecf80ecbc78b8da51d34437127e9b05368cf2600877d8b2412`
+- Timestamp: `2026-09-28T15:17:24+00:00`
+- Observations: After 24:00:01, no public send; outbox terminal window_closed and one private note to attendant; missing timestamp failed closed.
+- Evidence refs: none
+- Limitations: Evidence invalidated because an input changed.
+
+## EV-032 — stale
+
+- Ticket: `TK-006`
+- Acceptance: `AC-015`
+- Procedure: `.venv/bin/python -m pytest -q tests/test_channel_window.py tests/test_delivery_and_governance.py`
+- Execution: `executed`
+- Environment: OS=Linux-5.14.0-687.36.1.el9_8.x86_64-x86_64-with-glibc2.34; Python=3.9.25
+- Tested revision: `local:dfe90dfa54285cecf80ecbc78b8da51d34437127e9b05368cf2600877d8b2412`
+- Timestamp: `2026-09-28T15:17:24+00:00`
+- Observations: A scheduled Chatwoot follow-up after the WhatsApp window ended was window_closed at delivery and revalidation returned reason window_closed.
+- Evidence refs: none
+- Limitations: Evidence invalidated because an input changed.
+
+## EV-033 — passed
+
+- Ticket: `TK-006`
+- Acceptance: `AC-013`
+- Procedure: `.venv/bin/python -m pytest -q tests/test_channel_window.py tests/test_delivery_and_governance.py`
+- Execution: `executed`
+- Environment: OS=Linux-5.14.0-687.36.1.el9_8.x86_64-x86_64-with-glibc2.34; Python=3.9.25
+- Tested revision: `local:ca685b7a73d9eab23e1fb0ac5119c719caba228ffaf8e00f29a803824d39ceb4`
+- Timestamp: `2026-09-28T15:20:26+00:00`
+- Observations: At 23:59:59 and 24:00:00 after buyer admission, public delivery succeeded.
+- Evidence refs: none
+- Limitations: none recorded
+
+## EV-034 — passed
+
+- Ticket: `TK-006`
+- Acceptance: `AC-014`
+- Procedure: `.venv/bin/python -m pytest -q tests/test_channel_window.py tests/test_delivery_and_governance.py`
+- Execution: `executed`
+- Environment: OS=Linux-5.14.0-687.36.1.el9_8.x86_64-x86_64-with-glibc2.34; Python=3.9.25
+- Tested revision: `local:ca685b7a73d9eab23e1fb0ac5119c719caba228ffaf8e00f29a803824d39ceb4`
+- Timestamp: `2026-09-28T15:20:26+00:00`
+- Observations: After 24:00:01, public delivery became window_closed and exactly one private note was sent, including in observation mode; absent buyer timestamp closed safely.
+- Evidence refs: none
+- Limitations: none recorded
+
+## EV-035 — passed
+
+- Ticket: `TK-006`
+- Acceptance: `AC-015`
+- Procedure: `.venv/bin/python -m pytest -q tests/test_channel_window.py tests/test_delivery_and_governance.py`
+- Execution: `executed`
+- Environment: OS=Linux-5.14.0-687.36.1.el9_8.x86_64-x86_64-with-glibc2.34; Python=3.9.25
+- Tested revision: `local:ca685b7a73d9eab23e1fb0ac5119c719caba228ffaf8e00f29a803824d39ceb4`
+- Timestamp: `2026-09-28T15:20:27+00:00`
+- Observations: A scheduled Chatwoot follow-up outside the window became window_closed during delivery, with no public POST, and revalidation returned window_closed.
 - Evidence refs: none
 - Limitations: none recorded

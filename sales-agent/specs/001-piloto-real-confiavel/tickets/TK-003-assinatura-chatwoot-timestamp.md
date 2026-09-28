@@ -5,7 +5,7 @@ id: TK-003
 effort: 001-piloto-real-confiavel
 type: delivery
 status: done
-ticket_revision: 11
+ticket_revision: 14
 requires: ["TK-001"]
 requirement_refs: ["FR-003"]
 acceptance_refs: ["AC-004", "AC-005", "AC-006"]
@@ -13,8 +13,11 @@ spec_revision: 2
 plan_revision: 2
 owned_areas: ["src/sales_agent/channel.py", "tests/test_chatwoot_contract.py", "docs/OPERATIONS.md"]
 verification_status: passed
-last_update: EV-019 revalidou após import do serviço no CLI; revisão TK-003 anterior permanece aplicável
+last_update: EV-025 revalidou comportamento após TK-006; revisão anterior permanece aplicável
 ---
+
+
+
 
 
 
