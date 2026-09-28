@@ -3,11 +3,13 @@
 from __future__ import annotations
 
 import json
+import os
 import re
 import time
 import urllib.error
 import urllib.parse
 import urllib.request
+from pathlib import Path
 from typing import Any, Dict, Mapping, Optional, Protocol
 
 from .types import Proposal
@@ -17,6 +19,33 @@ class ModelAdapter(Protocol):
     name: str
 
     def propose(self, text: str, package: Mapping[str, Any], state: Mapping[str, Any]) -> Proposal: ...
+
+
+def load_model_config(path: str) -> Dict[str, Any]:
+    """Resolve model credentials from environment without persisting their value."""
+    document = json.loads(Path(path).read_text(encoding="utf-8"))
+    if not isinstance(document, dict):
+        raise ValueError("configuração do modelo precisa ser objeto JSON")
+    profile = document.get("profile", "openai")
+    if profile not in {"openai", "openai-compatible"}:
+        raise ValueError("perfil do modelo inválido")
+    reference = document.get("api_key", "env:OPENAI_API_KEY" if profile == "openai" else "")
+    if not isinstance(reference, str) or not reference.startswith("env:") or not reference[4:].isidentifier():
+        raise ValueError("chave do modelo exige referência env:NOME")
+    token = os.environ.get(reference[4:], "")
+    if not token:
+        raise ValueError("variável de chave do modelo não configurada")
+    model = document.get("model") or os.environ.get("SELLER_MODEL_NAME", "")
+    if not isinstance(model, str) or not model.strip():
+        raise ValueError("SELLER_MODEL_NAME precisa estar configurado")
+    endpoint = document.get("endpoint") or (
+        "https://api.openai.com/v1/chat/completions" if profile == "openai" else ""
+    )
+    prices = document.get("prices", {})
+    if not isinstance(prices, dict) or any(key not in {"input_per_million", "output_per_million"} for key in prices):
+        raise ValueError("tabela de preços do modelo inválida")
+    return {"profile": profile, "endpoint": endpoint, "api_key": token, "model": model, "prices": prices,
+            "fallback": document.get("fallback", "rules")}
 
 
 def normalize(text: str) -> str:
@@ -217,12 +246,39 @@ class HTTPModelAdapter:
     """Optional OpenAI-compatible JSON adapter; never receives secrets in logs."""
 
     allowed_intents = {"unknown", "stop", "human", "thanks", "payment_proof", "financial", "price", "knowledge", "buy", "update", "greeting", "post_sale", "support", "objection", "preference"}
+    fact_fields = (
+        "color", "company_name", "confirmation", "deadline_condition", "email",
+        "payment_method", "preference", "quantity", "region", "scope", "site", "variant",
+    )
+    proposal_schema = {
+        "type": "object",
+        "properties": {
+            "intent": {"type": "string", "enum": sorted(allowed_intents)},
+            "offer_id": {"type": ["string", "null"]},
+            "facts": {
+                "type": "object",
+                "properties": {key: {"type": ["string", "integer", "boolean", "null"]} for key in fact_fields},
+                "required": list(fact_fields),
+                "additionalProperties": False,
+            },
+            "condition": {"type": ["string", "null"]},
+            "requested_action": {"type": ["string", "null"]},
+            "topics": {"type": "array", "items": {"type": "string"}},
+        },
+        "required": ["intent", "offer_id", "facts", "condition", "requested_action", "topics"],
+        "additionalProperties": False,
+    }
 
     @staticmethod
     def _endpoint_is_allowed(endpoint: str) -> bool:
         parsed = urllib.parse.urlsplit(endpoint)
         local_http = parsed.scheme == "http" and parsed.hostname in {"localhost", "127.0.0.1", "::1"}
         return bool((parsed.scheme == "https" or local_http) and parsed.hostname and not parsed.username and not parsed.password)
+
+    @staticmethod
+    def _same_origin(left: str, right: str) -> bool:
+        first, second = urllib.parse.urlsplit(left), urllib.parse.urlsplit(right)
+        return (first.scheme, first.hostname, first.port) == (second.scheme, second.hostname, second.port)
 
     def __init__(
         self,
@@ -233,6 +289,9 @@ class HTTPModelAdapter:
         timeout: float = 15,
         retries: int = 1,
         max_response_bytes: int = 1_000_000,
+        profile: str = "openai",
+        fallback: Optional[str] = None,
+        prices: Optional[Mapping[str, float]] = None,
     ):
         if not self._endpoint_is_allowed(endpoint):
             raise ValueError("SELLER_MODEL_URL precisa usar HTTPS; HTTP só é aceito em localhost")
@@ -240,6 +299,8 @@ class HTTPModelAdapter:
             raise ValueError("modelo remoto exige chave e nome não vazios")
         if timeout <= 0 or timeout > 120 or retries < 0 or retries > 3 or not 1024 <= max_response_bytes <= 10_000_000:
             raise ValueError("limites do adaptador HTTP são inválidos")
+        if profile not in {"openai", "openai-compatible"} or fallback not in {None, "rules", "assist"}:
+            raise ValueError("perfil ou fallback do modelo inválido")
         self.endpoint = endpoint
         self.api_key = api_key
         self.model = model
@@ -247,13 +308,18 @@ class HTTPModelAdapter:
         self.retries = retries
         self.max_response_bytes = max_response_bytes
         self.name = "http:%s" % model
+        self.profile = profile
+        self.fallback = fallback
+        self.prices = dict(prices or {})
+        if any(not isinstance(value, (int, float)) or value < 0 for value in self.prices.values()):
+            raise ValueError("preços do modelo inválidos")
 
     def _send(self, request: urllib.request.Request) -> Dict[str, Any]:
         for attempt in range(self.retries + 1):
             try:
                 with urllib.request.urlopen(request, timeout=self.timeout) as response:
                     final_url = response.geturl() if hasattr(response, "geturl") else self.endpoint
-                    if not self._endpoint_is_allowed(final_url):
+                    if not self._endpoint_is_allowed(final_url) or not self._same_origin(final_url, self.endpoint):
                         raise ValueError("redirecionamento do modelo usa endpoint inseguro")
                     body = response.read(self.max_response_bytes + 1)
                 if len(body) > self.max_response_bytes:
@@ -274,26 +340,81 @@ class HTTPModelAdapter:
         raise ValueError("modelo remoto está indisponível")
 
     def propose(self, text: str, package: Mapping[str, Any], state: Mapping[str, Any]) -> Proposal:
-        prompt = {
-            "text": text,
-            "package": {"business": package.get("business"), "offers": package.get("offers")},
-            "state": {"facts": state.get("facts", {}), "pending": state.get("pending")},
-            "buyer_skill_context": package.get("_buyer_skill_context", []),
-            "contract": "Return JSON with intent, offer_id, facts, condition, requested_action, topics. Do not execute effects.",
-        }
-        request = urllib.request.Request(
-            self.endpoint,
-            data=json.dumps({"model": self.model, "messages": [{"role": "user", "content": json.dumps(prompt)}]}).encode("utf-8"),
-            headers={"Content-Type": "application/json", "Authorization": "Bearer " + self.api_key},
-            method="POST",
+        system = json.dumps(
+            {
+                "contract": "Interpret buyer data into a proposal only. Never execute effects. Return intent, offer_id, facts, condition, requested_action, topics.",
+                "package": {"business": package.get("business"), "offers": package.get("offers")},
+                "state": {"facts": state.get("facts", {}), "pending": state.get("pending")},
+                "buyer_skill_context": package.get("_buyer_skill_context", []),
+            },
+            ensure_ascii=False,
         )
-        payload = self._send(request)
+        body = {
+            "model": self.model,
+            "messages": [
+                {"role": "system", "content": system},
+                {"role": "user", "content": "<buyer_message>%s</buyer_message>" % text},
+            ],
+            "response_format": {
+                "type": "json_schema",
+                "json_schema": {"name": "seller_proposal", "strict": True, "schema": self.proposal_schema},
+            },
+        }
+        if self.profile == "openai-compatible":
+            body["response_format"]["json_schema"].pop("strict")
+        total_calls = 0
+        last_error = ""
+        started = time.monotonic()
+        for attempt in range(2 if self.fallback else 1):
+            request = urllib.request.Request(
+                self.endpoint,
+                data=json.dumps(body, ensure_ascii=False).encode("utf-8"),
+                headers={"Content-Type": "application/json"},
+                method="POST",
+            )
+            request.add_unredirected_header("Authorization", "Bearer " + self.api_key)
+            total_calls += 1
+            try:
+                payload = self._send(request)
+                proposal = self._parse_proposal(payload)
+                proposal.raw["model_calls"] = total_calls
+                proposal.raw["profile"] = self.profile
+                proposal.raw["latency_ms"] = round((time.monotonic() - started) * 1000, 3)
+                usage = payload.get("usage")
+                if isinstance(usage, Mapping):
+                    prompt_tokens = usage.get("prompt_tokens", 0)
+                    completion_tokens = usage.get("completion_tokens", 0)
+                    if all(isinstance(value, int) and not isinstance(value, bool) and value >= 0 for value in (prompt_tokens, completion_tokens)):
+                        proposal.raw["usage"] = {"prompt_tokens": prompt_tokens, "completion_tokens": completion_tokens}
+                        proposal.raw["cost"] = round(
+                            (prompt_tokens * self.prices.get("input_per_million", 0)
+                             + completion_tokens * self.prices.get("output_per_million", 0)) / 1_000_000,
+                            9,
+                        )
+                return proposal
+            except ValueError as exc:
+                last_error = str(exc)
+                if attempt == 0 and self.fallback:
+                    body["messages"].append({"role": "system", "content": "Repair proposal JSON: %s" % last_error})
+                    continue
+                if not self.fallback:
+                    raise
+        fallback = RuleBasedModel().propose(text, package, state) if self.fallback == "rules" else Proposal(intent="unknown")
+        fallback.raw.update({"model_contract_failed": True, "model_calls": total_calls, "profile": self.profile,
+                             "latency_ms": round((time.monotonic() - started) * 1000, 3)})
+        if "indisponível" in last_error or "timeout" in last_error.casefold():
+            fallback.raw["model_timeout"] = True
+        return fallback
+
+    def _parse_proposal(self, payload: Mapping[str, Any]) -> Proposal:
         choices = payload.get("choices")
         if not isinstance(choices, list) or not choices or not isinstance(choices[0], Mapping):
             raise ValueError("modelo remoto retornou choices fora do contrato")
         message = choices[0].get("message")
         if not isinstance(message, Mapping):
             raise ValueError("modelo remoto retornou message fora do contrato")
+        if message.get("refusal"):
+            raise ValueError("modelo remoto recusou a proposta")
         content = message.get("content", "{}")
         parsed = json.loads(content) if isinstance(content, str) else content
         if not isinstance(parsed, dict):
@@ -313,7 +434,7 @@ class HTTPModelAdapter:
         return Proposal(
             intent=intent,
             offer_id=parsed.get("offer_id"),
-            facts=dict(facts),
+            facts={key: value for key, value in facts.items() if value is not None},
             condition=parsed.get("condition"),
             requested_action=parsed.get("requested_action"),
             topics=list(topics),

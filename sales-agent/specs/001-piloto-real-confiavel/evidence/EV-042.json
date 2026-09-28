@@ -28,10 +28,10 @@
     "specs/001-piloto-real-confiavel/spec.md",
     "specs/001-piloto-real-confiavel/plan.md"
   ],
-  "limitations": "",
+  "limitations": "Evidence invalidated because an input changed.",
   "observations": "Image with payment-proof caption left payment_verification pending and produced no confirmed payment or commercial action.",
   "procedure": ".venv/bin/python -m pytest -q tests/test_non_text_messages.py tests/test_conversation_contract.py",
-  "result": "passed",
+  "result": "stale",
   "tested_revision": "local:63336220dbeac5f18fd322cd7153b22ff9d7999db6c1aff8402a2116c6fd7e63",
   "ticket": "TK-007",
   "timestamp": "2026-09-28T15:33:17+00:00"

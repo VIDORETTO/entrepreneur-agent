@@ -1,0 +1,32 @@
+{
+  "acceptance_refs": [
+    "AC-023"
+  ],
+  "environment": "OS=Linux-5.14.0-687.36.1.el9_8.x86_64-x86_64-with-glibc2.34; Python=3.9.25",
+  "evidence_refs": [],
+  "execution_status": "executed",
+  "id": "EV-055",
+  "input_fingerprints": {
+    "specs/001-piloto-real-confiavel/plan.md": "a069d7b1d149ba604d47c2cb8035b6bfe0e9dc7471acd4eb697cbcab209ab66e",
+    "specs/001-piloto-real-confiavel/spec.md": "057aed7c1e1360d8f71167caca6af45c61c0ddf7114ce1d2eb8ce7d6dd5858ba",
+    "src/sales_agent/cli.py": "52f324b716564757fa959bf60a2d9a601b3eacfbeff3740dcd92bbd4ff091ead",
+    "src/sales_agent/conversation.py": "c69c6d86a49628104d326387d3eb49a7fe6a52797b558c9dc03ce451e88e41a8",
+    "src/sales_agent/model.py": "a604309e83852b29803e1b0387b0daa062bd1dd2899f0aa39591bbd00df55df1",
+    "tests/test_model_adapter.py": "1a85545fa8a2f718410c0ebc641693cc3537c0fb411c74484fc164e9eaf5a09c"
+  },
+  "input_paths": [
+    "src/sales_agent/model.py",
+    "src/sales_agent/conversation.py",
+    "src/sales_agent/cli.py",
+    "tests/test_model_adapter.py",
+    "specs/001-piloto-real-confiavel/spec.md",
+    "specs/001-piloto-real-confiavel/plan.md"
+  ],
+  "limitations": "Only local fake HTTP contract; no real OpenAI credential call Evidence invalidated because an input changed.",
+  "observations": "Both openai and openai-compatible fake HTTP profiles returned model and profile; real API was not called.",
+  "procedure": ".venv/bin/python -m pytest -q tests/test_model_adapter.py",
+  "result": "stale",
+  "tested_revision": "local:8cc7eb43689a1870ea1268ae584e3868bf15d9473fb5ff6e5e9c60168bc05397",
+  "ticket": "TK-008",
+  "timestamp": "2026-09-28T15:48:14+00:00"
+}

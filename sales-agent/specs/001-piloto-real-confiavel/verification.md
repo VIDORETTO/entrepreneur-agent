@@ -470,7 +470,7 @@
 - Evidence refs: none
 - Limitations: none recorded
 
-## EV-037 — passed
+## EV-037 — stale
 
 - Ticket: `TK-004`
 - Acceptance: `AC-007`, `AC-008`, `AC-009`
@@ -481,7 +481,7 @@
 - Timestamp: `2026-09-28T15:33:16+00:00`
 - Observations: 37 passed after media admission and conversation changes; own echo and human takeover contracts remain green.
 - Evidence refs: none
-- Limitations: none recorded
+- Limitations: Evidence invalidated because an input changed.
 
 ## EV-038 — passed
 
@@ -496,7 +496,7 @@
 - Evidence refs: none
 - Limitations: none recorded
 
-## EV-039 — passed
+## EV-039 — stale
 
 - Ticket: `TK-006`
 - Acceptance: `AC-013`, `AC-014`, `AC-015`
@@ -507,9 +507,9 @@
 - Timestamp: `2026-09-28T15:33:16+00:00`
 - Observations: 29 passed after media event changes; WhatsApp window and follow-up remain green.
 - Evidence refs: none
-- Limitations: none recorded
+- Limitations: Evidence invalidated because an input changed.
 
-## EV-040 — passed
+## EV-040 — stale
 
 - Ticket: `TK-007`
 - Acceptance: `AC-016`
@@ -520,9 +520,9 @@
 - Timestamp: `2026-09-28T15:33:17+00:00`
 - Observations: Audio without text was authenticated, admitted and answered by ask_text; metadata persisted in public state. offer_human package policy also passed.
 - Evidence refs: none
-- Limitations: none recorded
+- Limitations: Evidence invalidated because an input changed.
 
-## EV-041 — passed
+## EV-041 — stale
 
 - Ticket: `TK-007`
 - Acceptance: `AC-017`
@@ -533,9 +533,9 @@
 - Timestamp: `2026-09-28T15:33:17+00:00`
 - Observations: Scripted audio transcription URL was sent to the transcriber; model interpreted transcript, trace marked transcribed, and buy effect required text confirmation.
 - Evidence refs: none
-- Limitations: none recorded
+- Limitations: Evidence invalidated because an input changed.
 
-## EV-042 — passed
+## EV-042 — stale
 
 - Ticket: `TK-007`
 - Acceptance: `AC-018`
@@ -546,4 +546,277 @@
 - Timestamp: `2026-09-28T15:33:17+00:00`
 - Observations: Image with payment-proof caption left payment_verification pending and produced no confirmed payment or commercial action.
 - Evidence refs: none
+- Limitations: Evidence invalidated because an input changed.
+
+## EV-043 — stale
+
+- Ticket: `TK-004`
+- Acceptance: `AC-007`, `AC-008`, `AC-009`
+- Procedure: `.venv/bin/python -m pytest -q tests/test_chatwoot_contract.py tests/test_conversation_contract.py`
+- Execution: `executed`
+- Environment: OS=Linux-5.14.0-687.36.1.el9_8.x86_64-x86_64-with-glibc2.34; Python=3.9.25
+- Tested revision: `local:f8034be3f80ef7d230d5adf013712fbbd0334b0b3b09ad7a5ca9669954973665`
+- Timestamp: `2026-09-28T15:46:17+00:00`
+- Observations: 37 passed after model trace changes; echo and human takeover contracts remain green.
+- Evidence refs: none
+- Limitations: Evidence invalidated because an input changed.
+
+## EV-044 — stale
+
+- Ticket: `TK-006`
+- Acceptance: `AC-013`, `AC-014`, `AC-015`
+- Procedure: `.venv/bin/python -m pytest -q tests/test_channel_window.py tests/test_delivery_and_governance.py`
+- Execution: `executed`
+- Environment: OS=Linux-5.14.0-687.36.1.el9_8.x86_64-x86_64-with-glibc2.34; Python=3.9.25
+- Tested revision: `local:43444680222a16ba0a6c0b84bb5cdcb1fc7997abea761f47731c39899daf0225`
+- Timestamp: `2026-09-28T15:46:17+00:00`
+- Observations: 29 passed after model trace changes; WhatsApp delivery window remains green.
+- Evidence refs: none
+- Limitations: Evidence invalidated because an input changed.
+
+## EV-045 — stale
+
+- Ticket: `TK-007`
+- Acceptance: `AC-016`, `AC-017`, `AC-018`
+- Procedure: `.venv/bin/python -m pytest -q tests/test_non_text_messages.py tests/test_conversation_contract.py`
+- Execution: `executed`
+- Environment: OS=Linux-5.14.0-687.36.1.el9_8.x86_64-x86_64-with-glibc2.34; Python=3.9.25
+- Tested revision: `local:0dccfda1367d6f4a3588c8b1e6bde57bbaa4d0b3a50740886ff76dc6235b87ca`
+- Timestamp: `2026-09-28T15:46:17+00:00`
+- Observations: 33 passed after model trace changes; attachment and transcription policy remain green.
+- Evidence refs: none
+- Limitations: Evidence invalidated because an input changed.
+
+## EV-046 — stale
+
+- Ticket: `TK-008`
+- Acceptance: `AC-019`
+- Procedure: `.venv/bin/python -m pytest -q tests/test_model_adapter.py`
+- Execution: `executed`
+- Environment: OS=Linux-5.14.0-687.36.1.el9_8.x86_64-x86_64-with-glibc2.34; Python=3.9.25
+- Tested revision: `local:7f62754b8c7cbf992cce862665de816bd7236024279d081fa21e403bfe3cbb9d`
+- Timestamp: `2026-09-28T15:46:17+00:00`
+- Observations: Captured Chat Completions body separates system instructions from delimited buyer message and sends strict JSON schema.
+- Evidence refs: none
+- Limitations: OpenAI real API not called; local fake HTTP contract only Evidence invalidated because an input changed.
+
+## EV-047 — stale
+
+- Ticket: `TK-008`
+- Acceptance: `AC-020`
+- Procedure: `.venv/bin/python -m pytest -q tests/test_model_adapter.py`
+- Execution: `executed`
+- Environment: OS=Linux-5.14.0-687.36.1.el9_8.x86_64-x86_64-with-glibc2.34; Python=3.9.25
+- Tested revision: `local:7f62754b8c7cbf992cce862665de816bd7236024279d081fa21e403bfe3cbb9d`
+- Timestamp: `2026-09-28T15:46:17+00:00`
+- Observations: Scripted invalid then valid responses produced two calls, one repair instruction and accepted proposal.
+- Evidence refs: none
+- Limitations: OpenAI real API not called; local fake HTTP contract only Evidence invalidated because an input changed.
+
+## EV-048 — stale
+
+- Ticket: `TK-008`
+- Acceptance: `AC-021`
+- Procedure: `.venv/bin/python -m pytest -q tests/test_model_adapter.py`
+- Execution: `executed`
+- Environment: OS=Linux-5.14.0-687.36.1.el9_8.x86_64-x86_64-with-glibc2.34; Python=3.9.25
+- Tested revision: `local:7f62754b8c7cbf992cce862665de816bd7236024279d081fa21e403bfe3cbb9d`
+- Timestamp: `2026-09-28T15:46:18+00:00`
+- Observations: Two invalid responses produced model_contract_failed trace, pending failure and no commercial action.
+- Evidence refs: none
+- Limitations: OpenAI real API not called; local fake HTTP contract only Evidence invalidated because an input changed.
+
+## EV-049 — stale
+
+- Ticket: `TK-008`
+- Acceptance: `AC-022`
+- Procedure: `.venv/bin/python -m pytest -q tests/test_model_adapter.py`
+- Execution: `executed`
+- Environment: OS=Linux-5.14.0-687.36.1.el9_8.x86_64-x86_64-with-glibc2.34; Python=3.9.25
+- Tested revision: `local:7f62754b8c7cbf992cce862665de816bd7236024279d081fa21e403bfe3cbb9d`
+- Timestamp: `2026-09-28T15:46:18+00:00`
+- Observations: 1000 input and 200 output tokens with configured prices 1 and 5 per million produced cost 0.002.
+- Evidence refs: none
+- Limitations: OpenAI real API not called; local fake HTTP contract only Evidence invalidated because an input changed.
+
+## EV-050 — stale
+
+- Ticket: `TK-008`
+- Acceptance: `AC-023`
+- Procedure: `.venv/bin/python -m pytest -q tests/test_model_adapter.py`
+- Execution: `executed`
+- Environment: OS=Linux-5.14.0-687.36.1.el9_8.x86_64-x86_64-with-glibc2.34; Python=3.9.25
+- Tested revision: `local:7f62754b8c7cbf992cce862665de816bd7236024279d081fa21e403bfe3cbb9d`
+- Timestamp: `2026-09-28T15:46:18+00:00`
+- Observations: Local response contract passed in openai and openai-compatible profiles; profile and model identity were reported. Real credential call not run.
+- Evidence refs: none
+- Limitations: OpenAI real API not called; local fake HTTP contract only Evidence invalidated because an input changed.
+
+## EV-051 — stale
+
+- Ticket: `TK-008`
+- Acceptance: `AC-019`
+- Procedure: `.venv/bin/python -m pytest -q tests/test_model_adapter.py`
+- Execution: `executed`
+- Environment: OS=Linux-5.14.0-687.36.1.el9_8.x86_64-x86_64-with-glibc2.34; Python=3.9.25
+- Tested revision: `local:8cc7eb43689a1870ea1268ae584e3868bf15d9473fb5ff6e5e9c60168bc05397`
+- Timestamp: `2026-09-28T15:48:13+00:00`
+- Observations: System and user roles separated; buyer text inside buyer_message; strict schema in captured request.
+- Evidence refs: none
+- Limitations: Only local fake HTTP contract; no real OpenAI credential call Evidence invalidated because an input changed.
+
+## EV-052 — stale
+
+- Ticket: `TK-008`
+- Acceptance: `AC-020`
+- Procedure: `.venv/bin/python -m pytest -q tests/test_model_adapter.py`
+- Execution: `executed`
+- Environment: OS=Linux-5.14.0-687.36.1.el9_8.x86_64-x86_64-with-glibc2.34; Python=3.9.25
+- Tested revision: `local:8cc7eb43689a1870ea1268ae584e3868bf15d9473fb5ff6e5e9c60168bc05397`
+- Timestamp: `2026-09-28T15:48:13+00:00`
+- Observations: One invalid then valid fake response required exactly two model calls and accepted the repaired proposal.
+- Evidence refs: none
+- Limitations: Only local fake HTTP contract; no real OpenAI credential call Evidence invalidated because an input changed.
+
+## EV-053 — stale
+
+- Ticket: `TK-008`
+- Acceptance: `AC-021`
+- Procedure: `.venv/bin/python -m pytest -q tests/test_model_adapter.py`
+- Execution: `executed`
+- Environment: OS=Linux-5.14.0-687.36.1.el9_8.x86_64-x86_64-with-glibc2.34; Python=3.9.25
+- Tested revision: `local:8cc7eb43689a1870ea1268ae584e3868bf15d9473fb5ff6e5e9c60168bc05397`
+- Timestamp: `2026-09-28T15:48:14+00:00`
+- Observations: Two invalid fake responses produced model_contract_failed trace, pending failure, no action.
+- Evidence refs: none
+- Limitations: Only local fake HTTP contract; no real OpenAI credential call Evidence invalidated because an input changed.
+
+## EV-054 — stale
+
+- Ticket: `TK-008`
+- Acceptance: `AC-022`
+- Procedure: `.venv/bin/python -m pytest -q tests/test_model_adapter.py`
+- Execution: `executed`
+- Environment: OS=Linux-5.14.0-687.36.1.el9_8.x86_64-x86_64-with-glibc2.34; Python=3.9.25
+- Tested revision: `local:8cc7eb43689a1870ea1268ae584e3868bf15d9473fb5ff6e5e9c60168bc05397`
+- Timestamp: `2026-09-28T15:48:14+00:00`
+- Observations: Configured prices 1 and 5 per million with 1000 and 200 tokens yielded cost 0.002.
+- Evidence refs: none
+- Limitations: Only local fake HTTP contract; no real OpenAI credential call Evidence invalidated because an input changed.
+
+## EV-055 — stale
+
+- Ticket: `TK-008`
+- Acceptance: `AC-023`
+- Procedure: `.venv/bin/python -m pytest -q tests/test_model_adapter.py`
+- Execution: `executed`
+- Environment: OS=Linux-5.14.0-687.36.1.el9_8.x86_64-x86_64-with-glibc2.34; Python=3.9.25
+- Tested revision: `local:8cc7eb43689a1870ea1268ae584e3868bf15d9473fb5ff6e5e9c60168bc05397`
+- Timestamp: `2026-09-28T15:48:14+00:00`
+- Observations: Both openai and openai-compatible fake HTTP profiles returned model and profile; real API was not called.
+- Evidence refs: none
+- Limitations: Only local fake HTTP contract; no real OpenAI credential call Evidence invalidated because an input changed.
+
+## EV-056 — passed
+
+- Ticket: `TK-004`
+- Acceptance: `AC-007`, `AC-008`, `AC-009`
+- Procedure: `.venv/bin/python -m pytest -q tests/test_chatwoot_contract.py tests/test_conversation_contract.py`
+- Execution: `executed`
+- Environment: OS=Linux-5.14.0-687.36.1.el9_8.x86_64-x86_64-with-glibc2.34; Python=3.9.25
+- Tested revision: `local:4bd0fe0ae4a354872964b17d573a304cd61952e3192c73a0b6f003b3a1d5428c`
+- Timestamp: `2026-09-28T15:50:47+00:00`
+- Observations: 37 passed with latency trace added; echo and takeover behavior unchanged.
+- Evidence refs: none
 - Limitations: none recorded
+
+## EV-057 — passed
+
+- Ticket: `TK-006`
+- Acceptance: `AC-013`, `AC-014`, `AC-015`
+- Procedure: `.venv/bin/python -m pytest -q tests/test_channel_window.py tests/test_delivery_and_governance.py`
+- Execution: `executed`
+- Environment: OS=Linux-5.14.0-687.36.1.el9_8.x86_64-x86_64-with-glibc2.34; Python=3.9.25
+- Tested revision: `local:af9d196cb2ed43243758eb794722df6e36bfbcf099a7b3832cee26a336aaec22`
+- Timestamp: `2026-09-28T15:50:47+00:00`
+- Observations: 29 passed with latency trace added; WhatsApp window unchanged.
+- Evidence refs: none
+- Limitations: none recorded
+
+## EV-058 — passed
+
+- Ticket: `TK-007`
+- Acceptance: `AC-016`, `AC-017`, `AC-018`
+- Procedure: `.venv/bin/python -m pytest -q tests/test_non_text_messages.py tests/test_conversation_contract.py`
+- Execution: `executed`
+- Environment: OS=Linux-5.14.0-687.36.1.el9_8.x86_64-x86_64-with-glibc2.34; Python=3.9.25
+- Tested revision: `local:2396a4a193a4de0b1172e44e40517305e902a6e42bbcf9b9a6498b140754d96b`
+- Timestamp: `2026-09-28T15:50:47+00:00`
+- Observations: 33 passed with latency trace added; non-text handling unchanged.
+- Evidence refs: none
+- Limitations: none recorded
+
+## EV-059 — passed
+
+- Ticket: `TK-008`
+- Acceptance: `AC-019`
+- Procedure: `.venv/bin/python -m pytest -q tests/test_model_adapter.py`
+- Execution: `executed`
+- Environment: OS=Linux-5.14.0-687.36.1.el9_8.x86_64-x86_64-with-glibc2.34; Python=3.9.25
+- Tested revision: `local:abe6e9a2f2d85eb6329df42355ebfe81a3873b6c480c8624a3612c1fd99f0913`
+- Timestamp: `2026-09-28T15:50:48+00:00`
+- Observations: System and user roles separated; buyer text delimited and strict JSON schema sent.
+- Evidence refs: none
+- Limitations: Local fake HTTP only; real OpenAI call not run
+
+## EV-060 — passed
+
+- Ticket: `TK-008`
+- Acceptance: `AC-020`
+- Procedure: `.venv/bin/python -m pytest -q tests/test_model_adapter.py`
+- Execution: `executed`
+- Environment: OS=Linux-5.14.0-687.36.1.el9_8.x86_64-x86_64-with-glibc2.34; Python=3.9.25
+- Tested revision: `local:abe6e9a2f2d85eb6329df42355ebfe81a3873b6c480c8624a3612c1fd99f0913`
+- Timestamp: `2026-09-28T15:50:48+00:00`
+- Observations: Invalid then valid response repaired with exactly two calls.
+- Evidence refs: none
+- Limitations: Local fake HTTP only; real OpenAI call not run
+
+## EV-061 — passed
+
+- Ticket: `TK-008`
+- Acceptance: `AC-021`
+- Procedure: `.venv/bin/python -m pytest -q tests/test_model_adapter.py`
+- Execution: `executed`
+- Environment: OS=Linux-5.14.0-687.36.1.el9_8.x86_64-x86_64-with-glibc2.34; Python=3.9.25
+- Tested revision: `local:abe6e9a2f2d85eb6329df42355ebfe81a3873b6c480c8624a3612c1fd99f0913`
+- Timestamp: `2026-09-28T15:50:48+00:00`
+- Observations: Two invalid responses yielded model_contract_failed trace and no action.
+- Evidence refs: none
+- Limitations: Local fake HTTP only; real OpenAI call not run
+
+## EV-062 — passed
+
+- Ticket: `TK-008`
+- Acceptance: `AC-022`
+- Procedure: `.venv/bin/python -m pytest -q tests/test_model_adapter.py`
+- Execution: `executed`
+- Environment: OS=Linux-5.14.0-687.36.1.el9_8.x86_64-x86_64-with-glibc2.34; Python=3.9.25
+- Tested revision: `local:abe6e9a2f2d85eb6329df42355ebfe81a3873b6c480c8624a3612c1fd99f0913`
+- Timestamp: `2026-09-28T15:50:48+00:00`
+- Observations: Usage 1000/200 with configured prices 1/5 per million yielded cost 0.002; latency tracked.
+- Evidence refs: none
+- Limitations: Local fake HTTP only; real OpenAI call not run
+
+## EV-063 — passed
+
+- Ticket: `TK-008`
+- Acceptance: `AC-023`
+- Procedure: `.venv/bin/python -m pytest -q tests/test_model_adapter.py`
+- Execution: `executed`
+- Environment: OS=Linux-5.14.0-687.36.1.el9_8.x86_64-x86_64-with-glibc2.34; Python=3.9.25
+- Tested revision: `local:abe6e9a2f2d85eb6329df42355ebfe81a3873b6c480c8624a3612c1fd99f0913`
+- Timestamp: `2026-09-28T15:50:49+00:00`
+- Observations: Both OpenAI and compatible profiles passed local HTTP contract with model/profile metadata; no real API call.
+- Evidence refs: none
+- Limitations: Local fake HTTP only; real OpenAI call not run

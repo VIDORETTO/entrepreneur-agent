@@ -589,8 +589,24 @@ class SellerEngine:
                 "offer_id": proposal.offer_id,
                 "requested_action": proposal.requested_action,
                 "topics": list(proposal.topics),
+                "profile": proposal.raw.get("profile") if isinstance(proposal.raw, Mapping) else None,
+                "model_calls": proposal.raw.get("model_calls") if isinstance(proposal.raw, Mapping) else None,
+                "usage": proposal.raw.get("usage") if isinstance(proposal.raw, Mapping) else None,
+                "cost": proposal.raw.get("cost") if isinstance(proposal.raw, Mapping) else None,
+                "latency_ms": proposal.raw.get("latency_ms") if isinstance(proposal.raw, Mapping) else None,
             }
         )
+        if isinstance(proposal.raw, Mapping) and proposal.raw.get("model_contract_failed"):
+            trace.append({"type": "model_contract_failed", "model": proposal.model_name, "calls": proposal.raw.get("model_calls")})
+            if proposal.raw.get("model_timeout"):
+                trace.append({"type": "model_timeout", "model": proposal.model_name})
+            state["pending"] = {"type": "model_contract_failed", "reason": "proposal_invalid"}
+            return self._result(
+                event,
+                state,
+                "Não consegui validar o pedido com segurança. Posso ajudar com informações ou chamar um atendente.",
+                trace=trace,
+            )
         offer = self._offer(package, proposal.offer_id)
         if proposal.offer_id and not offer:
             trace.append({"type": "proposal_rejected", "reason": "offer_not_in_package"})

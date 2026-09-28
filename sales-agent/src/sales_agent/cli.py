@@ -20,7 +20,7 @@ from .delivery import DeliveryProcessor
 from .evaluation import EvaluationRunner, model_contract_check
 from .governance import PilotController, QualitySupervisor
 from .knowledge import FarolArtifactImporter, PersistentFarolKnowledge, StableFarolAdapter
-from .model import HTTPModelAdapter, RuleBasedModel
+from .model import HTTPModelAdapter, RuleBasedModel, load_model_config
 from .service import ChannelServer, ServiceConfig
 from .skills import SkillCatalog
 from .storage import StateStore
@@ -285,11 +285,18 @@ def _discovery_view(payload: Dict[str, Any]) -> Dict[str, Any]:
 
 def _engine_for(store: StateStore, args: argparse.Namespace) -> SellerEngine:
     model = RuleBasedModel()
-    endpoint = os.environ.get("SELLER_MODEL_URL")
-    key = os.environ.get("SELLER_MODEL_API_KEY")
-    model_name = os.environ.get("SELLER_MODEL_NAME", "configured-model")
-    if endpoint and key and not getattr(args, "rules", False):
-        model = HTTPModelAdapter(endpoint, key, model_name)  # type: ignore[assignment]
+    config_path = os.environ.get("SELLER_MODEL_CONFIG")
+    if config_path and not getattr(args, "rules", False):
+        model = HTTPModelAdapter(**load_model_config(config_path))  # type: ignore[assignment]
+    else:
+        profile = os.environ.get("SELLER_MODEL_PROFILE", "openai")
+        endpoint = os.environ.get("SELLER_MODEL_URL") or (
+            "https://api.openai.com/v1/chat/completions" if profile == "openai" else ""
+        )
+        key = os.environ.get("OPENAI_API_KEY") if profile == "openai" else os.environ.get("SELLER_MODEL_API_KEY")
+        model_name = os.environ.get("SELLER_MODEL_NAME", "")
+        if endpoint and key and model_name and not getattr(args, "rules", False):
+            model = HTTPModelAdapter(endpoint, key, model_name, profile=profile, fallback="rules")  # type: ignore[assignment]
     supervisor = None
     setting = store.get_supervisor_setting()
     if setting and setting.get("mode") != "off":
@@ -593,7 +600,25 @@ def command_evaluate(args: argparse.Namespace) -> int:
 
 
 def command_model_check(args: argparse.Namespace) -> int:
-    if args.model is None:
+    if args.adapter == "http":
+        if args.config:
+            settings = load_model_config(args.config)
+            if args.profile:
+                settings["profile"] = args.profile
+            model = HTTPModelAdapter(**settings)
+        else:
+            profile = args.profile or os.environ.get("SELLER_MODEL_PROFILE", "openai")
+            endpoint = os.environ.get("SELLER_MODEL_URL") or (
+                "https://api.openai.com/v1/chat/completions" if profile == "openai" else ""
+            )
+            key = os.environ.get("OPENAI_API_KEY") if profile == "openai" else os.environ.get("SELLER_MODEL_API_KEY")
+            model_name = os.environ.get("SELLER_MODEL_NAME", "")
+            if not endpoint or not key or not model_name:
+                raise ValueError("model-check HTTP exige endpoint, chave em ambiente e SELLER_MODEL_NAME")
+            model = HTTPModelAdapter(endpoint, key, model_name, profile=profile, fallback="assist")
+        result = model_contract_check(model)
+        result.update({"profile": model.profile, "model": model.model})
+    elif args.model is None:
         result = model_contract_check()
     else:
         factory = EvaluationRunner.MODEL_NAMES[args.model]
@@ -842,6 +867,9 @@ def build_parser() -> argparse.ArgumentParser:
     evaluate.set_defaults(func=command_evaluate)
     model_check = sub.add_parser("model-check", help="testar contrato do adaptador de modelo")
     model_check.add_argument("--model", choices=sorted(EvaluationRunner.MODEL_NAMES))
+    model_check.add_argument("--adapter", choices=["rules", "http"], default="rules")
+    model_check.add_argument("--profile", choices=["openai", "openai-compatible"])
+    model_check.add_argument("--config", help="JSON com chave env:NOME e preços")
     model_check.set_defaults(func=command_model_check)
 
     storage = sub.add_parser("storage", help="verificar, copiar ou restaurar o estado SQLite")

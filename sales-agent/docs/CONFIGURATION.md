@@ -58,3 +58,24 @@ O produto diferencia:
 `non_text_policy` na raiz do pacote aceita `ask_text` (padrão) ou
 `offer_human`. Sem transcritor, áudio sem legenda usa essa resposta e registra
 metadados do anexo. A política não interpreta mídia nem autoriza checkout.
+
+Para interpretação remota, `SELLER_MODEL_CONFIG` aponta para um JSON como:
+
+```json
+{
+  "profile": "openai", "model": "modelo-configurado-pelo-operador",
+  "api_key": "env:OPENAI_API_KEY",
+  "prices": {"input_per_million": 1, "output_per_million": 5},
+  "fallback": "rules"
+}
+```
+
+O perfil `openai` usa Chat Completions e Structured Outputs estrito; confirme
+que o modelo configurado suporta `json_schema`. `openai-compatible` aceita
+`endpoint` HTTPS explícito e não envia `strict`; a compatibilidade deve ser
+comprovada com `vendedor model-check --adapter http --config model.json`.
+O valor da chave só vem do ambiente. `SELLER_MODEL_NAME` pode fornecer o nome
+quando `model` não está no JSON. Os preços são por milhão de tokens de entrada
+e saída e nunca são fixos no adaptador. Após duas propostas inválidas, o
+fallback registra `model_contract_failed` e não autoriza efeitos comerciais.
+Uma recusa explícita do provedor segue a mesma falha fechada.

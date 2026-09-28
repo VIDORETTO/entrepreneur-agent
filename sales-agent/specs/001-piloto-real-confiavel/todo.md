@@ -29,17 +29,17 @@ Status: `done` | Bloqueado por: TK-001
 - [x] TK-003.5 Executar regressão completa (`python -m pytest -q`, `ruff check src tests`) e atualizar documentação da interface.
 - [x] TK-003.6 Registrar evidência (`hybrid.py evidence add --executed`) e checkpoint; não marcar checklist de reviewer.
 
-## [ ] TK-008 — TK-008 — Adaptador de modelo real com saída estruturada, reparo, custo e fallback
-Status: `ready` | Bloqueado por: TK-001
+## [x] TK-008 — TK-008 — Adaptador de modelo real com saída estruturada, reparo, custo e fallback
+Status: `done` | Bloqueado por: TK-001
 
-- [ ] TK-008.1 Escrever o primeiro caso (AC-019) na seam indicada em `plan.md`; observar red pelo motivo previsto em `tdd.md`.
-- [ ] TK-008.2 Implementar o mínimo para green de AC-019; próximo caso só após green.
-- [ ] TK-008.3 Implementar o mínimo para green de AC-020; próximo caso só após green.
-- [ ] TK-008.4 Implementar o mínimo para green de AC-021; próximo caso só após green.
-- [ ] TK-008.5 Implementar o mínimo para green de AC-022; próximo caso só após green.
-- [ ] TK-008.6 Implementar o mínimo para green de AC-023; próximo caso só após green.
-- [ ] TK-008.7 Executar regressão completa (`python -m pytest -q`, `ruff check src tests`) e atualizar documentação da interface.
-- [ ] TK-008.8 Registrar evidência (`hybrid.py evidence add --executed`) e checkpoint; não marcar checklist de reviewer.
+- [x] TK-008.1 Escrever o primeiro caso (AC-019) na seam indicada em `plan.md`; observar red pelo motivo previsto em `tdd.md`.
+- [x] TK-008.2 Implementar o mínimo para green de AC-019; próximo caso só após green.
+- [x] TK-008.3 Implementar o mínimo para green de AC-020; próximo caso só após green.
+- [x] TK-008.4 Implementar o mínimo para green de AC-021; próximo caso só após green.
+- [x] TK-008.5 Implementar o mínimo para green de AC-022; próximo caso só após green.
+- [x] TK-008.6 Implementar o mínimo para green de AC-023; próximo caso só após green.
+- [x] TK-008.7 Executar regressão completa (`python -m pytest -q`, `ruff check src tests`) e atualizar documentação da interface.
+- [x] TK-008.8 Registrar evidência (`hybrid.py evidence add --executed`) e checkpoint; não marcar checklist de reviewer.
 
 ## [ ] TK-011 — TK-011 — Recuperação BM25 com acentos normalizados e recall medido
 Status: `ready` | Bloqueado por: TK-001

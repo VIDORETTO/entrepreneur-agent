@@ -1,5 +1,5 @@
 {
-  "active_ticket": "TK-008",
+  "active_ticket": "TK-012",
   "authorization_refs": [],
   "baseline": {
     "kind": "git",
@@ -26,28 +26,27 @@
       "revision": 2
     }
   },
-  "last_evidence": "EV-042",
+  "last_evidence": "EV-063",
   "last_invalidation": {
     "evidence": [
-      "EV-020",
-      "EV-021",
-      "EV-022",
-      "EV-024",
-      "EV-025",
-      "EV-026",
-      "EV-033",
-      "EV-034",
-      "EV-035"
+      "EV-043",
+      "EV-044",
+      "EV-045",
+      "EV-051",
+      "EV-052",
+      "EV-053",
+      "EV-054",
+      "EV-055"
     ],
     "inputs": {},
-    "timestamp": "2026-09-28T15:29:55+00:00"
+    "timestamp": "2026-09-28T15:50:13+00:00"
   },
   "mode": "standard",
-  "next_action": "Executar TK-008 (adaptador OpenAI), consultar documentação atual de Structured Outputs antes do código; TK-002 AC-003 segue sem CI",
+  "next_action": "Executar TK-012 (holdout e repetição); TK-002 AC-003 ainda depende de CI não executado",
   "pending_questions": [],
   "phase": "implementation",
-  "revision": 19,
+  "revision": 23,
   "schema_version": "1.0",
   "status": "active",
-  "updated_at": "2026-09-28T15:34:25+00:00"
+  "updated_at": "2026-09-28T15:51:50+00:00"
 }
