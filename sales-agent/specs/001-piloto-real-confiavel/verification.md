@@ -1821,3 +1821,16 @@
 - Observations: Local holdout passed 30/30 cases and 120/120 runs with checksum and file metadata; real model unavailable.
 - Evidence refs: none
 - Limitations: none recorded
+
+## EV-141 — not_run
+
+- Ticket: `TK-002`
+- Acceptance: `AC-003`
+- Procedure: `GitHub Actions sales-agent-ci.yml on feat/001-piloto-real-confiavel`
+- Execution: `observed_only`
+- Environment: OS=Linux-5.14.0-687.36.1.el9_8.x86_64-x86_64-with-glibc2.34; Python=3.12.14
+- Tested revision: `local:19687dd436d97d3894a7e95aeecc0e8503fdc884a79e3f18dee990ac9e0b1c7c`
+- Timestamp: `2026-09-28T19:09:32+00:00`
+- Observations: Workflow matrix and Python floor are implemented; the current local branch has not been pushed, so no CI run exists for this revision.
+- Evidence refs: none
+- Limitations: GOAL-PROMPT explicitly prohibits git push.

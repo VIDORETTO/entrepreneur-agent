@@ -1,0 +1,26 @@
+{
+  "acceptance_refs": [
+    "AC-003"
+  ],
+  "environment": "OS=Linux-5.14.0-687.36.1.el9_8.x86_64-x86_64-with-glibc2.34; Python=3.12.14",
+  "evidence_refs": [],
+  "execution_status": "observed_only",
+  "id": "EV-141",
+  "input_fingerprints": {
+    "pyproject.toml": "a778bcd40960a6feaf0a287a760988299244d4de45bfc2c1adeb647c59099312",
+    "specs/001-piloto-real-confiavel/plan.md": "a069d7b1d149ba604d47c2cb8035b6bfe0e9dc7471acd4eb697cbcab209ab66e",
+    "specs/001-piloto-real-confiavel/spec.md": "057aed7c1e1360d8f71167caca6af45c61c0ddf7114ce1d2eb8ce7d6dd5858ba"
+  },
+  "input_paths": [
+    "pyproject.toml",
+    "specs/001-piloto-real-confiavel/spec.md",
+    "specs/001-piloto-real-confiavel/plan.md"
+  ],
+  "limitations": "GOAL-PROMPT explicitly prohibits git push.",
+  "observations": "Workflow matrix and Python floor are implemented; the current local branch has not been pushed, so no CI run exists for this revision.",
+  "procedure": "GitHub Actions sales-agent-ci.yml on feat/001-piloto-real-confiavel",
+  "result": "not_run",
+  "tested_revision": "local:19687dd436d97d3894a7e95aeecc0e8503fdc884a79e3f18dee990ac9e0b1c7c",
+  "ticket": "TK-002",
+  "timestamp": "2026-09-28T19:09:32+00:00"
+}
