@@ -1,19 +1,24 @@
 ---
 schema: hybrid/ticket
-schema_version: "1.0"
+schema_version: 1.0
 id: TK-010
 effort: 001-piloto-real-confiavel
 type: delivery
-status: ready
-ticket_revision: 1
-requires: [TK-009]
-requirement_refs: [FR-010]
-acceptance_refs: [AC-028, AC-029, AC-030]
+status: done
+ticket_revision: 6
+requires: ["TK-009"]
+requirement_refs: ["FR-010"]
+acceptance_refs: ["AC-028", "AC-029", "AC-030"]
 spec_revision: 2
 plan_revision: 2
-owned_areas: [src/sales_agent/conversation.py, src/sales_agent/drafting.py, tests/test_injection.py, evaluation/]
-verification_status: not_run
+owned_areas: ["src/sales_agent/conversation.py", "src/sales_agent/drafting.py", "tests/test_injection.py", "evaluation/"]
+verification_status: passed
 ---
+
+
+
+
+
 
 # TK-010 — Resistência a injeção de prompt e vazamento de instruções
 

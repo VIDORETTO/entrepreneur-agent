@@ -1,34 +1,33 @@
 {
   "acceptance_refs": [
+    "AC-024",
+    "AC-025",
+    "AC-026",
     "AC-027"
   ],
   "environment": "OS=Linux-5.14.0-687.36.1.el9_8.x86_64-x86_64-with-glibc2.34; Python=3.12.14",
   "evidence_refs": [],
   "execution_status": "executed",
-  "id": "EV-089",
+  "id": "EV-098",
   "input_fingerprints": {
     "specs/001-piloto-real-confiavel/plan.md": "a069d7b1d149ba604d47c2cb8035b6bfe0e9dc7471acd4eb697cbcab209ab66e",
     "specs/001-piloto-real-confiavel/spec.md": "057aed7c1e1360d8f71167caca6af45c61c0ddf7114ce1d2eb8ce7d6dd5858ba",
-    "src/sales_agent/conversation.py": "911132324004eadbc2c4721d11e608d89c962b657e9adafc95c9f513d26a897b",
-    "src/sales_agent/drafting.py": "8974b3daa79b3f633cb787ffb466fd9395aa8634e0c8636a0492aea8fb8a34b4",
-    "src/sales_agent/governance.py": "a00ebbf07a19fe8a7bbf72bf1c87bc637d25d518207890b05a2ae7489eb2bf9a",
-    "src/sales_agent/model.py": "e6b453ebdf45c4a491662f6668e56e1a220dba7fb05e487638a738e93407d9e2",
+    "src/sales_agent/conversation.py": "db66fbf44e0a54cfa1e0f85b87fc8352dd878318aa662f9e8a8fcc4eaa470007",
+    "src/sales_agent/drafting.py": "55161592699a83eadef772644a0dbffeb93776190d57e303a15760cc4f496c67",
     "tests/test_grounded_drafting.py": "1680cd6604043caab6b352134e3a99299b860c36c5fae6b54bea0139f41a53cc"
   },
   "input_paths": [
-    "src/sales_agent/drafting.py",
     "src/sales_agent/conversation.py",
-    "src/sales_agent/model.py",
-    "src/sales_agent/governance.py",
+    "src/sales_agent/drafting.py",
     "tests/test_grounded_drafting.py",
     "specs/001-piloto-real-confiavel/spec.md",
     "specs/001-piloto-real-confiavel/plan.md"
   ],
-  "limitations": "Evidence invalidated because an input changed.",
-  "observations": "Unapproved https://pague-aqui.example was rejected; engine-issued checkout link remained.",
+  "limitations": "",
+  "observations": "47 drafting and supervisor tests passed after injection guard.",
   "procedure": "python3.12 -m pytest -q tests/test_grounded_drafting.py tests/test_channel_pilot_supervisor.py",
-  "result": "stale",
-  "tested_revision": "local:af793e0042976c31d60cef4ac3ef84a9688b8f8313394e0c3c16947ada8cec27",
+  "result": "passed",
+  "tested_revision": "local:1a777a39c87cfa3988a2c2596510d983d342a931144a2ddbcdb94d5f30a91c45",
   "ticket": "TK-009",
-  "timestamp": "2026-09-28T17:15:41+00:00"
+  "timestamp": "2026-09-28T17:35:05+00:00"
 }

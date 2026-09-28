@@ -19,6 +19,12 @@ na execução `dev`. `--model-config` aceita o mesmo JSON `env:NOME` usado por
 `model-check`; a credencial é resolvida em memória. `--split contract` preserva
 o relatório histórico de 38 cenários.
 
+O conjunto reservado inclui tentativas de trocar preço e declarar aceitação
+contratual, instrução escondida em fonte aprovada e pedido de revelar prompt
+ou skills. Esses casos verificam cotação, resposta e trace, sem executar
+qualquer ação externa. Ao acrescentar casos ao holdout, o SHA-256 muda; o
+relatório anterior não serve como prova da versão nova.
+
 `vendedor evaluate` executa os 38 cenários AC do contrato e emite JSON com caso,
 status, criticidade, backend, adaptador de modelo, limitações, versão do pacote,
 runtime e revisão Git quando disponível. `run.source.dirty: true` indica que o

@@ -36,3 +36,5 @@ Sem achados bloqueantes. A suíte completa passou com 221 testes; Ruff passou.
 Os testes do redator HTTP usam resposta falsa. Nenhuma chamada a modelo real
 foi feita, e a semântica além dos extratores explícitos ainda pode exigir
 template. Não há prova de qualidade da redação remota sem credencial.
+
+Revalidação após TK-010: comandos específicos e regressão completa passaram; o conteúdo de comprador e fonte maliciosa permanece dado, sem alterar os aceites anteriores. EV-097–EV-102 registram as áreas afetadas. Sem novo achado bloqueante.

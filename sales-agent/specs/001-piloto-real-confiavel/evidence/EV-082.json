@@ -20,10 +20,10 @@
     "specs/001-piloto-real-confiavel/spec.md",
     "specs/001-piloto-real-confiavel/plan.md"
   ],
-  "limitations": "",
+  "limitations": "Evidence invalidated because an input changed.",
   "observations": "Fake model fails critical case on fourth repetition: pass@1 3/4, pass^4 0/1, threshold false.",
   "procedure": "python3.12 -m pytest -q",
-  "result": "passed",
+  "result": "stale",
   "tested_revision": "local:dd64352487668932b05bbf3ea81c8bc6e501c6abc5b9e367d82bd86e1c3fd9ed",
   "ticket": "TK-012",
   "timestamp": "2026-09-28T16:37:41+00:00"

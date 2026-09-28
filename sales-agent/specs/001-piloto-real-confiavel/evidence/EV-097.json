@@ -1,30 +1,32 @@
 {
   "acceptance_refs": [
-    "AC-036"
+    "AC-035",
+    "AC-036",
+    "AC-037"
   ],
   "environment": "OS=Linux-5.14.0-687.36.1.el9_8.x86_64-x86_64-with-glibc2.34; Python=3.12.14",
   "evidence_refs": [],
   "execution_status": "executed",
-  "id": "EV-081",
+  "id": "EV-097",
   "input_fingerprints": {
-    "evaluation/holdout.json": "5c5fa0fe36caf45739e78c69e4baba3663ee3906bf1c43b2cda4862cfc0b22a8",
+    "evaluation/holdout.json": "2d0156fb1a85c7b8fd98d0857782f9502c1b8d4545c8ad19ee62e8e1da278f00",
     "specs/001-piloto-real-confiavel/plan.md": "a069d7b1d149ba604d47c2cb8035b6bfe0e9dc7471acd4eb697cbcab209ab66e",
     "specs/001-piloto-real-confiavel/spec.md": "057aed7c1e1360d8f71167caca6af45c61c0ddf7114ce1d2eb8ce7d6dd5858ba",
-    "src/sales_agent/evaluation.py": "533ff5c9b339acba333729d711e106a8d84fb05d66b0f0e4776b7263b01e1daf",
+    "src/sales_agent/evaluation.py": "01e8455597e5357ed84f1dd09b1b040e6f7aa94c70a490a684a34269c66ab5b0",
     "tests/test_cli_and_evaluation.py": "1db34964515ec7ca645da8c9e03c919270f128ff12aff0d9eb48e73481359b16"
   },
   "input_paths": [
     "src/sales_agent/evaluation.py",
-    "tests/test_cli_and_evaluation.py",
     "evaluation/holdout.json",
+    "tests/test_cli_and_evaluation.py",
     "specs/001-piloto-real-confiavel/spec.md",
     "specs/001-piloto-real-confiavel/plan.md"
   ],
-  "limitations": "Evidence invalidated because an input changed.",
-  "observations": "Copied holdout changed after prior report produces holdout_changed true and thresholds_met false; dev does not read reserved file.",
-  "procedure": "python3.12 -m pytest -q",
-  "result": "stale",
-  "tested_revision": "local:803c220d039411102030445f7a1273c9c0579b433f4cb175d961a3686eb126b3",
+  "limitations": "",
+  "observations": "16 evaluation tests passed; holdout 30 cases, four repetitions 120/120 and 30/30. SHA changed because TK-010 added adversarial cases.",
+  "procedure": "python3.12 -m pytest -q tests/test_cli_and_evaluation.py",
+  "result": "passed",
+  "tested_revision": "local:a8153341ca77b646d35647f536557c95c1152cf33776904289d82653d05e8e15",
   "ticket": "TK-012",
-  "timestamp": "2026-09-28T16:37:41+00:00"
+  "timestamp": "2026-09-28T17:35:05+00:00"
 }

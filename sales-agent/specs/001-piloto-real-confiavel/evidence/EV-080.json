@@ -26,10 +26,10 @@
     "specs/001-piloto-real-confiavel/spec.md",
     "specs/001-piloto-real-confiavel/plan.md"
   ],
-  "limitations": "",
+  "limitations": "Evidence invalidated because an input changed.",
   "observations": "208 tests passed; 50 dev and 30 holdout cases, total distribution 16/12/12/12/12/8/8. Holdout four repetitions: pass@1 120/120 and pass^4 30/30.",
   "procedure": "python3.12 -m pytest -q",
-  "result": "passed",
+  "result": "stale",
   "tested_revision": "local:15d112869a3a3b01f4b0b9987afbf1c3f7961c9ff07746587606a2e79e992240",
   "ticket": "TK-012",
   "timestamp": "2026-09-28T16:37:41+00:00"

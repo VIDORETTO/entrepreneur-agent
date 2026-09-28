@@ -7,11 +7,11 @@
   "environment": "OS=Linux-5.14.0-687.36.1.el9_8.x86_64-x86_64-with-glibc2.34; Python=3.12.14",
   "evidence_refs": [],
   "execution_status": "executed",
-  "id": "EV-090",
+  "id": "EV-099",
   "input_fingerprints": {
     "specs/001-piloto-real-confiavel/plan.md": "a069d7b1d149ba604d47c2cb8035b6bfe0e9dc7471acd4eb697cbcab209ab66e",
     "specs/001-piloto-real-confiavel/spec.md": "057aed7c1e1360d8f71167caca6af45c61c0ddf7114ce1d2eb8ce7d6dd5858ba",
-    "src/sales_agent/conversation.py": "911132324004eadbc2c4721d11e608d89c962b657e9adafc95c9f513d26a897b",
+    "src/sales_agent/conversation.py": "db66fbf44e0a54cfa1e0f85b87fc8352dd878318aa662f9e8a8fcc4eaa470007",
     "tests/test_conversation_contract.py": "9a9fd38d2b8bbde2807e564b15f40a3c1c3192257b66091cc8819978299dbc59"
   },
   "input_paths": [
@@ -20,11 +20,11 @@
     "specs/001-piloto-real-confiavel/spec.md",
     "specs/001-piloto-real-confiavel/plan.md"
   ],
-  "limitations": "Evidence invalidated because an input changed.",
-  "observations": "Chatwoot echo and conversation contracts revalidated in 94-test combined suite.",
+  "limitations": "",
+  "observations": "37 Chatwoot and conversation tests passed.",
   "procedure": ".venv/bin/python -m pytest -q tests/test_chatwoot_contract.py tests/test_conversation_contract.py",
-  "result": "stale",
-  "tested_revision": "local:0c52431b3a03bd3cdf61fe6daadf4d7826d5c139481b2c266694ceeb50dc2b38",
+  "result": "passed",
+  "tested_revision": "local:96c9fd9be1b56c7dbf9c41d1437ba5ef1c8a32698cb76ce610738befe5e2b7d4",
   "ticket": "TK-004",
-  "timestamp": "2026-09-28T17:15:56+00:00"
+  "timestamp": "2026-09-28T17:35:05+00:00"
 }

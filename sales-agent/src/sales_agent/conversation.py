@@ -14,7 +14,7 @@ from datetime import datetime
 from typing import Any, Callable, Dict, List, Mapping, Optional
 
 from .commerce import CommerceError, SimulatedCommerce
-from .drafting import ClaimVerifier, ResponseRequirements
+from .drafting import ClaimVerifier, ResponseRequirements, injection_signals
 from .knowledge import KnowledgeBackend, PersistentFarolKnowledge
 from .model import ModelAdapter, RuleBasedModel
 from .skills import SkillCatalog
@@ -523,6 +523,9 @@ class SellerEngine:
     def _decide(self, package: Mapping[str, Any], state: Dict[str, Any], event: Mapping[str, Any]) -> EngineResult:
         text = str(event["text"])
         trace: List[Dict[str, Any]] = []
+        signals = injection_signals(text)
+        if signals:
+            trace.append({"type": "injection_signal", "source": "buyer", "signals": signals})
         evidence: List[Dict[str, Any]] = []
         action: Optional[Dict[str, Any]] = None
         objection_response: Optional[str] = None
@@ -957,6 +960,15 @@ class SellerEngine:
                     if not hit.get("subject") or str(hit.get("subject")) == topic
                     if self._evidence_covers_topic(topic, hit)
                 ]
+                safe_hits = []
+                for hit in hits:
+                    source_signals = injection_signals(str(hit.get("content", "")))
+                    if source_signals:
+                        used_trace.append({"type": "injection_signal", "source": "evidence",
+                                           "evidence_id": hit.get("evidence_id"), "signals": source_signals})
+                    else:
+                        safe_hits.append(hit)
+                hits = safe_hits
                 if not hits:
                     missing_topics.append(topic)
                     continue

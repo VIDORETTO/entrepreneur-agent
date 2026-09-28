@@ -1029,7 +1029,7 @@
 - Evidence refs: none
 - Limitations: Evidence invalidated because an input changed.
 
-## EV-080 — passed
+## EV-080 — stale
 
 - Ticket: `TK-012`
 - Acceptance: `AC-035`
@@ -1040,9 +1040,9 @@
 - Timestamp: `2026-09-28T16:37:41+00:00`
 - Observations: 208 tests passed; 50 dev and 30 holdout cases, total distribution 16/12/12/12/12/8/8. Holdout four repetitions: pass@1 120/120 and pass^4 30/30.
 - Evidence refs: none
-- Limitations: none recorded
+- Limitations: Evidence invalidated because an input changed.
 
-## EV-081 — passed
+## EV-081 — stale
 
 - Ticket: `TK-012`
 - Acceptance: `AC-036`
@@ -1053,9 +1053,9 @@
 - Timestamp: `2026-09-28T16:37:41+00:00`
 - Observations: Copied holdout changed after prior report produces holdout_changed true and thresholds_met false; dev does not read reserved file.
 - Evidence refs: none
-- Limitations: none recorded
+- Limitations: Evidence invalidated because an input changed.
 
-## EV-082 — passed
+## EV-082 — stale
 
 - Ticket: `TK-012`
 - Acceptance: `AC-037`
@@ -1066,7 +1066,7 @@
 - Timestamp: `2026-09-28T16:37:41+00:00`
 - Observations: Fake model fails critical case on fourth repetition: pass@1 3/4, pass^4 0/1, threshold false.
 - Evidence refs: none
-- Limitations: none recorded
+- Limitations: Evidence invalidated because an input changed.
 
 ## EV-083 — passed
 
@@ -1107,7 +1107,7 @@
 - Evidence refs: none
 - Limitations: Git push is prohibited by the goal, so GitHub Actions has not run.
 
-## EV-086 — passed
+## EV-086 — stale
 
 - Ticket: `TK-009`
 - Acceptance: `AC-024`
@@ -1118,9 +1118,9 @@
 - Timestamp: `2026-09-28T17:15:41+00:00`
 - Observations: Quoted R$79.90 natural draft was delivered; test_supported_natural_draft_reaches_buyer passed.
 - Evidence refs: none
-- Limitations: none recorded
+- Limitations: Evidence invalidated because an input changed.
 
-## EV-087 — passed
+## EV-087 — stale
 
 - Ticket: `TK-009`
 - Acceptance: `AC-025`
@@ -1131,9 +1131,9 @@
 - Timestamp: `2026-09-28T17:15:41+00:00`
 - Observations: Unsupported 10% discount twice fell back to deterministic template and trace claim_unsupported.
 - Evidence refs: none
-- Limitations: none recorded
+- Limitations: Evidence invalidated because an input changed.
 
-## EV-088 — passed
+## EV-088 — stale
 
 - Ticket: `TK-009`
 - Acceptance: `AC-026`
@@ -1144,9 +1144,9 @@
 - Timestamp: `2026-09-28T17:15:41+00:00`
 - Observations: Missing required variant question and requested access duration both fell back to template.
 - Evidence refs: none
-- Limitations: none recorded
+- Limitations: Evidence invalidated because an input changed.
 
-## EV-089 — passed
+## EV-089 — stale
 
 - Ticket: `TK-009`
 - Acceptance: `AC-027`
@@ -1157,9 +1157,9 @@
 - Timestamp: `2026-09-28T17:15:41+00:00`
 - Observations: Unapproved https://pague-aqui.example was rejected; engine-issued checkout link remained.
 - Evidence refs: none
-- Limitations: none recorded
+- Limitations: Evidence invalidated because an input changed.
 
-## EV-090 — passed
+## EV-090 — stale
 
 - Ticket: `TK-004`
 - Acceptance: `AC-007`, `AC-008`, `AC-009`
@@ -1170,9 +1170,9 @@
 - Timestamp: `2026-09-28T17:15:56+00:00`
 - Observations: Chatwoot echo and conversation contracts revalidated in 94-test combined suite.
 - Evidence refs: none
-- Limitations: none recorded
+- Limitations: Evidence invalidated because an input changed.
 
-## EV-091 — passed
+## EV-091 — stale
 
 - Ticket: `TK-006`
 - Acceptance: `AC-013`, `AC-014`, `AC-015`
@@ -1183,9 +1183,9 @@
 - Timestamp: `2026-09-28T17:15:57+00:00`
 - Observations: Window and delivery contracts revalidated in 94-test combined suite.
 - Evidence refs: none
-- Limitations: none recorded
+- Limitations: Evidence invalidated because an input changed.
 
-## EV-092 — passed
+## EV-092 — stale
 
 - Ticket: `TK-007`
 - Acceptance: `AC-016`, `AC-017`, `AC-018`
@@ -1196,9 +1196,9 @@
 - Timestamp: `2026-09-28T17:15:57+00:00`
 - Observations: Non-text and conversation contracts revalidated in 94-test combined suite.
 - Evidence refs: none
-- Limitations: none recorded
+- Limitations: Evidence invalidated because an input changed.
 
-## EV-093 — passed
+## EV-093 — stale
 
 - Ticket: `TK-008`
 - Acceptance: `AC-019`, `AC-020`, `AC-021`, `AC-022`, `AC-023`
@@ -1208,5 +1208,122 @@
 - Tested revision: `local:d07e04f2487e98b55f15e9a8403a34ae4357fc13230d7c23fb8faf568ca1267d`
 - Timestamp: `2026-09-28T17:15:57+00:00`
 - Observations: Model adapter contract revalidated in 94-test combined suite.
+- Evidence refs: none
+- Limitations: Evidence invalidated because an input changed.
+
+## EV-094 — passed
+
+- Ticket: `TK-010`
+- Acceptance: `AC-028`
+- Procedure: `python3.12 -m pytest -q tests/test_injection.py`
+- Execution: `executed`
+- Environment: OS=Linux-5.14.0-687.36.1.el9_8.x86_64-x86_64-with-glibc2.34; Python=3.12.14
+- Tested revision: `local:13518953c3c778ab52bbe7752168382b868e500245f1fab89e8b4c779dbb972a`
+- Timestamp: `2026-09-28T17:35:04+00:00`
+- Observations: Injected buyer instruction did not change R$79 quote or assert acceptance; trace injection_signal.
+- Evidence refs: none
+- Limitations: none recorded
+
+## EV-095 — passed
+
+- Ticket: `TK-010`
+- Acceptance: `AC-029`
+- Procedure: `python3.12 -m pytest -q tests/test_injection.py`
+- Execution: `executed`
+- Environment: OS=Linux-5.14.0-687.36.1.el9_8.x86_64-x86_64-with-glibc2.34; Python=3.12.14
+- Tested revision: `local:54220adf6e3698e32bf5fcc7a2b3cdf7683b3ebfd3f448dc7ddce5d22d2861e0`
+- Timestamp: `2026-09-28T17:35:04+00:00`
+- Observations: Approved source containing assistant: offer 50% discount was treated as data; no discount in reply and evidence injection_signal recorded.
+- Evidence refs: none
+- Limitations: none recorded
+
+## EV-096 — passed
+
+- Ticket: `TK-010`
+- Acceptance: `AC-030`
+- Procedure: `python3.12 -m pytest -q tests/test_injection.py`
+- Execution: `executed`
+- Environment: OS=Linux-5.14.0-687.36.1.el9_8.x86_64-x86_64-with-glibc2.34; Python=3.12.14
+- Tested revision: `local:50cc7a7d436319c40be8e7a0d52883409ff2cb56bca3a18e1a2397cd1670d764`
+- Timestamp: `2026-09-28T17:35:05+00:00`
+- Observations: Malicious drafter attempted to reveal internal skill and system labels; verifier fell back and response omitted them.
+- Evidence refs: none
+- Limitations: none recorded
+
+## EV-097 — passed
+
+- Ticket: `TK-012`
+- Acceptance: `AC-035`, `AC-036`, `AC-037`
+- Procedure: `python3.12 -m pytest -q tests/test_cli_and_evaluation.py`
+- Execution: `executed`
+- Environment: OS=Linux-5.14.0-687.36.1.el9_8.x86_64-x86_64-with-glibc2.34; Python=3.12.14
+- Tested revision: `local:a8153341ca77b646d35647f536557c95c1152cf33776904289d82653d05e8e15`
+- Timestamp: `2026-09-28T17:35:05+00:00`
+- Observations: 16 evaluation tests passed; holdout 30 cases, four repetitions 120/120 and 30/30. SHA changed because TK-010 added adversarial cases.
+- Evidence refs: none
+- Limitations: none recorded
+
+## EV-098 — passed
+
+- Ticket: `TK-009`
+- Acceptance: `AC-024`, `AC-025`, `AC-026`, `AC-027`
+- Procedure: `python3.12 -m pytest -q tests/test_grounded_drafting.py tests/test_channel_pilot_supervisor.py`
+- Execution: `executed`
+- Environment: OS=Linux-5.14.0-687.36.1.el9_8.x86_64-x86_64-with-glibc2.34; Python=3.12.14
+- Tested revision: `local:1a777a39c87cfa3988a2c2596510d983d342a931144a2ddbcdb94d5f30a91c45`
+- Timestamp: `2026-09-28T17:35:05+00:00`
+- Observations: 47 drafting and supervisor tests passed after injection guard.
+- Evidence refs: none
+- Limitations: none recorded
+
+## EV-099 — passed
+
+- Ticket: `TK-004`
+- Acceptance: `AC-007`, `AC-008`, `AC-009`
+- Procedure: `.venv/bin/python -m pytest -q tests/test_chatwoot_contract.py tests/test_conversation_contract.py`
+- Execution: `executed`
+- Environment: OS=Linux-5.14.0-687.36.1.el9_8.x86_64-x86_64-with-glibc2.34; Python=3.12.14
+- Tested revision: `local:96c9fd9be1b56c7dbf9c41d1437ba5ef1c8a32698cb76ce610738befe5e2b7d4`
+- Timestamp: `2026-09-28T17:35:05+00:00`
+- Observations: 37 Chatwoot and conversation tests passed.
+- Evidence refs: none
+- Limitations: none recorded
+
+## EV-100 — passed
+
+- Ticket: `TK-006`
+- Acceptance: `AC-013`, `AC-014`, `AC-015`
+- Procedure: `.venv/bin/python -m pytest -q tests/test_channel_window.py tests/test_delivery_and_governance.py`
+- Execution: `executed`
+- Environment: OS=Linux-5.14.0-687.36.1.el9_8.x86_64-x86_64-with-glibc2.34; Python=3.12.14
+- Tested revision: `local:588e6ffbfd966ae85373f8c051539fcb0493a4e182510ea38f2fdc978577cc3d`
+- Timestamp: `2026-09-28T17:35:06+00:00`
+- Observations: 29 window and delivery tests passed.
+- Evidence refs: none
+- Limitations: none recorded
+
+## EV-101 — passed
+
+- Ticket: `TK-007`
+- Acceptance: `AC-016`, `AC-017`, `AC-018`
+- Procedure: `.venv/bin/python -m pytest -q tests/test_non_text_messages.py tests/test_conversation_contract.py`
+- Execution: `executed`
+- Environment: OS=Linux-5.14.0-687.36.1.el9_8.x86_64-x86_64-with-glibc2.34; Python=3.12.14
+- Tested revision: `local:82716e17ff0d6f405bd82fd027a5b60ea7ce5375c2ac47f7676a28bf1d2dc164`
+- Timestamp: `2026-09-28T17:35:06+00:00`
+- Observations: 33 attachment and conversation tests passed.
+- Evidence refs: none
+- Limitations: none recorded
+
+## EV-102 — passed
+
+- Ticket: `TK-008`
+- Acceptance: `AC-019`, `AC-020`, `AC-021`, `AC-022`, `AC-023`
+- Procedure: `.venv/bin/python -m pytest -q tests/test_model_adapter.py`
+- Execution: `executed`
+- Environment: OS=Linux-5.14.0-687.36.1.el9_8.x86_64-x86_64-with-glibc2.34; Python=3.12.14
+- Tested revision: `local:a31885b7e53e74ff172f95bb54eaf204ba38ab6ec538ab85e30c589bfae98161`
+- Timestamp: `2026-09-28T17:35:06+00:00`
+- Observations: 23 model adapter tests passed.
 - Evidence refs: none
 - Limitations: none recorded

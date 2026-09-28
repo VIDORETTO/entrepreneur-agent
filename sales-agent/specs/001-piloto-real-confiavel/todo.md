@@ -84,8 +84,8 @@ Status: `done` | Bloqueado por: TK-003
 - [x] TK-004.5 Executar regressão completa (`python -m pytest -q`, `ruff check src tests`) e atualizar documentação da interface.
 - [x] TK-004.6 Registrar evidência (`hybrid.py evidence add --executed`) e checkpoint; não marcar checklist de reviewer.
 
-## [ ] TK-009 — TK-009 — Redação natural opcional com verificador determinístico de alegações
-Status: `ready` | Bloqueado por: TK-008
+## [x] TK-009 — TK-009 — Redação natural opcional com verificador determinístico de alegações
+Status: `done` | Bloqueado por: TK-008
 
 - [ ] TK-009.1 Escrever o primeiro caso (AC-024) na seam indicada em `plan.md`; observar red pelo motivo previsto em `tdd.md`.
 - [ ] TK-009.2 Implementar o mínimo para green de AC-024; próximo caso só após green.

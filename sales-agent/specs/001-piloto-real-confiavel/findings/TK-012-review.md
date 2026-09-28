@@ -38,3 +38,5 @@ gerados em `reports/` usam negócios fictícios e adaptador determinístico.
 Nenhuma qualidade de modelo remoto foi inferida. `holdout_reference_available`
 fica falso no primeiro relatório sem `--previous-report`; um hash só pode ser
 comparado quando um relatório anterior aprovado é fornecido.
+
+Revalidação após TK-010: comandos específicos e regressão completa passaram; o conteúdo de comprador e fonte maliciosa permanece dado, sem alterar os aceites anteriores. EV-097–EV-102 registram as áreas afetadas. Sem novo achado bloqueante.

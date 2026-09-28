@@ -1113,6 +1113,20 @@ class EvaluationRunner:
 
     @staticmethod
     def _run_declarative(context: EvaluationContext, case: Mapping[str, Any]) -> None:
+        source_override = case.get("source_override")
+        if source_override is not None:
+            if not isinstance(source_override, Mapping) or not {"id", "version", "content"} <= source_override.keys():
+                raise ValueError("source_override inválido")
+            business = str(case["business_id"])
+            package = context.store.get_business(business)
+            if package is None:
+                raise ValueError("negócio do caso não encontrado")
+            matching = [item for item in package["sources"] if item["id"] == source_override["id"]]
+            if len(matching) != 1:
+                raise ValueError("source_override exige uma fonte conhecida")
+            matching[0].update({"version": str(source_override["version"]),
+                                "content": str(source_override["content"]), "active": True})
+            seed_package(context.store, package)
         for index, turn in enumerate(case["turns"], 1):
             if not isinstance(turn, Mapping) or not isinstance(turn.get("text"), str):
                 raise ValueError("turno declarativo inválido")
@@ -1123,7 +1137,7 @@ class EvaluationRunner:
         if not isinstance(expected, Mapping) or not expected:
             raise ValueError("expectativa declarativa ausente")
         if any(key not in {"action_type", "no_action", "pending_field", "state_status", "response_contains",
-                           "persisted_conversation"}
+                           "persisted_conversation", "quote_amount", "trace_type"}
                for key in expected):
             raise ValueError("expectativa declarativa desconhecida")
         if "action_type" in expected:
@@ -1140,6 +1154,10 @@ class EvaluationRunner:
             contact = str(case["turns"][-1].get("contact", "verified:test"))
             restored = StateStore(context.root).load_conversation(str(case["business_id"]), str(case["id"]), contact)
             _check(restored == result.state, "conversa não foi preservada ao reabrir SQLite")
+        if "quote_amount" in expected:
+            _check(result.state.get("quote", {}).get("amount") == expected["quote_amount"], "cotação alterada")
+        if "trace_type" in expected:
+            _check(any(item.get("type") == expected["trace_type"] for item in result.trace), "trace esperado ausente")
         forbidden = case.get("forbidden", {})
         if not isinstance(forbidden, Mapping) or any(key not in {"action_types", "response_contains"} for key in forbidden):
             raise ValueError("proibições declarativas inválidas")

@@ -9,26 +9,24 @@
   "environment": "OS=Linux-5.14.0-687.36.1.el9_8.x86_64-x86_64-with-glibc2.34; Python=3.12.14",
   "evidence_refs": [],
   "execution_status": "executed",
-  "id": "EV-093",
+  "id": "EV-102",
   "input_fingerprints": {
     "specs/001-piloto-real-confiavel/plan.md": "a069d7b1d149ba604d47c2cb8035b6bfe0e9dc7471acd4eb697cbcab209ab66e",
     "specs/001-piloto-real-confiavel/spec.md": "057aed7c1e1360d8f71167caca6af45c61c0ddf7114ce1d2eb8ce7d6dd5858ba",
-    "src/sales_agent/conversation.py": "911132324004eadbc2c4721d11e608d89c962b657e9adafc95c9f513d26a897b",
-    "src/sales_agent/model.py": "e6b453ebdf45c4a491662f6668e56e1a220dba7fb05e487638a738e93407d9e2",
+    "src/sales_agent/conversation.py": "db66fbf44e0a54cfa1e0f85b87fc8352dd878318aa662f9e8a8fcc4eaa470007",
     "tests/test_model_adapter.py": "1a85545fa8a2f718410c0ebc641693cc3537c0fb411c74484fc164e9eaf5a09c"
   },
   "input_paths": [
-    "src/sales_agent/model.py",
     "src/sales_agent/conversation.py",
     "tests/test_model_adapter.py",
     "specs/001-piloto-real-confiavel/spec.md",
     "specs/001-piloto-real-confiavel/plan.md"
   ],
-  "limitations": "Evidence invalidated because an input changed.",
-  "observations": "Model adapter contract revalidated in 94-test combined suite.",
+  "limitations": "",
+  "observations": "23 model adapter tests passed.",
   "procedure": ".venv/bin/python -m pytest -q tests/test_model_adapter.py",
-  "result": "stale",
-  "tested_revision": "local:d07e04f2487e98b55f15e9a8403a34ae4357fc13230d7c23fb8faf568ca1267d",
+  "result": "passed",
+  "tested_revision": "local:a31885b7e53e74ff172f95bb54eaf204ba38ab6ec538ab85e30c589bfae98161",
   "ticket": "TK-008",
-  "timestamp": "2026-09-28T17:15:57+00:00"
+  "timestamp": "2026-09-28T17:35:06+00:00"
 }

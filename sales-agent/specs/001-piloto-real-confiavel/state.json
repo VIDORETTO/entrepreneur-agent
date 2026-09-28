@@ -1,5 +1,5 @@
 {
-  "active_ticket": "TK-009",
+  "active_ticket": "TK-010",
   "authorization_refs": [],
   "baseline": {
     "kind": "git",
@@ -26,27 +26,30 @@
       "revision": 2
     }
   },
-  "last_evidence": "EV-085",
+  "last_evidence": "EV-093",
   "last_invalidation": {
     "evidence": [
-      "EV-056",
-      "EV-057",
-      "EV-058",
-      "EV-070",
-      "EV-071",
-      "EV-072",
-      "EV-073",
-      "EV-074"
+      "EV-080",
+      "EV-081",
+      "EV-082",
+      "EV-086",
+      "EV-087",
+      "EV-088",
+      "EV-089",
+      "EV-090",
+      "EV-091",
+      "EV-092",
+      "EV-093"
     ],
     "inputs": {},
-    "timestamp": "2026-09-28T17:14:52+00:00"
+    "timestamp": "2026-09-28T17:32:26+00:00"
   },
   "mode": "standard",
-  "next_action": "Executar TK-009; TK-002 AC-003 segue parcial até CI real",
+  "next_action": "Executar TK-010; TK-002 AC-003 segue parcial até CI real",
   "pending_questions": [],
   "phase": "implementation",
-  "revision": 28,
+  "revision": 30,
   "schema_version": "1.0",
   "status": "active",
-  "updated_at": "2026-09-28T17:14:52+00:00"
+  "updated_at": "2026-09-28T17:32:26+00:00"
 }

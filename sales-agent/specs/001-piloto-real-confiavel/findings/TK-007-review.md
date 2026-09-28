@@ -39,3 +39,5 @@ Regressão final: 197 testes passaram; Ruff passou. Evidências atuais:
 EV-040, EV-041 e EV-042.
 
 Revalidação após TK-009: os comandos de regressão específicos do ticket foram executados e passaram; a alteração em conversation.py preservou os aceites anteriores. Evidências atuais EV-090–EV-093, conforme o ticket. Sem novo achado bloqueante.
+
+Revalidação após TK-010: comandos específicos e regressão completa passaram; o conteúdo de comprador e fonte maliciosa permanece dado, sem alterar os aceites anteriores. EV-097–EV-102 registram as áreas afetadas. Sem novo achado bloqueante.

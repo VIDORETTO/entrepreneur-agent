@@ -7,6 +7,17 @@ from dataclasses import dataclass
 from typing import Any, Mapping
 
 
+def injection_signals(text: str) -> list[str]:
+    """Return lexical signals for audit; policy stays with the engine."""
+    patterns = {
+        "override": r"\bignore\b.{0,80}\b(?:instru[çc][õo]es|regras|prompt)\b|\bconcorde\s+com\s+tudo\b",
+        "contract": r"juridicamente\s+vinculante|\b(?:aceite|aceito)\s+(?:este|o)\s+contrato\b",
+        "role": r"\b(?:assistente|sistema|system|developer)\s*:\s*(?:ofere[çc]a|ignore|revele|mostre)",
+        "exfiltration": r"(?:mostre|revele|imprima).{0,50}\b(?:prompt|instru[çc][õo]es|skills?)\b",
+    }
+    return [name for name, pattern in patterns.items() if re.search(pattern, text, re.I | re.S)]
+
+
 def _money(text: str) -> set[str]:
     amounts = set()
     for match in re.finditer(r"R\$\s*(\d+(?:[.,]\d{1,2})?)", text, re.I):
@@ -158,6 +169,13 @@ class ClaimVerifier:
     @staticmethod
     def verify(draft: str, requirements: ResponseRequirements) -> list[dict[str, str]]:
         violations: list[dict[str, str]] = []
+        forbidden_patterns = {
+            "internal_instruction": r"\b(?:seller-conversation|sales-setup|sales-business-discovery|system\s*:|developer\s*:|system prompt)\b",
+            "contract_acceptance": r"juridicamente\s+vinculante|\b(?:aceito|aceitamos|concordo|concordamos)\b.{0,40}\b(?:contrato|condi[çc][õo]es|termos)\b",
+        }
+        for kind, pattern in forbidden_patterns.items():
+            if re.search(pattern, draft, re.I):
+                violations.append({"kind": kind, "value": "prohibited_content"})
         for price in sorted(_money(draft) - requirements.allowed_prices):
             violations.append({"kind": "price", "value": price})
         for percent in sorted(_percents(draft) - requirements.allowed_percents):
