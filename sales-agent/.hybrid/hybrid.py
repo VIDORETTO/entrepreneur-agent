@@ -28,7 +28,6 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Iterable, Iterator, Mapping, Sequence
 
-
 if hasattr(sys.stdout, "reconfigure"):
     sys.stdout.reconfigure(encoding="utf-8")
 if hasattr(sys.stderr, "reconfigure"):
@@ -1703,7 +1702,6 @@ def run_evidence_add(args: argparse.Namespace) -> dict[str, Any]:
 
 
 def render_verification_content_with_extra(effort_dir: Path, config: Mapping[str, Any], extra: Mapping[str, Any]) -> str:
-    content = render_verification_content(effort_dir, config)
     # The new record is not written yet, so render it in the same canonical order.
     records: list[dict[str, Any]] = []
     evidence_dir = effort_dir / str(config.get("evidence_dir", "evidence"))
