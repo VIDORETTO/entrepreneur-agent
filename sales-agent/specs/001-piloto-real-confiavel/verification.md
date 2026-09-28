@@ -145,7 +145,7 @@
 - Evidence refs: none
 - Limitations: Evidence invalidated because an input changed.
 
-## EV-012 — passed
+## EV-012 — stale
 
 - Ticket: `TK-003`
 - Acceptance: `AC-004`, `AC-005`, `AC-006`
@@ -156,7 +156,7 @@
 - Timestamp: `2026-09-28T14:44:43+00:00`
 - Observations: After echo correlation changes, timestamped HMAC, legacy opt-in and stale timestamp contract cases remained green; 43 passed
 - Evidence refs: none
-- Limitations: none recorded
+- Limitations: Evidence invalidated because an input changed.
 
 ## EV-013 — stale
 
@@ -194,5 +194,96 @@
 - Tested revision: `local:be8086c1be1eba8dffb5436cb9fa652be215d30e2f1f483ac68e6b3c26dfbe00`
 - Timestamp: `2026-09-28T14:46:43+00:00`
 - Observations: Local HTTP server contract verifies ID correlation, human takeover, synchronous echo race and 120-second bound after lease check; 37 passed
+- Evidence refs: none
+- Limitations: none recorded
+
+## EV-016 — stale
+
+- Ticket: `TK-005`
+- Acceptance: `AC-010`
+- Procedure: `.venv/bin/python -m pytest -q tests/test_service.py`
+- Execution: `executed`
+- Environment: OS=Linux-5.14.0-687.36.1.el9_8.x86_64-x86_64-with-glibc2.34; Python=3.9.25
+- Tested revision: `local:387cc32c992b096f21fefb9f12e67ac512ec9586ec75f20141665e7ff085fb9f`
+- Timestamp: `2026-09-28T14:59:58+00:00`
+- Observations: HTTP webhook returned 200 before Chatwoot received any POST; fake Chatwoot then received one public response.
+- Evidence refs: none
+- Limitations: Evidence invalidated because an input changed.
+
+## EV-017 — stale
+
+- Ticket: `TK-005`
+- Acceptance: `AC-011`
+- Procedure: `.venv/bin/python -m pytest -q tests/test_service.py`
+- Execution: `executed`
+- Environment: OS=Linux-5.14.0-687.36.1.el9_8.x86_64-x86_64-with-glibc2.34; Python=3.9.25
+- Tested revision: `local:387cc32c992b096f21fefb9f12e67ac512ec9586ec75f20141665e7ff085fb9f`
+- Timestamp: `2026-09-28T14:59:58+00:00`
+- Observations: Ready endpoint returned 200; interrupted channel and temporary SQLite foreign-key violation each returned 503 with specific reason; health stayed 200.
+- Evidence refs: none
+- Limitations: Evidence invalidated because an input changed.
+
+## EV-018 — stale
+
+- Ticket: `TK-005`
+- Acceptance: `AC-012`
+- Procedure: `.venv/bin/python -m pytest -q tests/test_service.py`
+- Execution: `executed`
+- Environment: OS=Linux-5.14.0-687.36.1.el9_8.x86_64-x86_64-with-glibc2.34; Python=3.9.25
+- Tested revision: `local:387cc32c992b096f21fefb9f12e67ac512ec9586ec75f20141665e7ff085fb9f`
+- Timestamp: `2026-09-28T14:59:59+00:00`
+- Observations: SIGTERM during held fake Chatwoot POST, then restart on same data directory, yielded exactly one POST and public outbox sent or unknown.
+- Evidence refs: none
+- Limitations: Evidence invalidated because an input changed.
+
+## EV-019 — passed
+
+- Ticket: `TK-003`
+- Acceptance: `AC-004`, `AC-005`, `AC-006`
+- Procedure: `.venv/bin/python -m pytest -q tests/test_chatwoot_contract.py tests/test_channel_pilot_supervisor.py`
+- Execution: `executed`
+- Environment: OS=Linux-5.14.0-687.36.1.el9_8.x86_64-x86_64-with-glibc2.34; Python=3.9.25
+- Tested revision: `local:a5145c8b45cb2a991115c6ca6a13fe9e2225d294e985a870c92a68da722bb7fb`
+- Timestamp: `2026-09-28T15:02:27+00:00`
+- Observations: After serve CLI addition, HMAC, legacy opt-in, stale timestamp and pilot channel contracts remain green; 43 passed.
+- Evidence refs: none
+- Limitations: none recorded
+
+## EV-020 — passed
+
+- Ticket: `TK-005`
+- Acceptance: `AC-010`
+- Procedure: `.venv/bin/python -m pytest -q tests/test_service.py`
+- Execution: `executed`
+- Environment: OS=Linux-5.14.0-687.36.1.el9_8.x86_64-x86_64-with-glibc2.34; Python=3.9.25
+- Tested revision: `local:d7f69e5f92a8498d760cd196a185b77b93bb4b425bbfeba8eff0f14a969de427`
+- Timestamp: `2026-09-28T15:02:27+00:00`
+- Observations: Webhook ACK preceded fake Chatwoot POST; one public response arrived after turn window.
+- Evidence refs: none
+- Limitations: none recorded
+
+## EV-021 — passed
+
+- Ticket: `TK-005`
+- Acceptance: `AC-011`
+- Procedure: `.venv/bin/python -m pytest -q tests/test_service.py`
+- Execution: `executed`
+- Environment: OS=Linux-5.14.0-687.36.1.el9_8.x86_64-x86_64-with-glibc2.34; Python=3.9.25
+- Tested revision: `local:d7f69e5f92a8498d760cd196a185b77b93bb4b425bbfeba8eff0f14a969de427`
+- Timestamp: `2026-09-28T15:02:28+00:00`
+- Observations: Ready endpoint was 200, then returned 503 with interruption or SQLite integrity reason; health remained 200.
+- Evidence refs: none
+- Limitations: none recorded
+
+## EV-022 — passed
+
+- Ticket: `TK-005`
+- Acceptance: `AC-012`
+- Procedure: `.venv/bin/python -m pytest -q tests/test_service.py`
+- Execution: `executed`
+- Environment: OS=Linux-5.14.0-687.36.1.el9_8.x86_64-x86_64-with-glibc2.34; Python=3.9.25
+- Tested revision: `local:d7f69e5f92a8498d760cd196a185b77b93bb4b425bbfeba8eff0f14a969de427`
+- Timestamp: `2026-09-28T15:02:28+00:00`
+- Observations: SIGTERM during a held provider POST, followed by restart, produced one POST and outbox sent or unknown.
 - Evidence refs: none
 - Limitations: none recorded

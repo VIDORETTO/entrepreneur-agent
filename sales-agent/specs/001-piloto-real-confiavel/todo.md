@@ -105,15 +105,15 @@ Status: `ready` | Bloqueado por: TK-008
 - [ ] TK-012.5 Executar regressão completa (`python -m pytest -q`, `ruff check src tests`) e atualizar documentação da interface.
 - [ ] TK-012.6 Registrar evidência (`hybrid.py evidence add --executed`) e checkpoint; não marcar checklist de reviewer.
 
-## [ ] TK-005 — TK-005 — Comando `vendedor serve` com receptor, turnos, entrega e saúde
-Status: `ready` | Bloqueado por: TK-004
+## [x] TK-005 — TK-005 — Comando `vendedor serve` com receptor, turnos, entrega e saúde
+Status: `done` | Bloqueado por: TK-004
 
-- [ ] TK-005.1 Escrever o primeiro caso (AC-010) na seam indicada em `plan.md`; observar red pelo motivo previsto em `tdd.md`.
-- [ ] TK-005.2 Implementar o mínimo para green de AC-010; próximo caso só após green.
-- [ ] TK-005.3 Implementar o mínimo para green de AC-011; próximo caso só após green.
-- [ ] TK-005.4 Implementar o mínimo para green de AC-012; próximo caso só após green.
-- [ ] TK-005.5 Executar regressão completa (`python -m pytest -q`, `ruff check src tests`) e atualizar documentação da interface.
-- [ ] TK-005.6 Registrar evidência (`hybrid.py evidence add --executed`) e checkpoint; não marcar checklist de reviewer.
+- [x] TK-005.1 Escrever o primeiro caso (AC-010) na seam indicada em `plan.md`; observar red pelo motivo previsto em `tdd.md`.
+- [x] TK-005.2 Implementar o mínimo para green de AC-010; próximo caso só após green.
+- [x] TK-005.3 Implementar o mínimo para green de AC-011; próximo caso só após green.
+- [x] TK-005.4 Implementar o mínimo para green de AC-012; próximo caso só após green.
+- [x] TK-005.5 Executar regressão completa (`python -m pytest -q`, `ruff check src tests`) e atualizar documentação da interface.
+- [x] TK-005.6 Registrar evidência (`hybrid.py evidence add --executed`) e checkpoint; não marcar checklist de reviewer.
 
 ## [ ] TK-006 — TK-006 — Respeitar a janela de 24 h do WhatsApp na entrega e no follow-up
 Status: `ready` | Bloqueado por: TK-004

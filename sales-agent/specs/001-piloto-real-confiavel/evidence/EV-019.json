@@ -4,15 +4,15 @@
     "AC-005",
     "AC-006"
   ],
-  "environment": "OS=Linux-5.14.0-687.36.1.el9_8.x86_64-x86_64-with-glibc2.34; Python=3.12.14",
+  "environment": "OS=Linux-5.14.0-687.36.1.el9_8.x86_64-x86_64-with-glibc2.34; Python=3.9.25",
   "evidence_refs": [],
   "execution_status": "executed",
-  "id": "EV-012",
+  "id": "EV-019",
   "input_fingerprints": {
     "specs/001-piloto-real-confiavel/plan.md": "a069d7b1d149ba604d47c2cb8035b6bfe0e9dc7471acd4eb697cbcab209ab66e",
     "specs/001-piloto-real-confiavel/spec.md": "057aed7c1e1360d8f71167caca6af45c61c0ddf7114ce1d2eb8ce7d6dd5858ba",
     "src/sales_agent/channel.py": "18e261aaed48d8c2fdd68b5398028529147431595c8cc3bca1eb3f88e568c40a",
-    "src/sales_agent/cli.py": "93bdf2a402c64c34a3245d9d53aa4edf9b2c8898f5130c38a055e757dc79f6bf",
+    "src/sales_agent/cli.py": "d73b6c267e8c9f30ea0e98e665e1dbb8cd4e7cb6c0bf5b786cbbe0bbf5691fda",
     "tests/test_channel_pilot_supervisor.py": "dab7a10851caec5180bf69c367c0d98108a7b276c145a985821b3bf967bcfde9",
     "tests/test_chatwoot_contract.py": "f463f991ea6d96314bae4d6e9fd416dad68cbbf9ef84d1850483e029345ce440"
   },
@@ -24,11 +24,11 @@
     "specs/001-piloto-real-confiavel/spec.md",
     "specs/001-piloto-real-confiavel/plan.md"
   ],
-  "limitations": "Evidence invalidated because an input changed.",
-  "observations": "After echo correlation changes, timestamped HMAC, legacy opt-in and stale timestamp contract cases remained green; 43 passed",
+  "limitations": "",
+  "observations": "After serve CLI addition, HMAC, legacy opt-in, stale timestamp and pilot channel contracts remain green; 43 passed.",
   "procedure": ".venv/bin/python -m pytest -q tests/test_chatwoot_contract.py tests/test_channel_pilot_supervisor.py",
-  "result": "stale",
-  "tested_revision": "local:8a591fec839adf30710d062b1d20db646b5c592246113467ddfee505e9a8eb32",
+  "result": "passed",
+  "tested_revision": "local:a5145c8b45cb2a991115c6ca6a13fe9e2225d294e985a870c92a68da722bb7fb",
   "ticket": "TK-003",
-  "timestamp": "2026-09-28T14:44:43+00:00"
+  "timestamp": "2026-09-28T15:02:27+00:00"
 }

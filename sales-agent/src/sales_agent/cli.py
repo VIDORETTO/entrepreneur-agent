@@ -21,6 +21,7 @@ from .evaluation import EvaluationRunner, model_contract_check
 from .governance import PilotController, QualitySupervisor
 from .knowledge import FarolArtifactImporter, PersistentFarolKnowledge, StableFarolAdapter
 from .model import HTTPModelAdapter, RuleBasedModel
+from .service import ChannelServer, ServiceConfig
 from .skills import SkillCatalog
 from .storage import StateStore
 from .turns import TurnAssembler
@@ -96,6 +97,12 @@ def command_doctor(args: argparse.Namespace) -> int:
         diagnostics["ok"] = False
     _print(diagnostics, pretty=not args.quiet)
     return 0 if diagnostics["ok"] else 2
+
+
+def command_serve(args: argparse.Namespace) -> int:
+    server = ChannelServer(args.data_dir, ServiceConfig.load(args.config), host=args.host, port=args.port)
+    server.run()
+    return 0
 
 
 def command_init(args: argparse.Namespace) -> int:
@@ -686,6 +693,12 @@ def build_parser() -> argparse.ArgumentParser:
     doctor.add_argument("--chatwoot-binding", help="arquivo JSON de binding com segredo env:NOME")
     doctor.set_defaults(func=command_doctor)
 
+    serve = sub.add_parser("serve", help="receber e entregar mensagens Chatwoot")
+    serve.add_argument("--config", required=True, help="JSON do serviço com segredos env:NOME")
+    serve.add_argument("--host", default="127.0.0.1")
+    serve.add_argument("--port", type=int, default=8080)
+    serve.set_defaults(func=command_serve)
+
     init = sub.add_parser("init", help="criar banco privado")
     init.add_argument("--examples", action="store_true")
     init.set_defaults(func=command_init)
@@ -967,7 +980,7 @@ def main(argv: Optional[List[str]] = None) -> int:
     args = parser.parse_args(argv)
     try:
         return int(args.func(args))
-    except (ConversationError, PackageError, OSError, TypeError, ValueError) as exc:
+    except (ConversationError, PackageError, OSError, RuntimeError, TypeError, ValueError) as exc:
         print(json.dumps({"ok": False, "error": str(exc)}, ensure_ascii=False), file=sys.stderr)
         return 2
 

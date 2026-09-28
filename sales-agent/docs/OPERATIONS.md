@@ -87,6 +87,66 @@ O harness `vendedor channel chatwoot-admit` aceita `--timestamp` com o valor
 exato usado na assinatura e `--secret env:NOME`; `--signature-mode legacy-body`
 é necessário para testes com assinatura antiga.
 
+### Serviço Chatwoot
+
+`vendedor serve` executa receptor HTTP e worker de turnos e entregas no mesmo
+processo. Prepare o negócio no diretório de dados, configure o piloto pela CLI
+e guarde o arquivo de configuração com acesso restrito ao usuário do serviço.
+O arquivo contém apenas referências aos segredos:
+
+```json
+{
+  "bindings": [{
+    "business_id": "minha-loja", "account_id": "11", "inbox_id": "13",
+    "secret": "env:CHATWOOT_WEBHOOK_SECRET", "signature_mode": "timestamped"
+  }],
+  "transport": {
+    "base_url": "https://chatwoot.example.invalid",
+    "account_id": "11", "api_access_token": "env:CHATWOOT_API_TOKEN",
+    "timeout_seconds": 10
+  },
+  "window_seconds": 3, "poll_interval_seconds": 1, "lease_seconds": 60
+}
+```
+
+```bash
+vendedor --data-dir /var/lib/vendedor serve --config /etc/vendedor/service.json \
+  --host 127.0.0.1 --port 8080
+```
+
+`GET /healthz` confirma que o processo responde. `GET /readyz` exige SQLite
+íntegro e canal não interrompido; informa `storage_integrity_failed` ou
+`channel_interrupted` com HTTP 503. O webhook é `POST /webhook`; o ACK é enviado
+depois da gravação da entrada, antes de montar o turno ou chamar o Chatwoot.
+Segredo literal no JSON é recusado. Uma trava em `service.lock` impede dois
+processos sobre o mesmo diretório. SIGTERM bloqueia novas admissões, aguarda a
+tentativa de entrega atual e fecha o servidor. Entrega sem ACK confirmado fica
+`unknown` e requer conciliação; leases vencidos são recuperados no início.
+
+Exemplo de unidade systemd, a adaptar ao usuário e caminhos locais:
+
+```ini
+[Unit]
+Description=Vendedor Chatwoot
+After=network-online.target
+
+[Service]
+Type=simple
+User=vendedor
+EnvironmentFile=/etc/vendedor/secrets.env
+ExecStart=/usr/local/bin/vendedor --data-dir /var/lib/vendedor serve --config /etc/vendedor/service.json --host 127.0.0.1 --port 8080
+Restart=on-failure
+TimeoutStopSec=30
+
+[Install]
+WantedBy=multi-user.target
+```
+
+No proxy reverso, encaminhe somente o caminho `/webhook` ao endereço local e
+preserve os cabeçalhos `X-Chatwoot-Timestamp` e `X-Chatwoot-Signature` e o corpo
+bruto. Exponha `/readyz` e `/healthz` apenas à rede de monitoramento. O proxy
+deve aplicar TLS e limites de corpo e de taxa adequados à instalação.
+
 Na entrega pública, o trabalhador registra um hash do conteúdo como envio em
 curso antes de chamar o transporte. Ao receber o ID da mensagem do Chatwoot,
 grava esse ID no mesmo commit que confirma o item do outbox. Um webhook

@@ -1,0 +1,30 @@
+{
+  "acceptance_refs": [
+    "AC-010"
+  ],
+  "environment": "OS=Linux-5.14.0-687.36.1.el9_8.x86_64-x86_64-with-glibc2.34; Python=3.9.25",
+  "evidence_refs": [],
+  "execution_status": "executed",
+  "id": "EV-020",
+  "input_fingerprints": {
+    "specs/001-piloto-real-confiavel/plan.md": "a069d7b1d149ba604d47c2cb8035b6bfe0e9dc7471acd4eb697cbcab209ab66e",
+    "specs/001-piloto-real-confiavel/spec.md": "057aed7c1e1360d8f71167caca6af45c61c0ddf7114ce1d2eb8ce7d6dd5858ba",
+    "src/sales_agent/cli.py": "d73b6c267e8c9f30ea0e98e665e1dbb8cd4e7cb6c0bf5b786cbbe0bbf5691fda",
+    "src/sales_agent/service.py": "4a5e237ef7649f7a8db06ea2e62cf5591d11572fb68c4b3ff3f104d01e1228d2",
+    "tests/test_service.py": "d70895e1220a9020e1244b0cc6d3fb49a9ad43ee1d8ab3d47bc6c85941ddf0b6"
+  },
+  "input_paths": [
+    "src/sales_agent/service.py",
+    "src/sales_agent/cli.py",
+    "tests/test_service.py",
+    "specs/001-piloto-real-confiavel/spec.md",
+    "specs/001-piloto-real-confiavel/plan.md"
+  ],
+  "limitations": "",
+  "observations": "Webhook ACK preceded fake Chatwoot POST; one public response arrived after turn window.",
+  "procedure": ".venv/bin/python -m pytest -q tests/test_service.py",
+  "result": "passed",
+  "tested_revision": "local:d7f69e5f92a8498d760cd196a185b77b93bb4b425bbfeba8eff0f14a969de427",
+  "ticket": "TK-005",
+  "timestamp": "2026-09-28T15:02:27+00:00"
+}
