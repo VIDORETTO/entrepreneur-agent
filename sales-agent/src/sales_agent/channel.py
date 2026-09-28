@@ -280,6 +280,13 @@ class ChatwootReceiver:
             raise ChannelEventRejected("evento Chatwoot sem id de mensagem")
         external_id = str(external_id)
         kind = self._event_kind(payload, message)
+        echo_reason = ""
+        if kind == "human_message":
+            content = _first(message, "content", "text") or ""
+            match = self.store.match_outbound(binding.business_id, conversation_id, external_id, str(content))
+            if match:
+                kind = "self_authored"
+                echo_reason = "echo_by_content" if match == "content" else "self_authored"
         audit_payload = {
             "event": payload.get("event", "message_created"),
             "account_id": account_id,
@@ -339,11 +346,11 @@ class ChatwootReceiver:
                 self._external_key(account_id, inbox_id, external_id),
                 audit_payload,
                 status="ignored",
-                reason=kind,
+                reason=echo_reason or kind,
                 business_id=binding.business_id,
                 conversation_id=conversation_id,
             )
-            result = {"accepted": False, "duplicate": False, "ack": True, "status": "ignored", "reason": kind}
+            result = {"accepted": False, "duplicate": False, "ack": True, "status": "ignored", "reason": echo_reason or kind}
             if self.pilot is not None:
                 self.pilot.record_inbound(
                     {"business_id": binding.business_id, "channel": self.channel, "conversation_id": conversation_id},
@@ -588,6 +595,15 @@ class ChatwootDeliveryProvider:
 
     def __init__(self, transport: ChatwootTransport):
         self.transport = transport
+
+    @staticmethod
+    def prepare_send(store: StateStore, item: Mapping[str, Any]) -> bool:
+        action = item.get("action") if isinstance(item.get("action"), Mapping) else {}
+        if action.get("type") in {"human_transfer", "private_note", "internal_note"}:
+            return True
+        if bool(item.get("private")) or not item.get("response"):
+            return True
+        return store.begin_outbound(item)
 
     def send(self, payload: Mapping[str, Any], *, idempotency_key: str) -> Mapping[str, Any]:
         conversation_id = str(payload.get("conversation_id", ""))

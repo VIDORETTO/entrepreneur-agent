@@ -1,0 +1,32 @@
+{
+  "acceptance_refs": [
+    "AC-007"
+  ],
+  "environment": "OS=Linux-5.14.0-687.36.1.el9_8.x86_64-x86_64-with-glibc2.34; Python=3.12.14",
+  "evidence_refs": [],
+  "execution_status": "executed",
+  "id": "EV-008",
+  "input_fingerprints": {
+    "specs/001-piloto-real-confiavel/plan.md": "a069d7b1d149ba604d47c2cb8035b6bfe0e9dc7471acd4eb697cbcab209ab66e",
+    "specs/001-piloto-real-confiavel/spec.md": "057aed7c1e1360d8f71167caca6af45c61c0ddf7114ce1d2eb8ce7d6dd5858ba",
+    "src/sales_agent/channel.py": "18e261aaed48d8c2fdd68b5398028529147431595c8cc3bca1eb3f88e568c40a",
+    "src/sales_agent/delivery.py": "608b639c8cf8945532ee286975a865e5b61c13dfcd5ff7223be22e8bce2a15fc",
+    "src/sales_agent/storage.py": "297a1c0a689e0900a2dd6f9608400fcc5233efe4b8f4abbfc1395346c7277b07",
+    "tests/test_chatwoot_contract.py": "a7408d8dfc744f7bdb9bb94e62b6899035f384e9dfc145da72c0e27ed1905ca2"
+  },
+  "input_paths": [
+    "src/sales_agent/channel.py",
+    "src/sales_agent/storage.py",
+    "src/sales_agent/delivery.py",
+    "tests/test_chatwoot_contract.py",
+    "specs/001-piloto-real-confiavel/spec.md",
+    "specs/001-piloto-real-confiavel/plan.md"
+  ],
+  "limitations": "Evidence invalidated because an input changed.",
+  "observations": "Sent response got provider ID 42; after reopening SQLite, outgoing echo returned self_authored without human pause; 37 tests passed",
+  "procedure": ".venv/bin/python -m pytest -q tests/test_chatwoot_contract.py tests/test_conversation_contract.py",
+  "result": "stale",
+  "tested_revision": "local:5a9cea82d598a32c1772fd698c7be2696e3dd3118a1f04227883c0a2d19dd143",
+  "ticket": "TK-004",
+  "timestamp": "2026-09-28T14:41:40+00:00"
+}

@@ -87,6 +87,15 @@ O harness `vendedor channel chatwoot-admit` aceita `--timestamp` com o valor
 exato usado na assinatura e `--secret env:NOME`; `--signature-mode legacy-body`
 é necessário para testes com assinatura antiga.
 
+Na entrega pública, o trabalhador registra um hash do conteúdo como envio em
+curso antes de chamar o transporte. Ao receber o ID da mensagem do Chatwoot,
+grava esse ID no mesmo commit que confirma o item do outbox. Um webhook
+`outgoing` com esse ID é eco do vendedor, mesmo se `sender.type=user`. Se o
+webhook chegar antes da resposta do POST, o receptor usa o hash do conteúdo
+somente na mesma conversa e durante 120 s. IDs desconhecidos ou texto diferente
+continuam sendo tratados como intervenção humana. O ledger persiste no SQLite
+entre reinícios e não guarda o texto da resposta.
+
 Os modos de canal são `observation`, `assistance` e `pilot`. Observação e
 assistência não enviam mensagens públicas. Piloto exige versão e fingerprint do
 pacote avaliados, coorte, limites e autorização explícita; reservas de entrega

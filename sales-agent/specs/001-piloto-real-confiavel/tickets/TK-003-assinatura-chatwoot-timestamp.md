@@ -5,7 +5,7 @@ id: TK-003
 effort: 001-piloto-real-confiavel
 type: delivery
 status: done
-ticket_revision: 5
+ticket_revision: 8
 requires: ["TK-001"]
 requirement_refs: ["FR-003"]
 acceptance_refs: ["AC-004", "AC-005", "AC-006"]
@@ -13,8 +13,11 @@ spec_revision: 2
 plan_revision: 2
 owned_areas: ["src/sales_agent/channel.py", "tests/test_chatwoot_contract.py", "docs/OPERATIONS.md"]
 verification_status: passed
-last_update: Revisão em findings/TK-003-review.md sem achados bloqueantes para AC-004–006
+last_update: EV-012 revalidou AC-004–006 após mudança de correlação; revisão anterior permanece aplicável
 ---
+
+
+
 
 
 

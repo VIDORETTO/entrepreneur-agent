@@ -155,6 +155,19 @@ class DeliveryProcessor:
             outcome = {"message_key": key, "status": "unknown", "reason": "lease_lost_before_provider"}
             self._record_pilot(item, outcome, pilot_decision)
             return outcome
+        prepare_send = getattr(provider, "prepare_send", None)
+        if callable(prepare_send):
+            try:
+                prepared = bool(prepare_send(self.store, item))
+            except Exception:
+                prepared = False
+            if not prepared:
+                self.store.mark_outbox_unknown(
+                    key, {"status": "unknown", "reason": "outbound_ledger_unavailable"}, lease_owner=owner
+                )
+                outcome = {"message_key": key, "status": "unknown", "reason": "outbound_ledger_unavailable"}
+                self._record_pilot(item, outcome, pilot_decision)
+                return outcome
         try:
             result = dict(provider.send(item, idempotency_key=key))
         except Exception as exc:  # provider boundary: classify without leaking payloads
@@ -206,7 +219,9 @@ class DeliveryProcessor:
                 }
             self._record_pilot(item, outcome, pilot_decision)
             return outcome
-        if not self.store.ack_outbox(key, lease_owner=owner):
+        if not self.store.ack_outbox(
+            key, lease_owner=owner, provider_message_id=str(result.get("provider_id") or "") or None
+        ):
             outcome = {"message_key": key, "status": "unknown", "reason": "lease_lost_after_provider_effect"}
             self._record_pilot(item, outcome, pilot_decision)
             return outcome

@@ -18,10 +18,10 @@
     "specs/001-piloto-real-confiavel/spec.md",
     "specs/001-piloto-real-confiavel/plan.md"
   ],
-  "limitations": "",
+  "limitations": "Evidence invalidated because an input changed.",
   "observations": "Timestamped HMAC request admitted once; replay returns duplicate; 39 contract/regression tests passed",
   "procedure": ".venv/bin/python -m pytest -q tests/test_chatwoot_contract.py tests/test_channel_pilot_supervisor.py",
-  "result": "passed",
+  "result": "stale",
   "tested_revision": "local:4441451e31e9451129aac10301596fb38abf8603b4bbbdd364881fefd3c286fe",
   "ticket": "TK-003",
   "timestamp": "2026-09-28T14:32:59+00:00"

@@ -1,30 +1,34 @@
 {
   "acceptance_refs": [
-    "AC-005"
+    "AC-004",
+    "AC-005",
+    "AC-006"
   ],
   "environment": "OS=Linux-5.14.0-687.36.1.el9_8.x86_64-x86_64-with-glibc2.34; Python=3.12.14",
   "evidence_refs": [],
   "execution_status": "executed",
-  "id": "EV-006",
+  "id": "EV-012",
   "input_fingerprints": {
     "specs/001-piloto-real-confiavel/plan.md": "a069d7b1d149ba604d47c2cb8035b6bfe0e9dc7471acd4eb697cbcab209ab66e",
     "specs/001-piloto-real-confiavel/spec.md": "057aed7c1e1360d8f71167caca6af45c61c0ddf7114ce1d2eb8ce7d6dd5858ba",
-    "src/sales_agent/channel.py": "815167414a5770a72d6ea9fe4c137d61612a15c2618e24327d7d4103519633d8",
+    "src/sales_agent/channel.py": "18e261aaed48d8c2fdd68b5398028529147431595c8cc3bca1eb3f88e568c40a",
     "src/sales_agent/cli.py": "93bdf2a402c64c34a3245d9d53aa4edf9b2c8898f5130c38a055e757dc79f6bf",
-    "tests/test_chatwoot_contract.py": "3258ebcb8977194dbdded67f5001c3e3c7d30ce690ec53a56ff61c217b73fb8c"
+    "tests/test_channel_pilot_supervisor.py": "dab7a10851caec5180bf69c367c0d98108a7b276c145a985821b3bf967bcfde9",
+    "tests/test_chatwoot_contract.py": "f463f991ea6d96314bae4d6e9fd416dad68cbbf9ef84d1850483e029345ce440"
   },
   "input_paths": [
     "src/sales_agent/channel.py",
     "src/sales_agent/cli.py",
     "tests/test_chatwoot_contract.py",
+    "tests/test_channel_pilot_supervisor.py",
     "specs/001-piloto-real-confiavel/spec.md",
     "specs/001-piloto-real-confiavel/plan.md"
   ],
-  "limitations": "Evidence invalidated because an input changed.",
-  "observations": "Body-only signature returns 401 with default binding; explicit legacy-body admits it; doctor reports legacy_signature without secret; 39 tests passed",
+  "limitations": "",
+  "observations": "After echo correlation changes, timestamped HMAC, legacy opt-in and stale timestamp contract cases remained green; 43 passed",
   "procedure": ".venv/bin/python -m pytest -q tests/test_chatwoot_contract.py tests/test_channel_pilot_supervisor.py",
-  "result": "stale",
-  "tested_revision": "local:879b9e47216358c6655be86fd44d278e2e30d2399d31d3932d000bc94cec7617",
+  "result": "passed",
+  "tested_revision": "local:8a591fec839adf30710d062b1d20db646b5c592246113467ddfee505e9a8eb32",
   "ticket": "TK-003",
-  "timestamp": "2026-09-28T14:32:59+00:00"
+  "timestamp": "2026-09-28T14:44:43+00:00"
 }

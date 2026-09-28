@@ -2,7 +2,7 @@
 
 <!-- GENERATED from evidence/*.json. Evidence records are canonical. -->
 
-## EV-001 — passed
+## EV-001 — stale
 
 - Ticket: `TK-001`
 - Acceptance: `AC-001`
@@ -13,7 +13,7 @@
 - Timestamp: `2026-09-28T14:13:45+00:00`
 - Observations: Farol source with validity ending 2026-09-22 returned under injected 2026-09-20 clock; 1 passed
 - Evidence refs: none
-- Limitations: none recorded
+- Limitations: Evidence invalidated because an input changed.
 
 ## EV-002 — stale
 
@@ -54,7 +54,7 @@
 - Evidence refs: none
 - Limitations: GitHub Actions workflow not executed; goal prohibits git push
 
-## EV-005 — passed
+## EV-005 — stale
 
 - Ticket: `TK-003`
 - Acceptance: `AC-004`
@@ -65,9 +65,9 @@
 - Timestamp: `2026-09-28T14:32:59+00:00`
 - Observations: Timestamped HMAC request admitted once; replay returns duplicate; 39 contract/regression tests passed
 - Evidence refs: none
-- Limitations: none recorded
+- Limitations: Evidence invalidated because an input changed.
 
-## EV-006 — passed
+## EV-006 — stale
 
 - Ticket: `TK-003`
 - Acceptance: `AC-005`
@@ -78,9 +78,9 @@
 - Timestamp: `2026-09-28T14:32:59+00:00`
 - Observations: Body-only signature returns 401 with default binding; explicit legacy-body admits it; doctor reports legacy_signature without secret; 39 tests passed
 - Evidence refs: none
-- Limitations: none recorded
+- Limitations: Evidence invalidated because an input changed.
 
-## EV-007 — passed
+## EV-007 — stale
 
 - Ticket: `TK-003`
 - Acceptance: `AC-006`
@@ -90,5 +90,109 @@
 - Tested revision: `local:4441451e31e9451129aac10301596fb38abf8603b4bbbdd364881fefd3c286fe`
 - Timestamp: `2026-09-28T14:32:59+00:00`
 - Observations: Timestamp 301 seconds old returns 401 and no queued inbound; same message later accepted with current signed timestamp; 39 tests passed
+- Evidence refs: none
+- Limitations: Evidence invalidated because an input changed.
+
+## EV-008 — stale
+
+- Ticket: `TK-004`
+- Acceptance: `AC-007`
+- Procedure: `.venv/bin/python -m pytest -q tests/test_chatwoot_contract.py tests/test_conversation_contract.py`
+- Execution: `executed`
+- Environment: OS=Linux-5.14.0-687.36.1.el9_8.x86_64-x86_64-with-glibc2.34; Python=3.12.14
+- Tested revision: `local:5a9cea82d598a32c1772fd698c7be2696e3dd3118a1f04227883c0a2d19dd143`
+- Timestamp: `2026-09-28T14:41:40+00:00`
+- Observations: Sent response got provider ID 42; after reopening SQLite, outgoing echo returned self_authored without human pause; 37 tests passed
+- Evidence refs: none
+- Limitations: Evidence invalidated because an input changed.
+
+## EV-009 — stale
+
+- Ticket: `TK-004`
+- Acceptance: `AC-008`
+- Procedure: `.venv/bin/python -m pytest -q tests/test_chatwoot_contract.py tests/test_conversation_contract.py`
+- Execution: `executed`
+- Environment: OS=Linux-5.14.0-687.36.1.el9_8.x86_64-x86_64-with-glibc2.34; Python=3.12.14
+- Tested revision: `local:83e38f1e08e3d1ff07ce2282f7bca841449a3f63adedf1b28114bef7a5d47641`
+- Timestamp: `2026-09-28T14:41:40+00:00`
+- Observations: Unknown outgoing message 99 from user with different content returned human_message and human_paused; 37 tests passed
+- Evidence refs: none
+- Limitations: Evidence invalidated because an input changed.
+
+## EV-010 — stale
+
+- Ticket: `TK-004`
+- Acceptance: `AC-009`
+- Procedure: `.venv/bin/python -m pytest -q tests/test_chatwoot_contract.py tests/test_conversation_contract.py`
+- Execution: `executed`
+- Environment: OS=Linux-5.14.0-687.36.1.el9_8.x86_64-x86_64-with-glibc2.34; Python=3.12.14
+- Tested revision: `local:286f00b25c90dfadeb8abf073eb6221d9db8bbd630c041eb70b5f55106ca36c9`
+- Timestamp: `2026-09-28T14:41:40+00:00`
+- Observations: Synchronous echo before provider ACK matched in-flight content; no human pause; after 121 seconds same content was human_message; 37 tests passed
+- Evidence refs: none
+- Limitations: Evidence invalidated because an input changed.
+
+## EV-011 — stale
+
+- Ticket: `TK-001`
+- Acceptance: `AC-001`
+- Procedure: `.venv/bin/python -m pytest -q tests/test_knowledge_and_configuration.py::test_farol_manifest_normalizes_offset_dates_and_replaces_previous_generation`
+- Execution: `executed`
+- Environment: OS=Linux-5.14.0-687.36.1.el9_8.x86_64-x86_64-with-glibc2.34; Python=3.12.14
+- Tested revision: `local:df01aa83e5cb114e91c4acc7086bdc67b930a9259c900bb16be91a341231be73`
+- Timestamp: `2026-09-28T14:44:43+00:00`
+- Observations: After additive outbound ledger migration, fixed-clock Farol validity test passed again
+- Evidence refs: none
+- Limitations: Evidence invalidated because an input changed.
+
+## EV-012 — passed
+
+- Ticket: `TK-003`
+- Acceptance: `AC-004`, `AC-005`, `AC-006`
+- Procedure: `.venv/bin/python -m pytest -q tests/test_chatwoot_contract.py tests/test_channel_pilot_supervisor.py`
+- Execution: `executed`
+- Environment: OS=Linux-5.14.0-687.36.1.el9_8.x86_64-x86_64-with-glibc2.34; Python=3.12.14
+- Tested revision: `local:8a591fec839adf30710d062b1d20db646b5c592246113467ddfee505e9a8eb32`
+- Timestamp: `2026-09-28T14:44:43+00:00`
+- Observations: After echo correlation changes, timestamped HMAC, legacy opt-in and stale timestamp contract cases remained green; 43 passed
+- Evidence refs: none
+- Limitations: none recorded
+
+## EV-013 — stale
+
+- Ticket: `TK-004`
+- Acceptance: `AC-007`, `AC-008`, `AC-009`
+- Procedure: `.venv/bin/python -m pytest -q tests/test_chatwoot_contract.py tests/test_conversation_contract.py`
+- Execution: `executed`
+- Environment: OS=Linux-5.14.0-687.36.1.el9_8.x86_64-x86_64-with-glibc2.34; Python=3.12.14
+- Tested revision: `local:ed99d7a6444a16a2acea2603475bfa69a50d1112dd665b837e0cf8dfec103420`
+- Timestamp: `2026-09-28T14:44:43+00:00`
+- Observations: Local HTTP Chatwoot server returned IDs and echoed signed webhooks before ACK; ID match persisted after restart; unknown human message paused; 120-second fallback bound; 37 passed
+- Evidence refs: none
+- Limitations: Evidence invalidated because an input changed.
+
+## EV-014 — passed
+
+- Ticket: `TK-001`
+- Acceptance: `AC-001`
+- Procedure: `.venv/bin/python -m pytest -q tests/test_knowledge_and_configuration.py::test_farol_manifest_normalizes_offset_dates_and_replaces_previous_generation`
+- Execution: `executed`
+- Environment: OS=Linux-5.14.0-687.36.1.el9_8.x86_64-x86_64-with-glibc2.34; Python=3.12.14
+- Tested revision: `local:fadb1d3e26fc3f77078d33b3aa755c15a9dd2f54cf9c1fed87874ee41663ece1`
+- Timestamp: `2026-09-28T14:46:42+00:00`
+- Observations: Fixed-clock Farol validity test still passes after outbound ledger lease check
+- Evidence refs: none
+- Limitations: none recorded
+
+## EV-015 — passed
+
+- Ticket: `TK-004`
+- Acceptance: `AC-007`, `AC-008`, `AC-009`
+- Procedure: `.venv/bin/python -m pytest -q tests/test_chatwoot_contract.py tests/test_conversation_contract.py`
+- Execution: `executed`
+- Environment: OS=Linux-5.14.0-687.36.1.el9_8.x86_64-x86_64-with-glibc2.34; Python=3.12.14
+- Tested revision: `local:be8086c1be1eba8dffb5436cb9fa652be215d30e2f1f483ac68e6b3c26dfbe00`
+- Timestamp: `2026-09-28T14:46:43+00:00`
+- Observations: Local HTTP server contract verifies ID correlation, human takeover, synchronous echo race and 120-second bound after lease check; 37 passed
 - Evidence refs: none
 - Limitations: none recorded

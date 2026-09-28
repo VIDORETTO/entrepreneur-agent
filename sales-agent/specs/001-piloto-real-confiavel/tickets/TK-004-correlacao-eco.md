@@ -1,19 +1,27 @@
 ---
 schema: hybrid/ticket
-schema_version: "1.0"
+schema_version: 1.0
 id: TK-004
 effort: 001-piloto-real-confiavel
 type: delivery
-status: ready
-ticket_revision: 1
-requires: [TK-003]
-requirement_refs: [FR-004]
-acceptance_refs: [AC-007, AC-008, AC-009]
+status: done
+ticket_revision: 8
+requires: ["TK-003"]
+requirement_refs: ["FR-004"]
+acceptance_refs: ["AC-007", "AC-008", "AC-009"]
 spec_revision: 2
 plan_revision: 2
-owned_areas: [src/sales_agent/channel.py, src/sales_agent/storage.py, tests/test_chatwoot_contract.py]
-verification_status: not_run
+owned_areas: ["src/sales_agent/channel.py", "src/sales_agent/storage.py", "tests/test_chatwoot_contract.py"]
+verification_status: passed
+last_update: Revisão Standards/Spec em findings/TK-004-review.md sem achado bloqueante
 ---
+
+
+
+
+
+
+
 
 # TK-004 — Reconhecer eco das próprias mensagens sem pausar a conversa
 
@@ -66,12 +74,12 @@ Oráculo: valores literais de `spec.md` e `tdd.md` (casos com expectativa litera
 
 Depende de: TK-003 (status `done`).
 
-- [ ] TK-004.1 Escrever o primeiro caso (AC-007) na seam indicada em `plan.md`; observar red pelo motivo previsto em `tdd.md`.
-- [ ] TK-004.2 Implementar o mínimo para green de AC-007; próximo caso só após green.
-- [ ] TK-004.3 Implementar o mínimo para green de AC-008; próximo caso só após green.
-- [ ] TK-004.4 Implementar o mínimo para green de AC-009; próximo caso só após green.
-- [ ] TK-004.5 Executar regressão completa (`python -m pytest -q`, `ruff check src tests`) e atualizar documentação da interface.
-- [ ] TK-004.6 Registrar evidência (`hybrid.py evidence add --executed`) e checkpoint; não marcar checklist de reviewer.
+- [x] TK-004.1 Escrever o primeiro caso (AC-007) na seam indicada em `plan.md`; observar red pelo motivo previsto em `tdd.md`.
+- [x] TK-004.2 Implementar o mínimo para green de AC-007; próximo caso só após green.
+- [x] TK-004.3 Implementar o mínimo para green de AC-008; próximo caso só após green.
+- [x] TK-004.4 Implementar o mínimo para green de AC-009; próximo caso só após green.
+- [x] TK-004.5 Executar regressão completa (`python -m pytest -q`, `ruff check src tests`) e atualizar documentação da interface.
+- [x] TK-004.6 Registrar evidência (`hybrid.py evidence add --executed`) e checkpoint; não marcar checklist de reviewer.
 
 ## Validação
 

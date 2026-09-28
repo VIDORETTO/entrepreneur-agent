@@ -17,7 +17,7 @@ from typing import Any, Dict, List, Mapping, Optional, Tuple, Union
 from .clock import Clock, SystemClock
 from .types import empty_conversation
 
-DATABASE_SCHEMA_VERSION = 10
+DATABASE_SCHEMA_VERSION = 11
 OUTBOX_STATUSES = {"pending", "processing", "sent", "cancelled", "dead_letter", "unknown", "observed"}
 EFFECT_TRANSITIONS = {
     "reserved": {"unknown", "confirmed", "failed"},
@@ -258,6 +258,20 @@ class StateStore:
                     created_at TEXT NOT NULL,
                     PRIMARY KEY (channel, external_event_id)
                 );
+                CREATE TABLE IF NOT EXISTS outbound_ledger (
+                    message_key TEXT PRIMARY KEY,
+                    business_id TEXT NOT NULL,
+                    conversation_id TEXT NOT NULL,
+                    provider_message_id TEXT,
+                    content_sha256 TEXT NOT NULL,
+                    state TEXT NOT NULL,
+                    started_at TEXT NOT NULL,
+                    sent_at TEXT
+                );
+                CREATE INDEX IF NOT EXISTS outbound_ledger_provider_idx
+                    ON outbound_ledger(business_id, conversation_id, provider_message_id);
+                CREATE INDEX IF NOT EXISTS outbound_ledger_content_idx
+                    ON outbound_ledger(business_id, conversation_id, content_sha256, state);
                 CREATE TABLE IF NOT EXISTS operating_modes (
                     scope_key TEXT PRIMARY KEY,
                     business_id TEXT NOT NULL,
@@ -374,6 +388,20 @@ class StateStore:
                 created_at TEXT NOT NULL,
                 PRIMARY KEY (channel, external_event_id)
             );
+            CREATE TABLE IF NOT EXISTS outbound_ledger (
+                message_key TEXT PRIMARY KEY,
+                business_id TEXT NOT NULL,
+                conversation_id TEXT NOT NULL,
+                provider_message_id TEXT,
+                content_sha256 TEXT NOT NULL,
+                state TEXT NOT NULL,
+                started_at TEXT NOT NULL,
+                sent_at TEXT
+            );
+            CREATE INDEX IF NOT EXISTS outbound_ledger_provider_idx
+                ON outbound_ledger(business_id, conversation_id, provider_message_id);
+            CREATE INDEX IF NOT EXISTS outbound_ledger_content_idx
+                ON outbound_ledger(business_id, conversation_id, content_sha256, state);
             CREATE TABLE IF NOT EXISTS operating_modes (
                 scope_key TEXT PRIMARY KEY,
                 business_id TEXT NOT NULL,
@@ -1309,7 +1337,74 @@ class StateStore:
             "last_error": row["last_error"],
         }
 
-    def ack_outbox(self, message_key: str, *, lease_owner: Optional[str] = None) -> bool:
+    def begin_outbound(self, item: Mapping[str, Any]) -> bool:
+        """Record a public Chatwoot send before crossing the provider boundary."""
+
+        key = str(item.get("message_key", ""))
+        owner = str(item.get("lease_owner", ""))
+        business_id = str(item.get("business_id", ""))
+        conversation_id = str(item.get("conversation_id", ""))
+        content = str(item.get("response", ""))
+        if not all((key, owner, business_id, conversation_id, content)):
+            return False
+        content_hash = hashlib.sha256(content.encode("utf-8")).hexdigest()
+        now = self.clock.now()
+        with self._lock, self.connect() as db:
+            db.execute("BEGIN IMMEDIATE")
+            row = db.execute(
+                "SELECT business_id, conversation_id, leased_until FROM outbox "
+                "WHERE message_key = ? AND status = 'processing' AND lease_owner = ?",
+                (key, owner),
+            ).fetchone()
+            if not row or row["business_id"] != business_id or row["conversation_id"] != conversation_id:
+                return False
+            if not row["leased_until"] or normalize_iso_datetime(row["leased_until"]) <= normalize_iso_datetime(now):
+                return False
+            cursor = db.execute(
+                "INSERT INTO outbound_ledger(message_key, business_id, conversation_id, provider_message_id, "
+                "content_sha256, state, started_at, sent_at) VALUES (?, ?, ?, NULL, ?, 'in_flight', ?, NULL) "
+                "ON CONFLICT(message_key) DO UPDATE SET content_sha256 = excluded.content_sha256, "
+                "state = 'in_flight', started_at = excluded.started_at "
+                "WHERE outbound_ledger.state = 'failed'",
+                (key, business_id, conversation_id, content_hash, now),
+            )
+            return cursor.rowcount == 1
+
+    def match_outbound(
+        self, business_id: str, conversation_id: str, provider_message_id: str, content: str
+    ) -> Optional[str]:
+        """Return id/content match for an authenticated outgoing webhook."""
+
+        with self.connect() as db:
+            if provider_message_id:
+                row = db.execute(
+                    "SELECT 1 FROM outbound_ledger WHERE business_id = ? AND conversation_id = ? "
+                    "AND provider_message_id = ? AND state = 'sent' LIMIT 1",
+                    (business_id, conversation_id, provider_message_id),
+                ).fetchone()
+                if row:
+                    return "id"
+            if not content:
+                return None
+            content_hash = hashlib.sha256(content.encode("utf-8")).hexdigest()
+            rows = db.execute(
+                "SELECT started_at FROM outbound_ledger WHERE business_id = ? AND conversation_id = ? "
+                "AND content_sha256 = ? AND state = 'in_flight'",
+                (business_id, conversation_id, content_hash),
+            ).fetchall()
+        now = datetime.fromisoformat(self.clock.now().replace("Z", "+00:00"))
+        for row in rows:
+            try:
+                started = datetime.fromisoformat(row["started_at"].replace("Z", "+00:00"))
+            except ValueError:
+                continue
+            if 0 <= (now - started).total_seconds() <= 120:
+                return "content"
+        return None
+
+    def ack_outbox(
+        self, message_key: str, *, lease_owner: Optional[str] = None, provider_message_id: Optional[str] = None
+    ) -> bool:
         with self._lock, self.connect() as db:
             db.execute("BEGIN IMMEDIATE")
             owner = lease_owner
@@ -1324,11 +1419,18 @@ class StateStore:
                 owner = row["lease_owner"] if row else None
             if not owner:
                 return False
+            now = self.clock.now()
             cursor = db.execute(
                 "UPDATE outbox SET status = 'sent', leased_until = NULL, lease_owner = NULL, last_error = NULL, updated_at = ? "
                 "WHERE message_key = ? AND status = 'processing' AND lease_owner = ?",
-                (utc_now(), message_key, owner),
+                (now, message_key, owner),
             )
+            if cursor.rowcount == 1 and provider_message_id:
+                db.execute(
+                    "UPDATE outbound_ledger SET provider_message_id = ?, state = 'sent', sent_at = ? "
+                    "WHERE message_key = ? AND state = 'in_flight'",
+                    (str(provider_message_id), now, message_key),
+                )
             return cursor.rowcount == 1
 
     def nack_outbox(
@@ -1361,6 +1463,10 @@ class StateStore:
                 "UPDATE outbox SET status = ?, available_at = ?, leased_until = NULL, lease_owner = NULL, last_error = ?, updated_at = ? "
                 "WHERE message_key = ? AND status = 'processing' AND lease_owner = ?",
                 (status, available_at, error[:2000], now.isoformat(timespec="seconds"), message_key, owner),
+            )
+            db.execute(
+                "UPDATE outbound_ledger SET state = 'failed' WHERE message_key = ? AND state = 'in_flight'",
+                (message_key,),
             )
             return status
 
