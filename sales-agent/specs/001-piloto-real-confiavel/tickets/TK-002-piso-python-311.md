@@ -4,17 +4,19 @@ schema_version: 1.0
 id: TK-002
 effort: 001-piloto-real-confiavel
 type: delivery
-status: implemented
-ticket_revision: 6
+status: done
+ticket_revision: 8
 requires: ["TK-001"]
 requirement_refs: ["FR-002"]
 acceptance_refs: ["AC-003"]
 spec_revision: 2
 plan_revision: 2
 owned_areas: ["pyproject.toml", "../.github/workflows/sales-agent-ci.yml", "docs/INSTALLATION.md", "README.md"]
-verification_status: partial
-last_update: "Local Python 3.10 rejection, Python 3.11/3.14 suites, build and Twine passed; real CI remains unexecuted because git push is prohibited."
+verification_status: passed
+last_update: Revisão separada sem achados bloqueantes; GitHub Actions run 36472024805 passou; EV-142.
 ---
+
+
 
 
 
@@ -70,10 +72,10 @@ Oráculo: valores literais de `spec.md` e `tdd.md` (casos com expectativa litera
 
 Depende de: TK-001 (status `done`).
 
-- [ ] TK-002.1 Escrever o primeiro caso (AC-003) na seam indicada em `plan.md`; observar red pelo motivo previsto em `tdd.md` (red observado manualmente no instalador; caso de CI ainda não executado).
+- [x] TK-002.1 Escrever o primeiro caso (AC-003) na seam indicada em `plan.md`; observar red pelo motivo previsto em `tdd.md` (red observado manualmente no instalador; CI executado no run 36472024805).
 - [x] TK-002.2 Implementar o mínimo para green de AC-003; próximo caso só após green.
 - [x] TK-002.3 Executar regressão completa (`python -m pytest -q`, `ruff check src tests`) e atualizar documentação da interface.
-- [ ] TK-002.4 Registrar evidência (`hybrid.py evidence add --executed`) e checkpoint; não marcar checklist de reviewer.
+- [x] TK-002.4 Registrar evidência (`hybrid.py evidence add --executed`) e checkpoint; não marcar checklist de reviewer.
 
 ## Validação
 

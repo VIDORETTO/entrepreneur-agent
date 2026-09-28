@@ -1,13 +1,11 @@
 {
-  "active_ticket": "TK-002",
+  "active_ticket": "",
   "authorization_refs": [],
   "baseline": {
     "kind": "git",
     "ref": "9abaf956eeaa8459fc237c185c14d4241529063e"
   },
-  "blockers": [
-    "CI não executado: GOAL-PROMPT proíbe git push; AC-003 exige suíte verde no CI"
-  ],
+  "blockers": [],
   "effort_id": "001-piloto-real-confiavel",
   "inputs": {
     "contract": {
@@ -26,7 +24,7 @@
       "revision": 2
     }
   },
-  "last_evidence": "EV-141",
+  "last_evidence": "EV-142",
   "last_invalidation": {
     "evidence": [
       "EV-080",
@@ -45,11 +43,11 @@
     "timestamp": "2026-09-28T17:32:26+00:00"
   },
   "mode": "standard",
-  "next_action": "Aguardar autorização para publicar a branch e executar GitHub Actions; AC-003 segue parcial, demais ACs com evidência atual",
+  "next_action": "Entrega técnica concluída; para piloto com tráfego real, configurar horário e privacidade e obter evidência de modelo e canal reais antes de ativar.",
   "pending_questions": [],
-  "phase": "implementation",
-  "revision": 37,
+  "phase": "closed",
+  "revision": 38,
   "schema_version": "1.0",
-  "status": "active",
-  "updated_at": "2026-09-28T19:09:46+00:00"
+  "status": "complete",
+  "updated_at": "2026-09-28T19:28:31+00:00"
 }

@@ -1,0 +1,26 @@
+{
+  "acceptance_refs": [
+    "AC-003"
+  ],
+  "environment": "OS=Linux-5.14.0-687.36.1.el9_8.x86_64-x86_64-with-glibc2.34; Python=3.12.14",
+  "evidence_refs": [],
+  "execution_status": "executed",
+  "id": "EV-142",
+  "input_fingerprints": {
+    "pyproject.toml": "a778bcd40960a6feaf0a287a760988299244d4de45bfc2c1adeb647c59099312",
+    "specs/001-piloto-real-confiavel/plan.md": "a069d7b1d149ba604d47c2cb8035b6bfe0e9dc7471acd4eb697cbcab209ab66e",
+    "specs/001-piloto-real-confiavel/spec.md": "057aed7c1e1360d8f71167caca6af45c61c0ddf7114ce1d2eb8ce7d6dd5858ba"
+  },
+  "input_paths": [
+    "pyproject.toml",
+    "specs/001-piloto-real-confiavel/spec.md",
+    "specs/001-piloto-real-confiavel/plan.md"
+  ],
+  "limitations": "",
+  "observations": "Run 36472024805 completed success for commit 9d945fc; Python 3.11 and 3.14 jobs passed pytest with coverage, Ruff, doctor, demo, model-check and evaluation; Python 3.10 installation rejection job passed. Local Python 3.12 pytest: 246 passed. https://github.com/VIDORETTO/entrepreneur-agent/actions/runs/36472024805",
+  "procedure": "GitHub Actions sales-agent-ci.yml push run 36472024805 for commit 9d945fc: test (3.11), test (3.14), reject-unsupported-python, distribution, shifted-clock",
+  "result": "passed",
+  "tested_revision": "local:19687dd436d97d3894a7e95aeecc0e8503fdc884a79e3f18dee990ac9e0b1c7c",
+  "ticket": "TK-002",
+  "timestamp": "2026-09-28T19:27:02+00:00"
+}

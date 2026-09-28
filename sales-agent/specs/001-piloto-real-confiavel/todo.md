@@ -11,13 +11,13 @@ Status: `done` | Bloqueado por: nenhum
 - [x] TK-001.4 Executar regressão completa (`python -m pytest -q`, `ruff check src tests`) e atualizar documentação da interface.
 - [x] TK-001.5 Registrar evidência (`hybrid.py evidence add --executed`) e checkpoint; não marcar checklist de reviewer.
 
-## [ ] TK-002 — TK-002 — Piso Python 3.11 e matriz de CI atualizada
-Status: `implemented` | Bloqueado por: TK-001
+## [x] TK-002 — TK-002 — Piso Python 3.11 e matriz de CI atualizada
+Status: `done` | Bloqueado por: TK-001
 
-- [ ] TK-002.1 Escrever o primeiro caso (AC-003) na seam indicada em `plan.md`; observar red pelo motivo previsto em `tdd.md` (red observado manualmente no instalador; caso de CI ainda não executado).
+- [x] TK-002.1 Escrever o primeiro caso (AC-003) na seam indicada em `plan.md`; observar red pelo motivo previsto em `tdd.md` (red observado manualmente no instalador; CI executado no run 36472024805).
 - [x] TK-002.2 Implementar o mínimo para green de AC-003; próximo caso só após green.
 - [x] TK-002.3 Executar regressão completa (`python -m pytest -q`, `ruff check src tests`) e atualizar documentação da interface.
-- [ ] TK-002.4 Registrar evidência (`hybrid.py evidence add --executed`) e checkpoint; não marcar checklist de reviewer.
+- [x] TK-002.4 Registrar evidência (`hybrid.py evidence add --executed`) e checkpoint; não marcar checklist de reviewer.
 
 ## [x] TK-003 — TK-003 — Assinatura Chatwoot com timestamp e janela anti-replay
 Status: `done` | Bloqueado por: TK-001

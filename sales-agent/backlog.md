@@ -12,4 +12,4 @@
 | `CAND-006` | Comprador simulado por modelo para ampliar avaliação (estilo τ-bench) sem substituir casos escritos à mão | `roadmap` | `P3` | `roadmap` | `candidate` | — | Promover após prontidão |
 | `CAND-007` | Segundo modelo validado para comprovar portabilidade (plano §18 M5) | `roadmap` | `P2` | `roadmap` | `candidate` | — | Promover após prontidão |
 | `CAND-008` | Segundo negócio real reproduzindo a instalação (plano §18 M5) | `roadmap` | `P3` | `roadmap` | `candidate` | — | Promover após prontidão |
-| `001-piloto-real-confiavel` | Specification: Do alpha local ao primeiro piloto real confiável | `effort` | `—` | `implementation` | `active` | `14/15` | Aguardar autorização para publicar a branch e executar GitHub Actions; AC-003 segue parcial, demais ACs com evidência atual |
+| `001-piloto-real-confiavel` | Specification: Do alpha local ao primeiro piloto real confiável | `effort` | `—` | `closed` | `complete` | `15/15` | Entrega técnica concluída; para piloto com tráfego real, configurar horário e privacidade e obter evidência de modelo e canal reais antes de ativar. |

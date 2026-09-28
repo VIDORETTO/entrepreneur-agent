@@ -1834,3 +1834,16 @@
 - Observations: Workflow matrix and Python floor are implemented; the current local branch has not been pushed, so no CI run exists for this revision.
 - Evidence refs: none
 - Limitations: GOAL-PROMPT explicitly prohibits git push.
+
+## EV-142 — passed
+
+- Ticket: `TK-002`
+- Acceptance: `AC-003`
+- Procedure: `GitHub Actions sales-agent-ci.yml push run 36472024805 for commit 9d945fc: test (3.11), test (3.14), reject-unsupported-python, distribution, shifted-clock`
+- Execution: `executed`
+- Environment: OS=Linux-5.14.0-687.36.1.el9_8.x86_64-x86_64-with-glibc2.34; Python=3.12.14
+- Tested revision: `local:19687dd436d97d3894a7e95aeecc0e8503fdc884a79e3f18dee990ac9e0b1c7c`
+- Timestamp: `2026-09-28T19:27:02+00:00`
+- Observations: Run 36472024805 completed success for commit 9d945fc; Python 3.11 and 3.14 jobs passed pytest with coverage, Ruff, doctor, demo, model-check and evaluation; Python 3.10 installation rejection job passed. Local Python 3.12 pytest: 246 passed. https://github.com/VIDORETTO/entrepreneur-agent/actions/runs/36472024805
+- Evidence refs: none
+- Limitations: none recorded
