@@ -1,0 +1,16 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "hybrid/install-manifest.schema.json",
+  "title": "Hybrid local installation manifest",
+  "type": "object",
+  "required": ["schema_version", "source", "skill_root", "files", "conflicts", "timestamp"],
+  "properties": {
+    "schema_version": {"const": "1.0"},
+    "source": {"type": "string"},
+    "skill_root": {"type": "string"},
+    "files": {"type": "array", "items": {"type": "string"}},
+    "conflicts": {"type": "array", "items": {"type": "string"}},
+    "timestamp": {"type": "string"}
+  },
+  "additionalProperties": true
+}

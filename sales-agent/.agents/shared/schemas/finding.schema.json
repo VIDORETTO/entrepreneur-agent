@@ -1,0 +1,19 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "hybrid/finding.schema.json",
+  "title": "Hybrid review or convergence finding",
+  "type": "object",
+  "required": ["id", "effort", "origin", "gap_type", "area", "severity", "summary", "state", "dedupe_key"],
+  "properties": {
+    "id": {"type": "string", "pattern": "^FD-[0-9]{3,}$"},
+    "effort": {"type": "string"},
+    "origin": {"enum": ["consistency", "standards", "spec", "convergence"]},
+    "gap_type": {"type": "string"},
+    "area": {"type": "string"},
+    "severity": {"enum": ["blocker", "major", "minor", "note"]},
+    "summary": {"type": "string", "minLength": 1},
+    "state": {"enum": ["open", "in_progress", "resolved", "duplicate", "wontfix"]},
+    "dedupe_key": {"type": "string", "minLength": 1}
+  },
+  "additionalProperties": true
+}

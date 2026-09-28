@@ -1,0 +1,24 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "hybrid/evidence.schema.json",
+  "title": "Hybrid verification evidence",
+  "type": "object",
+  "required": ["id", "ticket", "acceptance_refs", "procedure", "execution_status", "environment", "tested_revision", "timestamp", "result", "observations", "evidence_refs", "limitations", "input_paths", "input_fingerprints"],
+  "properties": {
+    "id": {"type": "string", "pattern": "^EV-[0-9]{3,}$"},
+    "ticket": {"oneOf": [{"type": "string", "pattern": "^TK-[0-9]{3,}$"}, {"type": "null"}]},
+    "acceptance_refs": {"type": "array", "minItems": 1, "items": {"type": "string", "pattern": "^AC-[0-9]{3,}$"}},
+    "procedure": {"type": "string", "minLength": 1},
+    "execution_status": {"enum": ["executed", "observed_only"]},
+    "environment": {"type": "string"},
+    "tested_revision": {"type": "string"},
+    "timestamp": {"type": "string"},
+    "result": {"enum": ["passed", "failed", "partial", "not_run", "stale"]},
+    "observations": {"type": "string"},
+    "evidence_refs": {"type": "array", "items": {"type": "string"}},
+    "limitations": {"type": "string"},
+    "input_paths": {"type": "array", "items": {"type": "string"}},
+    "input_fingerprints": {"type": "object", "additionalProperties": {"type": "string"}}
+  },
+  "additionalProperties": true
+}

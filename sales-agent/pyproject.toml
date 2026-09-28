@@ -39,6 +39,7 @@ dev = [
   "twine>=5,<7",
   "ruff>=0.12,<1",
   "jsonschema>=4,<5",
+  "time-machine>=2,<4",
 ]
 
 [project.scripts]

@@ -1,0 +1,29 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "hybrid/config.schema.json",
+  "title": "Hybrid project configuration",
+  "type": "object",
+  "required": ["schema_version", "mode", "specs_root", "roadmap_path", "backlog_path", "todo_name", "state_name", "ticket_dir", "evidence_dir", "findings_dir", "tracker"],
+  "properties": {
+    "schema_version": {"const": "1.0"},
+    "mode": {"enum": ["standard", "compact", "expanded"]},
+    "specs_root": {"type": "string", "minLength": 1},
+    "roadmap_path": {"type": "string", "minLength": 1},
+    "backlog_path": {"type": "string", "minLength": 1},
+    "todo_name": {"type": "string", "minLength": 1},
+    "state_name": {"type": "string", "minLength": 1},
+    "ticket_dir": {"type": "string", "minLength": 1},
+    "evidence_dir": {"type": "string", "minLength": 1},
+    "findings_dir": {"type": "string", "minLength": 1},
+    "tracker": {
+      "type": "object",
+      "required": ["kind", "enabled"],
+      "properties": {
+        "kind": {"enum": ["local", "none"]},
+        "enabled": {"type": "boolean"}
+      },
+      "additionalProperties": true
+    }
+  },
+  "additionalProperties": true
+}

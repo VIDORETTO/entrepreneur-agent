@@ -1,0 +1,19 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "hybrid/state.schema.json",
+  "title": "Hybrid effort checkpoint",
+  "type": "object",
+  "required": ["schema_version", "effort_id", "mode", "phase", "status", "revision", "baseline", "inputs", "next_action"],
+  "properties": {
+    "schema_version": {"const": "1.0"},
+    "effort_id": {"type": "string"},
+    "mode": {"enum": ["standard", "compact", "expanded"]},
+    "phase": {"enum": ["discovery", "specification", "planning", "slicing", "implementation", "verification", "review", "convergence", "delivery", "closed"]},
+    "status": {"enum": ["active", "waiting_input", "blocked_external", "failed", "complete", "cancelled"]},
+    "revision": {"type": "integer", "minimum": 0},
+    "baseline": {"type": "object"},
+    "inputs": {"type": "object"},
+    "next_action": {"type": "string", "minLength": 1}
+  },
+  "additionalProperties": true
+}

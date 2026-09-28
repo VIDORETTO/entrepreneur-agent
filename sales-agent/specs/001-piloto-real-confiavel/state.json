@@ -1,0 +1,36 @@
+{
+  "active_ticket": "TK-002",
+  "authorization_refs": [],
+  "baseline": {
+    "kind": "git",
+    "ref": "9abaf956eeaa8459fc237c185c14d4241529063e"
+  },
+  "blockers": [],
+  "effort_id": "001-piloto-real-confiavel",
+  "inputs": {
+    "contract": {
+      "fingerprint": "057aed7c1e1360d8f71167caca6af45c61c0ddf7114ce1d2eb8ce7d6dd5858ba",
+      "path": "specs/001-piloto-real-confiavel/spec.md",
+      "revision": 2
+    },
+    "plan": {
+      "fingerprint": "a069d7b1d149ba604d47c2cb8035b6bfe0e9dc7471acd4eb697cbcab209ab66e",
+      "path": "specs/001-piloto-real-confiavel/plan.md",
+      "revision": 2
+    },
+    "spec": {
+      "fingerprint": "057aed7c1e1360d8f71167caca6af45c61c0ddf7114ce1d2eb8ce7d6dd5858ba",
+      "path": "specs/001-piloto-real-confiavel/spec.md",
+      "revision": 2
+    }
+  },
+  "last_evidence": "EV-002",
+  "mode": "standard",
+  "next_action": "Executar TK-002 (piso Python 3.11) após commit TK-001",
+  "pending_questions": [],
+  "phase": "implementation",
+  "revision": 4,
+  "schema_version": "1.0",
+  "status": "active",
+  "updated_at": "2026-09-28T14:14:47+00:00"
+}

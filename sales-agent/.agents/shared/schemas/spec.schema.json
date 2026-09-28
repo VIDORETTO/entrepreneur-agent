@@ -1,0 +1,16 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "hybrid/spec.schema.json",
+  "title": "Hybrid behavioral specification metadata",
+  "type": "object",
+  "required": ["schema", "schema_version", "effort_id", "revision", "status", "profile"],
+  "properties": {
+    "schema": {"enum": ["hybrid/spec", "hybrid/change"]},
+    "schema_version": {"const": "1.0"},
+    "effort_id": {"type": "string", "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]*$"},
+    "revision": {"type": "integer", "minimum": 1},
+    "status": {"enum": ["draft", "accepted", "superseded", "closed"]},
+    "profile": {"enum": ["standard", "compact", "expanded"]}
+  },
+  "additionalProperties": true
+}

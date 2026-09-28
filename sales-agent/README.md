@@ -61,6 +61,12 @@ vendedor examples
 
 ## Demonstração reproduzível
 
+Regras de vigência do conhecimento usam o relógio injetado em `StateStore`.
+Sem argumento, a aplicação usa `SystemClock`; testes podem passar `FixedClock`
+com um instante ISO 8601 UTC e avançá-lo com `advance(seconds)`.
+Para verificar a suíte com a data do processo avançada 400 dias, execute
+`python -m pytest -q --clock-shift-days=400` no ambiente de desenvolvimento.
+
 Os nomes e preços abaixo são fictícios e estão no código de exemplos. A saída
 mostra quatro modalidades: físico B2C, oferta B2B padronizada, serviço
 consultivo e produto digital.

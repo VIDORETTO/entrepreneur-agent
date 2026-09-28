@@ -1,0 +1,16 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "hybrid/plan.schema.json",
+  "title": "Hybrid implementation plan metadata",
+  "type": "object",
+  "required": ["schema", "schema_version", "effort_id", "revision", "spec_revision", "status"],
+  "properties": {
+    "schema": {"const": "hybrid/plan"},
+    "schema_version": {"const": "1.0"},
+    "effort_id": {"type": "string"},
+    "revision": {"type": "integer", "minimum": 1},
+    "spec_revision": {"type": "integer", "minimum": 1},
+    "status": {"enum": ["draft", "ready", "superseded"]}
+  },
+  "additionalProperties": true
+}

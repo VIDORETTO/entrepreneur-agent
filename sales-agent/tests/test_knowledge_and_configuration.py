@@ -159,7 +159,7 @@ def test_farol_import_rejects_reversed_validity_interval(tmp_path: Path):
         FarolArtifactImporter(backend).import_package("invalid-validity-business", artifact)
 
 
-def test_farol_manifest_normalizes_offset_dates_and_replaces_previous_generation(tmp_path: Path):
+def test_farol_manifest_normalizes_offset_dates_and_replaces_previous_generation(tmp_path: Path, clock):
     import hashlib
 
     def make_artifact(root: Path, generation: str, filename: str, content: str, valid_from: str, valid_until: str):
@@ -191,7 +191,7 @@ def test_farol_manifest_normalizes_offset_dates_and_replaces_previous_generation
             encoding="utf-8",
         )
 
-    store = StateStore(tmp_path / "data")
+    store = StateStore(tmp_path / "data", clock=clock)
     backend = PersistentFarolKnowledge(store)
     first = tmp_path / "generation-1"
     make_artifact(first, "gen-1", "old.md", "A política antiga vale hoje.", "2026-09-19T23:00:00-03:00", "2026-09-21T03:00:00+03:00")

@@ -1,0 +1,16 @@
+{
+  "backlog_path": "backlog.md",
+  "evidence_dir": "evidence",
+  "findings_dir": "findings",
+  "mode": "standard",
+  "roadmap_path": "roadmap.md",
+  "schema_version": "1.0",
+  "specs_root": "specs",
+  "state_name": "state.json",
+  "ticket_dir": "tickets",
+  "todo_name": "todo.md",
+  "tracker": {
+    "enabled": false,
+    "kind": "local"
+  }
+}

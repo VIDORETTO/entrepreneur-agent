@@ -1,0 +1,32 @@
+{
+  "acceptance_refs": [
+    "AC-001"
+  ],
+  "environment": "OS=Linux-5.14.0-687.36.1.el9_8.x86_64-x86_64-with-glibc2.34; Python=3.12.14",
+  "evidence_refs": [],
+  "execution_status": "executed",
+  "id": "EV-001",
+  "input_fingerprints": {
+    "specs/001-piloto-real-confiavel/plan.md": "a069d7b1d149ba604d47c2cb8035b6bfe0e9dc7471acd4eb697cbcab209ab66e",
+    "specs/001-piloto-real-confiavel/spec.md": "057aed7c1e1360d8f71167caca6af45c61c0ddf7114ce1d2eb8ce7d6dd5858ba",
+    "src/sales_agent/clock.py": "a7f050b9272e43d853e91925f6e7cb4d3e50ce2ade2a89db21ae0a6f8eb5d680",
+    "src/sales_agent/knowledge.py": "462b189863ab54f918917b88d511fd4a5248a2e309f3b5493f550344ca516d5a",
+    "src/sales_agent/storage.py": "de282908dc32748f3358c5c97d7c4ce2ef3fc7f1838dd71f8039fcedc5547724",
+    "tests/test_knowledge_and_configuration.py": "9104849c1ca0c9b2f1229f83d7afc7e1111ef298a10df62b57cc43dba233e45c"
+  },
+  "input_paths": [
+    "src/sales_agent/clock.py",
+    "src/sales_agent/storage.py",
+    "src/sales_agent/knowledge.py",
+    "tests/test_knowledge_and_configuration.py",
+    "specs/001-piloto-real-confiavel/spec.md",
+    "specs/001-piloto-real-confiavel/plan.md"
+  ],
+  "limitations": "",
+  "observations": "Farol source with validity ending 2026-09-22 returned under injected 2026-09-20 clock; 1 passed",
+  "procedure": ".venv/bin/python -m pytest -q tests/test_knowledge_and_configuration.py::test_farol_manifest_normalizes_offset_dates_and_replaces_previous_generation",
+  "result": "passed",
+  "tested_revision": "local:a8d4e0af5e216d97289288ba9a398d7e555c581ce51f56bb3b6fb2cf96b4a10f",
+  "ticket": "TK-001",
+  "timestamp": "2026-09-28T14:13:45+00:00"
+}

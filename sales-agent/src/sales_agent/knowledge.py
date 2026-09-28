@@ -298,7 +298,7 @@ class PersistentFarolKnowledge:
             if expected_metadata is not None and field in expected_metadata:
                 if str(row[field] or "") != str(expected_metadata.get(field) or ""):
                     return False
-        now = datetime.now(timezone.utc)
+        now = datetime.fromisoformat(self.store.clock.now().replace("Z", "+00:00"))
         try:
             valid_from = _parse_iso(row["valid_from"]) if row["valid_from"] else None
             valid_until = _parse_iso(row["valid_until"]) if row["valid_until"] else None

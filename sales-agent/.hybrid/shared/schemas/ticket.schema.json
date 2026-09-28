@@ -1,0 +1,24 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "hybrid/ticket.schema.json",
+  "title": "Hybrid execution ticket",
+  "type": "object",
+  "required": ["schema", "schema_version", "id", "effort", "type", "status", "requires", "requirement_refs", "acceptance_refs", "spec_revision", "plan_revision", "ticket_revision", "owned_areas", "verification_status"],
+  "properties": {
+    "schema": {"const": "hybrid/ticket"},
+    "schema_version": {"const": "1.0"},
+    "id": {"type": "string", "pattern": "^TK-[0-9]{3,}$"},
+    "effort": {"type": "string"},
+    "type": {"type": "string"},
+    "status": {"enum": ["draft", "ready", "in_progress", "implemented", "verified", "done", "blocked", "cancelled", "superseded"]},
+    "requires": {"type": "array", "items": {"type": "string", "pattern": "^TK-[0-9]{3,}$"}},
+    "requirement_refs": {"type": "array", "items": {"type": "string", "pattern": "^FR-[0-9]{3,}$"}},
+    "acceptance_refs": {"type": "array", "items": {"type": "string", "pattern": "^AC-[0-9]{3,}$"}},
+    "spec_revision": {"type": "integer", "minimum": 1},
+    "plan_revision": {"type": "integer", "minimum": 1},
+    "ticket_revision": {"type": "integer", "minimum": 1},
+    "owned_areas": {"type": "array", "items": {"type": "string"}},
+    "verification_status": {"enum": ["not_run", "partial", "passed", "failed", "stale"]}
+  },
+  "additionalProperties": true
+}

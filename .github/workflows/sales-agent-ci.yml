@@ -58,3 +58,18 @@ jobs:
       - run: python -m twine check dist/*
       - run: python -m pip install --force-reinstall dist/*.whl
       - run: cd "${RUNNER_TEMP}" && vendedor doctor && vendedor demo
+
+  shifted-clock:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: sales-agent
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+          cache-dependency-path: sales-agent/pyproject.toml
+      - run: python -m pip install -e ".[dev]"
+      - run: python -m pytest -q --clock-shift-days=400

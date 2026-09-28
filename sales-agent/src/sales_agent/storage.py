@@ -14,6 +14,7 @@ from datetime import datetime, timedelta, timezone
 from pathlib import Path
 from typing import Any, Dict, List, Mapping, Optional, Tuple, Union
 
+from .clock import Clock, SystemClock
 from .types import empty_conversation
 
 DATABASE_SCHEMA_VERSION = 10
@@ -27,7 +28,7 @@ EFFECT_TRANSITIONS = {
 
 
 def utc_now() -> str:
-    return datetime.now(timezone.utc).isoformat(timespec="seconds")
+    return SystemClock().now()
 
 
 def reservation_expired(payload: Mapping[str, Any], now: datetime) -> bool:
@@ -91,7 +92,8 @@ def _requested_topics(query: str) -> List[set[str]]:
 class StateStore:
     """Deep persistence seam used by configuration, runtime and adapters."""
 
-    def __init__(self, data_dir: Union[Path, str]):
+    def __init__(self, data_dir: Union[Path, str], clock: Optional[Clock] = None):
+        self.clock = clock or SystemClock()
         self.data_dir = Path(data_dir).expanduser().resolve()
         self.data_dir.mkdir(parents=True, exist_ok=True)
         self._restrict_permissions(self.data_dir, 0o700)
@@ -1922,7 +1924,7 @@ class StateStore:
         subject: str = "",
     ) -> List[Dict[str, Any]]:
         try:
-            as_of = normalize_iso_datetime(as_of or utc_now())
+            as_of = normalize_iso_datetime(as_of or self.clock.now())
         except ValueError:
             return []
         with self.connect() as db:
