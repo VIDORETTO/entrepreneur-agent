@@ -8,7 +8,6 @@ Chatwoot instance.
 
 from __future__ import annotations
 
-import base64
 import hashlib
 import hmac
 import json
@@ -17,6 +16,7 @@ import urllib.error
 import urllib.parse
 import urllib.request
 from dataclasses import dataclass
+from datetime import datetime
 from typing import Any, Dict, Iterable, List, Mapping, Optional, Protocol, Tuple, Union
 
 from .storage import StateStore, durable_key, utc_now
@@ -77,6 +77,14 @@ class ChatwootBinding:
     inbox_id: str
     secret: str
     enabled: bool = True
+    signature_mode: str = "timestamped"
+    timestamp_tolerance_seconds: int = 300
+
+    def __post_init__(self) -> None:
+        if self.signature_mode not in {"timestamped", "legacy-body"}:
+            raise ValueError("modo de assinatura Chatwoot inválido")
+        if not 60 <= self.timestamp_tolerance_seconds <= 900:
+            raise ValueError("tolerância de timestamp Chatwoot inválida")
 
 
 def _header(headers: Mapping[str, Any], name: str) -> str:
@@ -128,6 +136,14 @@ class ChatwootReceiver:
                 raise ValueError("segredo do binding Chatwoot inválido")
             self.bindings[(binding.account_id, binding.inbox_id)] = binding
 
+    def diagnostics(self) -> Dict[str, Any]:
+        """Report webhook contract risks without exposing binding secrets."""
+
+        return {
+            "legacy_signature": any(binding.signature_mode == "legacy-body" for binding in self.bindings.values()),
+            "bindings": len(self.bindings),
+        }
+
     @staticmethod
     def _binding_from_mapping(item: Mapping[str, Any]) -> ChatwootBinding:
         required = ("business_id", "account_id", "inbox_id", "secret")
@@ -139,6 +155,8 @@ class ChatwootReceiver:
             inbox_id=str(item["inbox_id"]),
             secret=str(item["secret"]),
             enabled=bool(item.get("enabled", True)),
+            signature_mode=str(item.get("signature_mode", "timestamped")),
+            timestamp_tolerance_seconds=int(item.get("timestamp_tolerance_seconds", 300)),
         )
 
     @staticmethod
@@ -160,15 +178,27 @@ class ChatwootReceiver:
         return value
 
     @staticmethod
-    def _signature_matches(secret: str, raw: bytes, signature: str) -> bool:
+    def _signature_matches(binding: ChatwootBinding, raw: bytes, signature: str, timestamp: str, now: str) -> bool:
         if not signature.strip():
             return False
-        supplied = signature.strip()
-        if supplied.startswith("sha256="):
-            supplied = supplied[7:]
-        digest = hmac.new(secret.encode("utf-8"), raw, hashlib.sha256)
-        candidates = [digest.hexdigest(), base64.b64encode(digest.digest()).decode("ascii")]
-        return any(hmac.compare_digest(supplied, candidate) for candidate in candidates)
+        if binding.signature_mode == "timestamped":
+            if not (1 <= len(timestamp) <= 20 and timestamp.isascii() and timestamp.isdecimal()) or not signature.startswith(
+                "sha256="
+            ):
+                return False
+            try:
+                current = datetime.fromisoformat(now.replace("Z", "+00:00")).timestamp()
+            except ValueError:
+                return False
+            if abs(current - int(timestamp)) > binding.timestamp_tolerance_seconds:
+                return False
+            payload = timestamp.encode("ascii") + b"." + raw
+            supplied = signature[7:]
+        else:
+            payload = raw
+            supplied = signature.removeprefix("sha256=").strip()
+        expected = hmac.new(binding.secret.encode("utf-8"), payload, hashlib.sha256).hexdigest()
+        return hmac.compare_digest(expected, supplied)
 
     @staticmethod
     def _ids(payload: Mapping[str, Any]) -> Tuple[str, str, str]:
@@ -196,7 +226,8 @@ class ChatwootReceiver:
         if binding is None:
             raise ChannelAuthenticationError("conta/inbox Chatwoot não autorizado")
         signature = _header(headers, "X-Chatwoot-Signature") or _header(headers, "X-Chatwoot-Webhook-Signature")
-        if not self._signature_matches(binding.secret, raw, signature):
+        timestamp = _header(headers, "X-Chatwoot-Timestamp")
+        if not self._signature_matches(binding, raw, signature, timestamp, self.store.clock.now()):
             raise ChannelAuthenticationError("assinatura Chatwoot inválida")
         return binding
 
@@ -238,7 +269,8 @@ class ChatwootReceiver:
     ) -> Dict[str, Any]:
         raw = self._raw_body(body)
         payload = self._payload(body)
-        binding = self._authenticate(raw, payload, headers or {})
+        headers = headers or {}
+        binding = self._authenticate(raw, payload, headers)
         if self.store.get_business(binding.business_id) is None:
             raise ChannelAuthenticationError("negócio do binding Chatwoot não está configurado")
         account_id, inbox_id, conversation_id = self._ids(payload)
@@ -256,6 +288,9 @@ class ChatwootReceiver:
             "message_id": external_id,
             "kind": kind,
         }
+        delivery_id = _header(headers, "X-Chatwoot-Delivery")
+        if delivery_id:
+            audit_payload["delivery_id"] = delivery_id[:200]
         # Authenticated replays return an ACK without re-entering the queue.
         existing = self.store.get_channel_event(self.channel, self._external_key(account_id, inbox_id, external_id))
         if existing:
@@ -343,7 +378,7 @@ class ChatwootReceiver:
         }
         # The inbound row is the ACK boundary. No model or provider call is
         # made before this insert succeeds.
-        inserted = self.store.save_inbound_message(event, received_at or utc_now())
+        inserted = self.store.save_inbound_message(event, received_at or self.store.clock.now())
         self.store.record_channel_event(
             self.channel,
             self._external_key(account_id, inbox_id, external_id),

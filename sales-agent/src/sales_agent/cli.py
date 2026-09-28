@@ -38,13 +38,34 @@ def _print(value: Any, pretty: bool = True) -> None:
         print(json.dumps(value, ensure_ascii=False, indent=2 if pretty else None, sort_keys=pretty))
 
 
+def _chatwoot_bindings_from_file(path: str) -> List[Dict[str, Any]]:
+    """Resolve secret references only in memory; never put values in reports."""
+
+    document = json.loads(Path(path).read_text(encoding="utf-8"))
+    entries = document.get("bindings") if isinstance(document, dict) and "bindings" in document else [document]
+    if not isinstance(entries, list) or not entries:
+        raise ValueError("arquivo de binding Chatwoot precisa conter um binding ou lista não vazia")
+    resolved = []
+    for entry in entries:
+        if not isinstance(entry, dict):
+            raise ValueError("binding Chatwoot precisa ser objeto")
+        reference = str(entry.get("secret", ""))
+        if not reference.startswith("env:") or not reference[4:].isidentifier():
+            raise ValueError("segredo Chatwoot exige referência env:NOME")
+        value = os.environ.get(reference[4:], "")
+        if not value:
+            raise ValueError("variável de segredo Chatwoot não configurada")
+        resolved.append({**entry, "secret": value})
+    return resolved
+
+
 def command_doctor(args: argparse.Namespace) -> int:
     store = _store(args)
     storage_report = store.integrity_report()
     diagnostics: Dict[str, Any] = {
         "ok": storage_report["ok"],
         "python": sys.version.split()[0],
-        "python_supported": sys.version_info >= (3, 9),
+        "python_supported": sys.version_info >= (3, 11),
         "sqlite": __import__("sqlite3").sqlite_version,
         "data_dir": str(store.data_dir),
         "data_dir_writable": os.access(str(store.data_dir), os.W_OK),
@@ -59,6 +80,9 @@ def command_doctor(args: argparse.Namespace) -> int:
         "dependencies": {"external_runtime": "none", "pytest": importlib.util.find_spec("pytest") is not None},
         "storage": storage_report,
     }
+    if args.chatwoot_binding:
+        receiver = ChatwootReceiver(store, _chatwoot_bindings_from_file(args.chatwoot_binding))
+        diagnostics["chatwoot"] = receiver.diagnostics()
     try:
         manifest = load_manifest()
         diagnostics["manifest"] = {"version": manifest.get("version"), "sources": len(manifest.get("sources", []))}
@@ -414,9 +438,21 @@ def command_outbox_process(args: argparse.Namespace) -> int:
 
 def command_chatwoot_admit(args: argparse.Namespace) -> int:
     raw = Path(args.body).read_bytes() if args.body else args.payload.encode("utf-8")
-    binding = ChatwootBinding(args.business_id, args.account_id, args.inbox_id, args.secret)
+    secret = args.secret
+    if secret.startswith("env:"):
+        secret = os.environ.get(secret[4:], "")
+    binding = ChatwootBinding(
+        args.business_id,
+        args.account_id,
+        args.inbox_id,
+        secret,
+        signature_mode=args.signature_mode,
+    )
     receiver = ChatwootReceiver(_store(args), [binding])
-    result = receiver.admit(raw, {"X-Chatwoot-Signature": args.signature})
+    result = receiver.admit(
+        raw,
+        {"X-Chatwoot-Signature": args.signature, "X-Chatwoot-Timestamp": args.timestamp or ""},
+    )
     _print(result)
     return 0 if result.get("ack") else 2
 
@@ -647,6 +683,7 @@ def build_parser() -> argparse.ArgumentParser:
 
     doctor = sub.add_parser("doctor", help="diagnosticar instalação e capacidades")
     doctor.add_argument("--quiet", action="store_true")
+    doctor.add_argument("--chatwoot-binding", help="arquivo JSON de binding com segredo env:NOME")
     doctor.set_defaults(func=command_doctor)
 
     init = sub.add_parser("init", help="criar banco privado")
@@ -881,6 +918,8 @@ def build_parser() -> argparse.ArgumentParser:
     body_group.add_argument("--body")
     body_group.add_argument("--payload")
     chatwoot.add_argument("--signature", required=True)
+    chatwoot.add_argument("--timestamp", help="valor exato de X-Chatwoot-Timestamp")
+    chatwoot.add_argument("--signature-mode", choices=["timestamped", "legacy-body"], default="timestamped")
     chatwoot.set_defaults(func=command_chatwoot_admit)
 
     pilot = sub.add_parser("pilot", help="modos graduais e interrupção")

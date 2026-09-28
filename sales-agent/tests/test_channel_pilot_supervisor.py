@@ -46,8 +46,9 @@ def _outgoing_payload(sender_type, *, message_id=20):
 
 def _signed(payload, secret="synthetic-secret"):
     raw = json.dumps(payload, ensure_ascii=False, separators=(",", ":")).encode("utf-8")
-    signature = hmac.new(secret.encode("utf-8"), raw, hashlib.sha256).hexdigest()
-    return raw, {"X-Chatwoot-Signature": signature}
+    timestamp = str(int(time.time()))
+    signature = hmac.new(secret.encode("utf-8"), timestamp.encode() + b"." + raw, hashlib.sha256).hexdigest()
+    return raw, {"X-Chatwoot-Timestamp": timestamp, "X-Chatwoot-Signature": "sha256=" + signature}
 
 
 def test_chatwoot_admission_is_authenticated_durable_and_idempotent(tmp_path):
@@ -79,6 +80,7 @@ def test_chatwoot_wsgi_ack_is_after_durable_admission(tmp_path):
         "CONTENT_LENGTH": str(len(raw)),
         "wsgi.input": io.BytesIO(raw),
         "HTTP_X_CHATWOOT_SIGNATURE": headers["X-Chatwoot-Signature"],
+        "HTTP_X_CHATWOOT_TIMESTAMP": headers["X-Chatwoot-Timestamp"],
     }
     captured = {}
 

@@ -1,11 +1,13 @@
 {
-  "active_ticket": "TK-002",
+  "active_ticket": "TK-004",
   "authorization_refs": [],
   "baseline": {
     "kind": "git",
     "ref": "9abaf956eeaa8459fc237c185c14d4241529063e"
   },
-  "blockers": [],
+  "blockers": [
+    "CI não executado: GOAL-PROMPT proíbe git push; AC-003 exige suíte verde no CI"
+  ],
   "effort_id": "001-piloto-real-confiavel",
   "inputs": {
     "contract": {
@@ -24,13 +26,20 @@
       "revision": 2
     }
   },
-  "last_evidence": "EV-002",
+  "last_evidence": "EV-007",
+  "last_invalidation": {
+    "evidence": [
+      "EV-002"
+    ],
+    "inputs": {},
+    "timestamp": "2026-09-28T14:18:46+00:00"
+  },
   "mode": "standard",
-  "next_action": "Executar TK-002 (piso Python 3.11) após commit TK-001",
+  "next_action": "Executar TK-004; TK-002 aguarda execução do GitHub Actions para AC-003",
   "pending_questions": [],
   "phase": "implementation",
-  "revision": 4,
+  "revision": 7,
   "schema_version": "1.0",
   "status": "active",
-  "updated_at": "2026-09-28T14:14:47+00:00"
+  "updated_at": "2026-09-28T14:34:15+00:00"
 }

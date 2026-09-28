@@ -68,6 +68,25 @@ identidade externa `chatwoot:<id>` e ela pode ser usada pelo checkout simulado;
 esse vínculo é conferido no ledger persistente do evento. O prefixo
 `verified:*` continua reservado aos exemplos e à simulação local.
 
+O binding Chatwoot usa `signature_mode: "timestamped"` por padrão. O receptor
+exige `X-Chatwoot-Timestamp` em segundos Unix e
+`X-Chatwoot-Signature: sha256=<hex>`; o HMAC-SHA256 cobre os bytes de
+`"{timestamp}."` seguidos do corpo bruto. O timestamp deve estar a até 300 s
+do relógio do receptor, configurável por binding entre 60 e 900 s. Um binding
+antigo que assina somente o corpo precisa declarar `"signature_mode":
+"legacy-body"` explicitamente. Esse modo aparece como `legacy_signature` no
+diagnóstico e deve ser recusado pelo portão de prontidão do piloto.
+
+Para diagnosticar um binding sem imprimir o segredo, use um JSON local com os
+campos `business_id`, `account_id`, `inbox_id`, `secret: "env:NOME"`,
+`signature_mode` e, opcionalmente, `timestamp_tolerance_seconds`; uma lista
+pode ficar sob `bindings`. Então execute `vendedor doctor --chatwoot-binding
+binding.json` com a variável de ambiente configurada. O diagnóstico lê o
+segredo somente em memória e informa se há assinatura legada.
+O harness `vendedor channel chatwoot-admit` aceita `--timestamp` com o valor
+exato usado na assinatura e `--secret env:NOME`; `--signature-mode legacy-body`
+é necessário para testes com assinatura antiga.
+
 Os modos de canal são `observation`, `assistance` e `pilot`. Observação e
 assistência não enviam mensagens públicas. Piloto exige versão e fingerprint do
 pacote avaliados, coorte, limites e autorização explícita; reservas de entrega

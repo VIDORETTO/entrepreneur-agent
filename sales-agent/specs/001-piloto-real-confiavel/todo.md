@@ -12,22 +12,22 @@ Status: `done` | Bloqueado por: nenhum
 - [x] TK-001.5 Registrar evidência (`hybrid.py evidence add --executed`) e checkpoint; não marcar checklist de reviewer.
 
 ## [ ] TK-002 — TK-002 — Piso Python 3.11 e matriz de CI atualizada
-Status: `ready` | Bloqueado por: TK-001
+Status: `implemented` | Bloqueado por: TK-001
 
-- [ ] TK-002.1 Escrever o primeiro caso (AC-003) na seam indicada em `plan.md`; observar red pelo motivo previsto em `tdd.md`.
-- [ ] TK-002.2 Implementar o mínimo para green de AC-003; próximo caso só após green.
-- [ ] TK-002.3 Executar regressão completa (`python -m pytest -q`, `ruff check src tests`) e atualizar documentação da interface.
+- [ ] TK-002.1 Escrever o primeiro caso (AC-003) na seam indicada em `plan.md`; observar red pelo motivo previsto em `tdd.md` (red observado manualmente no instalador; caso de CI ainda não executado).
+- [x] TK-002.2 Implementar o mínimo para green de AC-003; próximo caso só após green.
+- [x] TK-002.3 Executar regressão completa (`python -m pytest -q`, `ruff check src tests`) e atualizar documentação da interface.
 - [ ] TK-002.4 Registrar evidência (`hybrid.py evidence add --executed`) e checkpoint; não marcar checklist de reviewer.
 
-## [ ] TK-003 — TK-003 — Assinatura Chatwoot com timestamp e janela anti-replay
-Status: `ready` | Bloqueado por: TK-001
+## [x] TK-003 — TK-003 — Assinatura Chatwoot com timestamp e janela anti-replay
+Status: `done` | Bloqueado por: TK-001
 
-- [ ] TK-003.1 Escrever o primeiro caso (AC-004) na seam indicada em `plan.md`; observar red pelo motivo previsto em `tdd.md`.
-- [ ] TK-003.2 Implementar o mínimo para green de AC-004; próximo caso só após green.
-- [ ] TK-003.3 Implementar o mínimo para green de AC-005; próximo caso só após green.
-- [ ] TK-003.4 Implementar o mínimo para green de AC-006; próximo caso só após green.
-- [ ] TK-003.5 Executar regressão completa (`python -m pytest -q`, `ruff check src tests`) e atualizar documentação da interface.
-- [ ] TK-003.6 Registrar evidência (`hybrid.py evidence add --executed`) e checkpoint; não marcar checklist de reviewer.
+- [x] TK-003.1 Escrever o primeiro caso (AC-004) na seam indicada em `plan.md`; observar red pelo motivo previsto em `tdd.md`.
+- [x] TK-003.2 Implementar o mínimo para green de AC-004; próximo caso só após green.
+- [x] TK-003.3 Implementar o mínimo para green de AC-005; próximo caso só após green.
+- [x] TK-003.4 Implementar o mínimo para green de AC-006; próximo caso só após green.
+- [x] TK-003.5 Executar regressão completa (`python -m pytest -q`, `ruff check src tests`) e atualizar documentação da interface.
+- [x] TK-003.6 Registrar evidência (`hybrid.py evidence add --executed`) e checkpoint; não marcar checklist de reviewer.
 
 ## [ ] TK-008 — TK-008 — Adaptador de modelo real com saída estruturada, reparo, custo e fallback
 Status: `ready` | Bloqueado por: TK-001

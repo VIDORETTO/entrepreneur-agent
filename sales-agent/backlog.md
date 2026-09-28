@@ -12,4 +12,4 @@
 | `CAND-006` | Comprador simulado por modelo para ampliar avaliação (estilo τ-bench) sem substituir casos escritos à mão | `roadmap` | `P3` | `roadmap` | `candidate` | — | Promover após prontidão |
 | `CAND-007` | Segundo modelo validado para comprovar portabilidade (plano §18 M5) | `roadmap` | `P2` | `roadmap` | `candidate` | — | Promover após prontidão |
 | `CAND-008` | Segundo negócio real reproduzindo a instalação (plano §18 M5) | `roadmap` | `P3` | `roadmap` | `candidate` | — | Promover após prontidão |
-| `001-piloto-real-confiavel` | Specification: Do alpha local ao primeiro piloto real confiável | `effort` | `—` | `implementation` | `active` | `1/15` | Executar TK-002 (piso Python 3.11) após commit TK-001 |
+| `001-piloto-real-confiavel` | Specification: Do alpha local ao primeiro piloto real confiável | `effort` | `—` | `implementation` | `active` | `2/15` | Executar TK-004; TK-002 aguarda execução do GitHub Actions para AC-003 |
