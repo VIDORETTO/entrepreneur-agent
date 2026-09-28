@@ -18,7 +18,7 @@ from typing import Any, Dict, List, Mapping, Optional, Tuple, Union
 from .clock import Clock, SystemClock
 from .types import empty_conversation
 
-DATABASE_SCHEMA_VERSION = 13
+DATABASE_SCHEMA_VERSION = 14
 OUTBOX_STATUSES = {"pending", "processing", "sent", "cancelled", "dead_letter", "unknown", "observed", "window_closed"}
 EFFECT_TRANSITIONS = {
     "reserved": {"unknown", "confirmed", "failed"},
@@ -286,6 +286,8 @@ class StateStore:
                     evaluated_model TEXT,
                     evaluated_backend TEXT,
                     reason TEXT,
+                    override_reason TEXT,
+                    readiness TEXT,
                     updated_at TEXT NOT NULL
                 );
                 CREATE TABLE IF NOT EXISTS pilot_metrics (
@@ -478,6 +480,10 @@ class StateStore:
         operating_mode_columns = {row["name"] for row in db.execute("PRAGMA table_info(operating_modes)").fetchall()}
         if "evaluated_package_fingerprint" not in operating_mode_columns:
             db.execute("ALTER TABLE operating_modes ADD COLUMN evaluated_package_fingerprint TEXT")
+        if "override_reason" not in operating_mode_columns:
+            db.execute("ALTER TABLE operating_modes ADD COLUMN override_reason TEXT")
+        if "readiness" not in operating_mode_columns:
+            db.execute("ALTER TABLE operating_modes ADD COLUMN readiness TEXT")
         try:
             db.executescript(
                 """
@@ -2501,6 +2507,8 @@ class StateStore:
         evaluated_model: Optional[str] = None,
         evaluated_backend: Optional[str] = None,
         reason: str = "",
+        override_reason: Optional[str] = None,
+        readiness: Optional[Mapping[str, Any]] = None,
     ) -> Dict[str, Any]:
         if mode not in {"observation", "assistance", "pilot"}:
             raise ValueError("modo operacional inválido")
@@ -2517,12 +2525,14 @@ class StateStore:
             "evaluated_model": evaluated_model,
             "evaluated_backend": evaluated_backend,
             "reason": reason,
+            "override_reason": override_reason,
+            "readiness": dict(readiness or {}),
             "updated_at": utc_now(),
         }
         with self._lock, self.connect() as db:
             db.execute(
-                "INSERT INTO operating_modes(scope_key, business_id, channel, mode, enabled, cohort, limits, evaluated_package_version, evaluated_package_fingerprint, evaluated_model, evaluated_backend, reason, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) "
-                "ON CONFLICT(scope_key) DO UPDATE SET business_id=excluded.business_id, channel=excluded.channel, mode=excluded.mode, enabled=excluded.enabled, cohort=excluded.cohort, limits=excluded.limits, evaluated_package_version=excluded.evaluated_package_version, evaluated_package_fingerprint=excluded.evaluated_package_fingerprint, evaluated_model=excluded.evaluated_model, evaluated_backend=excluded.evaluated_backend, reason=excluded.reason, updated_at=excluded.updated_at",
+                "INSERT INTO operating_modes(scope_key, business_id, channel, mode, enabled, cohort, limits, evaluated_package_version, evaluated_package_fingerprint, evaluated_model, evaluated_backend, reason, override_reason, readiness, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) "
+                "ON CONFLICT(scope_key) DO UPDATE SET business_id=excluded.business_id, channel=excluded.channel, mode=excluded.mode, enabled=excluded.enabled, cohort=excluded.cohort, limits=excluded.limits, evaluated_package_version=excluded.evaluated_package_version, evaluated_package_fingerprint=excluded.evaluated_package_fingerprint, evaluated_model=excluded.evaluated_model, evaluated_backend=excluded.evaluated_backend, reason=excluded.reason, override_reason=excluded.override_reason, readiness=excluded.readiness, updated_at=excluded.updated_at",
                 (
                     value["scope_key"],
                     value["business_id"],
@@ -2536,6 +2546,8 @@ class StateStore:
                     value["evaluated_model"],
                     value["evaluated_backend"],
                     value["reason"],
+                    value["override_reason"],
+                    self.dumps(value["readiness"]),
                     value["updated_at"],
                 ),
             )
@@ -2559,6 +2571,8 @@ class StateStore:
             "evaluated_model": row["evaluated_model"],
             "evaluated_backend": row["evaluated_backend"],
             "reason": row["reason"],
+            "override_reason": row["override_reason"],
+            "readiness": self.loads(row["readiness"]) if row["readiness"] else {},
             "updated_at": row["updated_at"],
         }
 

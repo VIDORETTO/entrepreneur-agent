@@ -1535,3 +1535,42 @@
 - Observations: 5 privacy tests and final full regression 238 tests passed
 - Evidence refs: none
 - Limitations: none recorded
+
+## EV-119 — passed
+
+- Ticket: `TK-015`
+- Acceptance: `AC-038`
+- Procedure: `python3.12 -m pytest -q tests/test_pilot_readiness.py tests/test_channel_pilot_supervisor.py`
+- Execution: `executed`
+- Environment: OS=Linux-5.14.0-687.36.1.el9_8.x86_64-x86_64-with-glibc2.34; Python=3.12.14
+- Tested revision: `local:60f59ee6594f69857c2e1a9b7014a35aa150f880b38def17ade7b0202b0b866e`
+- Timestamp: `2026-09-28T18:38:14+00:00`
+- Observations: 39 focused tests passed and full regression 243 passed; Ruff passed
+- Evidence refs: none
+- Limitations: none recorded
+
+## EV-120 — passed
+
+- Ticket: `TK-015`
+- Acceptance: `AC-039`
+- Procedure: `python3.12 -m pytest -q tests/test_pilot_readiness.py tests/test_channel_pilot_supervisor.py`
+- Execution: `executed`
+- Environment: OS=Linux-5.14.0-687.36.1.el9_8.x86_64-x86_64-with-glibc2.34; Python=3.12.14
+- Tested revision: `local:60f59ee6594f69857c2e1a9b7014a35aa150f880b38def17ade7b0202b0b866e`
+- Timestamp: `2026-09-28T18:38:14+00:00`
+- Observations: 39 focused tests passed and full regression 243 passed; Ruff passed
+- Evidence refs: none
+- Limitations: none recorded
+
+## EV-121 — passed
+
+- Ticket: `TK-015`
+- Acceptance: `AC-040`
+- Procedure: `python3.12 -m pytest -q tests/test_pilot_readiness.py tests/test_channel_pilot_supervisor.py`
+- Execution: `executed`
+- Environment: OS=Linux-5.14.0-687.36.1.el9_8.x86_64-x86_64-with-glibc2.34; Python=3.12.14
+- Tested revision: `local:60f59ee6594f69857c2e1a9b7014a35aa150f880b38def17ade7b0202b0b866e`
+- Timestamp: `2026-09-28T18:38:15+00:00`
+- Observations: 39 focused tests passed and full regression 243 passed; Ruff passed
+- Evidence refs: none
+- Limitations: none recorded

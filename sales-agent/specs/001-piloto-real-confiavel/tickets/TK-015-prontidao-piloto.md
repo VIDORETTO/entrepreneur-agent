@@ -1,19 +1,23 @@
 ---
 schema: hybrid/ticket
-schema_version: "1.0"
+schema_version: 1.0
 id: TK-015
 effort: 001-piloto-real-confiavel
 type: delivery
-status: ready
-ticket_revision: 1
-requires: [TK-003, TK-004, TK-005, TK-012, TK-013, TK-014]
-requirement_refs: [FR-013]
-acceptance_refs: [AC-038, AC-039, AC-040]
+status: done
+ticket_revision: 5
+requires: ["TK-003", "TK-004", "TK-005", "TK-012", "TK-013", "TK-014"]
+requirement_refs: ["FR-013"]
+acceptance_refs: ["AC-038", "AC-039", "AC-040"]
 spec_revision: 2
 plan_revision: 2
-owned_areas: [src/sales_agent/governance.py, src/sales_agent/cli.py, tests/test_pilot_readiness.py, docs/OPERATIONS.md]
-verification_status: not_run
+owned_areas: ["src/sales_agent/governance.py", "src/sales_agent/cli.py", "tests/test_pilot_readiness.py", "docs/OPERATIONS.md"]
+verification_status: passed
 ---
+
+
+
+
 
 # TK-015 — Portão de prontidão do piloto baseado em evidências
 

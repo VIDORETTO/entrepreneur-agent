@@ -226,3 +226,9 @@ novas alterações de pedido e novos checkouts.
 `vendedor --data-dir DIR privacy export --business-id ID --contact CONTATO` exporta as conversas e eventos do contato indicado. `privacy erase` remove esse histórico e anonimiza os efeitos persistidos com um HMAC local; o segredo fica em `DIR/privacy.key` com permissão privada. A operação registra um evento em `privacy_audit` e mantém contadores agregados. Faça um backup operacional antes da eliminação, pois ela é irreversível no banco ativo.
 
 `privacy purge --business-id ID` usa `privacy.retention_days` do pacote (padrão 180 dias); `0` desativa o expurgo automático. `--before` permite um corte ISO-8601 explícito com fuso. Intenções de entrega pendentes permanecem na outbox até conciliação; o expurgo remove eventos antigos e limpa o histórico da conversa correspondente. A exportação usa JSON e os relatórios de avaliação substituem telefones, e-mails e documentos reconhecidos por `[REDACTED]`.
+
+## Portão do piloto
+
+`vendedor pilot readiness --business-id ID --channel chatwoot --evidence-file bundle.json` devolve `ready`, `missing` e os nomes das evidências aceitas. O bundle reúne `holdout` do modelo e pacote selecionados, `model_check`, `channel_contract` (assinatura timestamped e eco) e `interruption` para o mesmo escopo. O hash do holdout deve corresponder ao corpus instalado. O pacote precisa declarar `service_hours` e `privacy.retention_days`. Um relatório `rules-v1` não libera o piloto.
+
+`pilot configure --mode pilot` consulta o mesmo portão e retorna código 2 se faltar prova. O dono pode registrar uma exceção explícita com `--authorize --override --reason TEXTO`; `pilot inspect` exibe o motivo e os itens ausentes. Isso altera somente o estado local. Não registra webhook nem ativa uma integração externa.

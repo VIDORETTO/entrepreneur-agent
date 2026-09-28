@@ -1,0 +1,30 @@
+{
+  "acceptance_refs": [
+    "AC-039"
+  ],
+  "environment": "OS=Linux-5.14.0-687.36.1.el9_8.x86_64-x86_64-with-glibc2.34; Python=3.12.14",
+  "evidence_refs": [],
+  "execution_status": "executed",
+  "id": "EV-120",
+  "input_fingerprints": {
+    "specs/001-piloto-real-confiavel/plan.md": "a069d7b1d149ba604d47c2cb8035b6bfe0e9dc7471acd4eb697cbcab209ab66e",
+    "specs/001-piloto-real-confiavel/spec.md": "057aed7c1e1360d8f71167caca6af45c61c0ddf7114ce1d2eb8ce7d6dd5858ba",
+    "src/sales_agent/cli.py": "0f0a8bed562bf47b73993783f68832dcfb748bad016b0ec3e125a74ab903ea32",
+    "src/sales_agent/governance.py": "87fd35308654faf4d8d859b28c9b53894e8fb9baace9b30c9b16705890381e0a",
+    "tests/test_pilot_readiness.py": "a694a0708280a2b5dc8e02a8c4e1f6661f4ceb8c7dd7189b15d677f5b0f6c42e"
+  },
+  "input_paths": [
+    "src/sales_agent/governance.py",
+    "src/sales_agent/cli.py",
+    "tests/test_pilot_readiness.py",
+    "specs/001-piloto-real-confiavel/spec.md",
+    "specs/001-piloto-real-confiavel/plan.md"
+  ],
+  "limitations": "",
+  "observations": "39 focused tests passed and full regression 243 passed; Ruff passed",
+  "procedure": "python3.12 -m pytest -q tests/test_pilot_readiness.py tests/test_channel_pilot_supervisor.py",
+  "result": "passed",
+  "tested_revision": "local:60f59ee6594f69857c2e1a9b7014a35aa150f880b38def17ade7b0202b0b866e",
+  "ticket": "TK-015",
+  "timestamp": "2026-09-28T18:38:14+00:00"
+}

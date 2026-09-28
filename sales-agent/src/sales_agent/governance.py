@@ -7,12 +7,15 @@ supervisor permission to send.
 
 from __future__ import annotations
 
+import hashlib
 import math
 import re
+import sys
 import tempfile
 import threading
 import time
 import uuid
+from pathlib import Path
 from queue import Empty, Queue
 from typing import Any, Callable, Dict, Mapping, Optional
 
@@ -55,6 +58,64 @@ class PilotController:
     def __init__(self, store: StateStore):
         self.store = store
 
+    def readiness(self, business_id: str, channel: str, *, evidence: Optional[Mapping[str, Any]] = None) -> Dict[str, Any]:
+        """Check the selected package, remote model, channel and operator gates."""
+
+        package = self.store.get_business(business_id)
+        if package is None:
+            raise ValueError("negócio não configurado: %s" % business_id)
+        bundle = dict(evidence or {})
+        holdout = bundle.get("holdout") if isinstance(bundle.get("holdout"), Mapping) else {}
+        evaluation = holdout.get("evaluation") if isinstance(holdout.get("evaluation"), Mapping) else {}
+        model = holdout.get("model") if isinstance(holdout.get("model"), Mapping) else {}
+        candidate = evaluation.get("candidate") if isinstance(evaluation.get("candidate"), Mapping) else {}
+        model_name = str(model.get("name", ""))
+        checkout_holdout = Path(__file__).resolve().parents[2] / "evaluation" / "holdout.json"
+        installed_holdout = Path(sys.prefix) / "share" / "vendedor-adaptavel" / "evaluation" / "holdout.json"
+        holdout_path = checkout_holdout if checkout_holdout.is_file() else installed_holdout
+        current_holdout_hash = hashlib.sha256(holdout_path.read_bytes()).hexdigest() if holdout_path.is_file() else None
+        fingerprint = holdout.get("candidate_package_fingerprint") or candidate.get("package_fingerprint")
+        version = holdout.get("candidate_package_version") or candidate.get("package_version")
+        missing = []
+        accepted = []
+        if not (model_name and model_name != "rules-v1" and holdout.get("status") == "passed"
+                and evaluation.get("split") == "holdout" and evaluation.get("thresholds_met") is True
+                and current_holdout_hash and evaluation.get("holdout_sha256") == current_holdout_hash
+                and version == package.get("package_version")
+                and fingerprint == package_fingerprint(package)):
+            missing.append("holdout_selected_model")
+        else:
+            accepted.append("holdout_selected_model")
+        model_check = bundle.get("model_check") if isinstance(bundle.get("model_check"), Mapping) else {}
+        selected_profile = model.get("profile")
+        if not (model_check.get("passed") is True and model_check.get("model") == model_name
+                and model_check.get("profile") == selected_profile and selected_profile in {"openai", "openai-compatible"}):
+            missing.append("model_check_selected_profile")
+        else:
+            accepted.append("model_check_selected_profile")
+        contract = bundle.get("channel_contract") if isinstance(bundle.get("channel_contract"), Mapping) else {}
+        if not (contract.get("channel") == channel and contract.get("signature_mode") == "timestamped"
+                and contract.get("signature_passed") is True and contract.get("echo_passed") is True):
+            missing.append("channel_contract")
+        else:
+            accepted.append("channel_contract")
+        if not package.get("service_hours"):
+            missing.append("service_hours")
+        else:
+            accepted.append("service_hours")
+        if not isinstance(package.get("privacy"), Mapping) or "retention_days" not in package["privacy"]:
+            missing.append("privacy")
+        else:
+            accepted.append("privacy")
+        interrupted = bundle.get("interruption") if isinstance(bundle.get("interruption"), Mapping) else {}
+        if interrupted.get("status") != "passed" or interrupted.get("scope_key") != scope_key(business_id, channel):
+            missing.append("interruption_exercised")
+        else:
+            accepted.append("interruption_exercised")
+        return {"ready": not missing, "missing": missing, "evidence": accepted,
+                "business_id": business_id, "channel": channel,
+                "model": model_name or None, "package_fingerprint": package_fingerprint(package)}
+
     def configure(
         self,
         business_id: str,
@@ -70,6 +131,8 @@ class PilotController:
         evaluation_evidence: Optional[Mapping[str, Any]] = None,
         authorize: bool = False,
         reason: str = "",
+        override: bool = False,
+        readiness_evidence: Optional[Mapping[str, Any]] = None,
     ) -> Dict[str, Any]:
         if mode not in MODES:
             raise ValueError("modo deve ser observation, assistance ou pilot")
@@ -77,6 +140,7 @@ class PilotController:
         if not package:
             raise ValueError("negócio não configurado: %s" % business_id)
         current_package_fingerprint = package_fingerprint(package)
+        readiness_result: Dict[str, Any] = {}
         if mode == "pilot":
             if not authorize:
                 raise ValueError("piloto exige autorização explícita")
@@ -112,28 +176,27 @@ class PilotController:
                         normalized_limits[name] = normalize_iso_datetime(value)
                     except ValueError as exc:
                         raise ValueError("período de piloto inválido") from exc
-            evidence = dict(evaluation_evidence or self._local_evaluation_evidence(package))
-            if not self._evaluation_matches(
-                evidence,
-                package,
-                evaluated_model,
-                evaluated_backend,
-                evaluated_package_fingerprint,
-            ):
-                raise ValueError("piloto exige evidência de avaliação aprovada para pacote, modelo e backend")
+            if override and not reason.strip():
+                raise ValueError("override exige motivo")
+            if readiness_evidence is None and evaluation_evidence is not None:
+                readiness_evidence = {"holdout": evaluation_evidence}
+            readiness_result = self.readiness(business_id, channel, evidence=readiness_evidence)
+            if not readiness_result["ready"] and not override:
+                raise ValueError("piloto não pronto: %s" % ", ".join(readiness_result["missing"]))
+            evidence = dict((readiness_evidence or {}).get("holdout") or {})
+            reported_model = str(evidence.get("model", {}).get("name", ""))
+            reported_backend = str(evidence.get("backend", {}).get("name", ""))
+            if evaluated_model and reported_model and evaluated_model != reported_model:
+                raise ValueError("modelo selecionado não corresponde ao holdout")
+            if evaluated_backend and reported_backend and evaluated_backend != reported_backend:
+                raise ValueError("backend selecionado não corresponde ao holdout")
             evaluated_package_fingerprint = evaluated_package_fingerprint or str(
-                evidence.get("candidate_package_fingerprint")
-                or (
-                    evidence.get("evaluation", {}).get("candidate", {})
-                    if isinstance(evidence.get("evaluation"), Mapping)
-                    else {}
-                ).get("package_fingerprint")
-                or current_package_fingerprint
+                evidence.get("candidate_package_fingerprint") or current_package_fingerprint
             )
             if evaluated_package_fingerprint != current_package_fingerprint:
                 raise ValueError("piloto exige fingerprint do pacote avaliado e vigente")
-            evaluated_model = evaluated_model or str(evidence.get("model", {}).get("name", ""))
-            evaluated_backend = evaluated_backend or str(evidence.get("backend", {}).get("name", ""))
+            evaluated_model = evaluated_model or reported_model
+            evaluated_backend = evaluated_backend or reported_backend
         value = self.store.save_operating_mode(
             scope_key(business_id, channel),
             business_id,
@@ -147,6 +210,8 @@ class PilotController:
             evaluated_model=evaluated_model,
             evaluated_backend=evaluated_backend,
             reason=reason or ("authorized by owner" if authorize else "local configuration"),
+            override_reason=reason if override else None,
+            readiness=readiness_result,
         )
         self.store.update_pilot_metrics(value["scope_key"], {"configuration_changes": 1})
         return self.public_config(value)
@@ -234,6 +299,8 @@ class PilotController:
                 evaluated_model=current.get("evaluated_model"),
                 evaluated_backend=current.get("evaluated_backend"),
                 reason=reason,
+                override_reason=current.get("override_reason"),
+                readiness=current.get("readiness"),
             )
         self.store.update_pilot_metrics(current["scope_key"], {"interruptions": 1})
         return self.public_config(current)
@@ -453,6 +520,8 @@ class PilotController:
             "evaluated_model": value.get("evaluated_model"),
             "evaluated_backend": value.get("evaluated_backend"),
             "reason": value.get("reason"),
+            "override_reason": value.get("override_reason"),
+            "readiness": dict(value.get("readiness") or {}),
             "updated_at": value.get("updated_at"),
         }
 

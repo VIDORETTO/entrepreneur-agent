@@ -489,9 +489,18 @@ def command_pilot_configure(args: argparse.Namespace) -> int:
         evaluated_backend=args.evaluated_backend,
         authorize=args.authorize,
         reason=args.reason or "",
+        override=args.override,
+        readiness_evidence=json.loads(Path(args.evidence_file).read_text(encoding="utf-8")) if args.evidence_file else None,
     )
     _print(result)
     return 0
+
+
+def command_pilot_readiness(args: argparse.Namespace) -> int:
+    evidence = json.loads(Path(args.evidence_file).read_text(encoding="utf-8")) if args.evidence_file else None
+    result = PilotController(_store(args)).readiness(args.business_id, args.channel, evidence=evidence)
+    _print(redact_data(result))
+    return 0 if result["ready"] else 2
 
 
 def command_pilot_inspect(args: argparse.Namespace) -> int:
@@ -1017,7 +1026,14 @@ def build_parser() -> argparse.ArgumentParser:
     pilot_config.add_argument("--evaluated-backend")
     pilot_config.add_argument("--authorize", action="store_true")
     pilot_config.add_argument("--reason", default="")
+    pilot_config.add_argument("--override", action="store_true", help="exceção auditada com --reason obrigatório")
+    pilot_config.add_argument("--evidence-file", help="JSON com holdout, model_check, channel_contract e interruption")
     pilot_config.set_defaults(func=command_pilot_configure)
+    pilot_readiness = pilot_sub.add_parser("readiness")
+    pilot_readiness.add_argument("--business-id", required=True)
+    pilot_readiness.add_argument("--channel", default="chatwoot")
+    pilot_readiness.add_argument("--evidence-file")
+    pilot_readiness.set_defaults(func=command_pilot_readiness)
     pilot_inspect = pilot_sub.add_parser("inspect")
     pilot_inspect.add_argument("--business-id", required=True)
     pilot_inspect.add_argument("--channel", default="chatwoot")

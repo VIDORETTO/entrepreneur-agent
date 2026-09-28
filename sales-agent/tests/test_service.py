@@ -102,6 +102,8 @@ def _service(tmp_path, chatwoot_url, *, window_seconds=0.3, transport_timeout=10
                 "evaluation": {"thresholds_met": True},
             },
             authorize=True,
+            override=True,
+            reason="legacy local service test",
         )
     config = tmp_path / "service.json"
     config.write_text(

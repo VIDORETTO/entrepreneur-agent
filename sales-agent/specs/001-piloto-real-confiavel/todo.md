@@ -63,8 +63,8 @@ Status: `done` | Bloqueado por: TK-001
 - [ ] TK-013.6 Executar regressão completa (`python -m pytest -q`, `ruff check src tests`) e atualizar documentação da interface.
 - [ ] TK-013.7 Registrar evidência (`hybrid.py evidence add --executed`) e checkpoint; não marcar checklist de reviewer.
 
-## [ ] TK-014 — TK-014 — Exportação, eliminação, retenção e redação de dados pessoais
-Status: `ready` | Bloqueado por: TK-001
+## [x] TK-014 — TK-014 — Exportação, eliminação, retenção e redação de dados pessoais
+Status: `done` | Bloqueado por: TK-001
 
 - [ ] TK-014.1 Escrever o primeiro caso (AC-045) na seam indicada em `plan.md`; observar red pelo motivo previsto em `tdd.md`.
 - [ ] TK-014.2 Implementar o mínimo para green de AC-045; próximo caso só após green.

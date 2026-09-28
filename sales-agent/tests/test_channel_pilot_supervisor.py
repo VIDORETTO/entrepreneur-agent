@@ -472,7 +472,7 @@ def test_pilot_requires_evaluation_and_interrupts_public_delivery(app):
         cohort={"all": True},
         limits={"max_deliveries": 1},
         evaluated_package_version=package_version,
-        authorize=True,
+        authorize=True, override=True, reason="legacy local pilot test",
     )
     engine.handle(
         {
@@ -746,7 +746,7 @@ def test_pilot_inspection_exposes_validation_reversal_and_retention_plan(app):
         cohort={"contacts": ["chatwoot:14"]},
         limits={"max_deliveries": 1},
         evaluated_package_version=package_version,
-        authorize=True,
+        authorize=True, override=True, reason="legacy local pilot test",
     )
 
     plan = pilot.inspect("azul-b2c", "chatwoot")["operator_plan"]
@@ -774,7 +774,7 @@ def test_pilot_reads_nested_provider_metrics_and_keeps_fractional_cost(app):
         limits={"max_cost": 0.5, "max_deliveries": 2},
         evaluated_package_version=package_version,
         evaluation_evidence=evidence,
-        authorize=True,
+        authorize=True, override=True, reason="legacy local pilot test",
     )
 
     zero_cost = pilot.decide(
@@ -850,7 +850,7 @@ def test_pilot_settles_nested_actual_cost_once(app):
             "model": {"name": "rules-v1"},
             "backend": {"name": "sqlite-farol-v1"},
         },
-        authorize=True,
+        authorize=True, override=True, reason="legacy local pilot test",
     )
     item = {
         "message_key": "pilot-nested-settlement",
@@ -914,7 +914,7 @@ def test_pilot_expiration_is_enforced_before_reserving_a_delivery(app):
             "model": {"name": "rules-v1"},
             "backend": {"name": "sqlite-farol-v1"},
         },
-        authorize=True,
+        authorize=True, override=True, reason="legacy local pilot test",
     )
 
     decision = pilot.decide(
@@ -950,7 +950,7 @@ def test_pilot_stops_when_package_content_changes_with_same_version(app):
             "model": {"name": "rules-v1"},
             "backend": {"name": "sqlite-farol-v1"},
         },
-        authorize=True,
+        authorize=True, override=True, reason="legacy local pilot test",
     )
     package = store.get_business("azul-b2c")
     package["offers"][0]["price"] = 80
