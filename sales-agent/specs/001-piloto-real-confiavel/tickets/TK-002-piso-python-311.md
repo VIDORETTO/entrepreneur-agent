@@ -5,16 +5,17 @@ id: TK-002
 effort: 001-piloto-real-confiavel
 type: delivery
 status: implemented
-ticket_revision: 5
+ticket_revision: 6
 requires: ["TK-001"]
 requirement_refs: ["FR-002"]
 acceptance_refs: ["AC-003"]
 spec_revision: 2
 plan_revision: 2
 owned_areas: ["pyproject.toml", "../.github/workflows/sales-agent-ci.yml", "docs/INSTALLATION.md", "README.md"]
-verification_status: stale
-last_update: Evidence invalidated after an input changed.
+verification_status: partial
+last_update: "Local Python 3.10 rejection, Python 3.11/3.14 suites, build and Twine passed; real CI remains unexecuted because git push is prohibited."
 ---
+
 
 
 

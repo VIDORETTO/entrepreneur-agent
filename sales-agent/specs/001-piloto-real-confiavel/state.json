@@ -26,7 +26,7 @@
       "revision": 2
     }
   },
-  "last_evidence": "EV-121",
+  "last_evidence": "EV-135",
   "last_invalidation": {
     "evidence": [
       "EV-080",
@@ -45,11 +45,11 @@
     "timestamp": "2026-09-28T17:32:26+00:00"
   },
   "mode": "standard",
-  "next_action": "Executar gates finais e verificar convergência; AC-003 depende de CI após push autorizado",
+  "next_action": "Quando houver autorização para push, executar GitHub Actions CI e completar AC-003; depois repetir convergence",
   "pending_questions": [],
   "phase": "implementation",
-  "revision": 35,
+  "revision": 36,
   "schema_version": "1.0",
   "status": "active",
-  "updated_at": "2026-09-28T18:38:51+00:00"
+  "updated_at": "2026-09-28T18:47:59+00:00"
 }
