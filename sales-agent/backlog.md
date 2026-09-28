@@ -12,4 +12,4 @@
 | `CAND-006` | Comprador simulado por modelo para ampliar avaliação (estilo τ-bench) sem substituir casos escritos à mão | `roadmap` | `P3` | `roadmap` | `candidate` | — | Promover após prontidão |
 | `CAND-007` | Segundo modelo validado para comprovar portabilidade (plano §18 M5) | `roadmap` | `P2` | `roadmap` | `candidate` | — | Promover após prontidão |
 | `CAND-008` | Segundo negócio real reproduzindo a instalação (plano §18 M5) | `roadmap` | `P3` | `roadmap` | `candidate` | — | Promover após prontidão |
-| `001-piloto-real-confiavel` | Specification: Do alpha local ao primeiro piloto real confiável | `effort` | `—` | `implementation` | `active` | `7/15` | Executar TK-012 (holdout e repetição); TK-002 AC-003 ainda depende de CI não executado |
+| `001-piloto-real-confiavel` | Specification: Do alpha local ao primeiro piloto real confiável | `effort` | `—` | `implementation` | `active` | `8/15` | Executar TK-009; TK-002 AC-003 segue parcial até CI real |

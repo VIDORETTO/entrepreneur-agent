@@ -16,6 +16,7 @@ import uuid
 from queue import Empty, Queue
 from typing import Any, Callable, Dict, Mapping, Optional
 
+from .drafting import commercial_claims, policy_claims
 from .storage import StateStore, durable_key, normalize_iso_datetime, utc_now
 from .validation import package_capability, package_fingerprint
 
@@ -958,67 +959,11 @@ class QualitySupervisor:
 
     @staticmethod
     def _policy_claims(text: str) -> list[tuple[str, str]]:
-        """Extract only explicit policy polarity, conservatively."""
-
-        value = text.casefold()
-        patterns = {
-            "guarantee": (
-                r"garant(?:ia|ias)",
-                r"(?:não|nao)\s+(?:cobre|inclui|abrange|oferece)|sem\s+garantia",
-                r"(?:cobre|inclui|abrange|oferece|vale|válida|valida)",
-            ),
-            "exchange": (
-                r"troca",
-                r"(?:não|nao)\s+(?:aceita|permite|cobre).*troca|sem\s+troca",
-                r"(?:aceita|permite|cobre).*troca|troca.*(?:aceita|permitida|disponível|disponivel)",
-            ),
-            "return": (
-                r"devoluç(?:ão|ao)|reembolso",
-                r"(?:não|nao)\s+(?:aceita|permite|faz|há).*?(?:devoluç(?:ão|ao)|reembolso)|sem\s+(?:devoluç(?:ão|ao)|reembolso)",
-                r"(?:aceita|permite|faz|há|disponível|disponivel).*?(?:devoluç(?:ão|ao)|reembolso)|(?:devoluç(?:ão|ao)|reembolso).*?(?:aceita|permitida|disponível|disponivel)",
-            ),
-        }
-        claims: list[tuple[str, str]] = []
-        for subject, (keyword, negative_pattern, positive_pattern) in patterns.items():
-            if not re.search(keyword, value):
-                continue
-            negative = bool(re.search(negative_pattern, value))
-            positive = bool(re.search(positive_pattern, value)) and not negative
-            if negative:
-                claims.append((subject, "negative"))
-            elif positive:
-                claims.append((subject, "positive"))
-        return claims
+        return policy_claims(text)
 
     @staticmethod
     def _commercial_claims(text: str) -> list[tuple[str, str]]:
-        value = text.casefold()
-        claims = []
-        for match in re.finditer(r"(?:r\$\s*|\b)([0-9]+(?:[.,][0-9]{1,2})?)\s*(?:reais?|rs\.?|r\$)?", value):
-            amount = re.sub(r"[^0-9]", "", match.group(1))
-            if match.group(0).strip().lower().endswith(("reais", "real", "rs", "r$")) or "r$" in match.group(0).lower():
-                claims.append(("price", amount))
-        for match in re.finditer(r"\b(\d+)\s*(dias?|meses?|semanas?)\b", text.casefold()):
-            unit = match.group(2)
-            if unit.startswith("dia"):
-                unit = "dias"
-            elif unit.startswith("mes"):
-                unit = "meses"
-            else:
-                unit = "semanas"
-            claims.append(("deadline", "%s %s" % (match.group(1), unit)))
-        patterns = {
-            "payment_status": (r"pagamento\s+(?:foi\s+)?confirmado", "payment_confirmed"),
-            "shipping": (r"frete\s+gr[aá]tis", "free_shipping"),
-            "guarantee_duration": (r"garantia\s+(?:é\s+)?vital[ií]cia", "lifetime_guarantee"),
-            "delivery_tomorrow": (r"entreg(?:a|amos)\s+amanh[ãa]", "delivery_tomorrow"),
-            "discount": (r"\bdesconto\b", "discount"),
-            "refund": (r"\bestorno\b|\breembolso\b", "refund"),
-        }
-        for kind, (pattern, value_name) in patterns.items():
-            if re.search(pattern, value):
-                claims.append((kind, value_name))
-        return claims
+        return commercial_claims(text)
 
     def _evidence_current(self, business_id: str, evidence: Any) -> bool:
         if not isinstance(evidence, list):

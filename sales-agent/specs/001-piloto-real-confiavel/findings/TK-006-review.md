@@ -35,3 +35,5 @@ Red esperado foi observado em AC-013 (binding sem `channel_kind`), AC-014
 (`cancelled` em vez de `window_closed`) e AC-015 (follow-up marcado `sent` fora
 da janela). Depois das correções, 191 testes passaram e Ruff passou.
 Evidências atuais: EV-033, EV-034, EV-035.
+
+Revalidação após TK-009: os comandos de regressão específicos do ticket foram executados e passaram; a alteração em conversation.py preservou os aceites anteriores. Evidências atuais EV-090–EV-093, conforme o ticket. Sem novo achado bloqueante.

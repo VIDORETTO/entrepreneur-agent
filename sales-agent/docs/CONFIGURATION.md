@@ -1,5 +1,18 @@
 # Configuração do dono
 
+## Redação opcional de respostas
+
+O pacote aceita `"draft_mode": "on"` ou `"off"` (padrão). Em `on`, o
+adaptador de modelo pode produzir uma versão natural do template já calculado
+pelo motor. O motor verifica preço, percentual, prazo, quantidade, URL,
+pergunta necessária e tópicos solicitados antes de entregar o texto. Um
+rascunho inválido recebe uma única tentativa de correção; se a segunda falhar
+ou o redator estiver indisponível, o comprador recebe o template. O trace
+registra `draft_accepted`, `claim_unsupported` e `draft_fallback`. A ação
+comercial continua sendo decidida pelo motor; o redator recebe o link emitido
+e não cria um novo. Configure o adaptador HTTP com a mesma referência
+`env:NOME` de `model-check` quando desejar redação remota.
+
 `configure start` lê materiais fornecidos, registra indícios com origem e cria
 uma questão prioritária. Cada `answer` grava decisões e avança o cursor. Uma
 sessão nova consulta o checkpoint, não repete a entrevista inteira. `finalize`

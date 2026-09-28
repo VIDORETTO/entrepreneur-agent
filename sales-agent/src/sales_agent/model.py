@@ -12,6 +12,7 @@ import urllib.request
 from pathlib import Path
 from typing import Any, Dict, Mapping, Optional, Protocol
 
+from .drafting import ResponseRequirements
 from .types import Proposal
 
 
@@ -405,6 +406,40 @@ class HTTPModelAdapter:
         if "indisponível" in last_error or "timeout" in last_error.casefold():
             fallback.raw["model_timeout"] = True
         return fallback
+
+    def draft_response(self, requirements: ResponseRequirements, feedback: list[dict[str, str]]) -> str:
+        """Request text only; the engine verifies every returned draft."""
+        system = json.dumps({
+            "task": "Rephrase the template naturally without adding facts or effects. Preserve required question, topics and checkout URL. Return text only.",
+            "template": requirements.template,
+            "approved_evidence": requirements.evidence,
+            "required_question_field": requirements.question_field,
+            "required_topics": requirements.topics,
+            "checkout_url": requirements.checkout_url,
+            "previous_violations": feedback,
+        }, ensure_ascii=False)
+        body = {"model": self.model, "messages": [
+            {"role": "system", "content": system},
+            {"role": "user", "content": "<buyer_message>%s</buyer_message>" % requirements.buyer_text},
+        ]}
+        request = urllib.request.Request(
+            self.endpoint,
+            data=json.dumps(body, ensure_ascii=False).encode("utf-8"),
+            headers={"Content-Type": "application/json"},
+            method="POST",
+        )
+        request.add_unredirected_header("Authorization", "Bearer " + self.api_key)
+        payload = self._send(request)
+        choices = payload.get("choices")
+        if not isinstance(choices, list) or not choices or not isinstance(choices[0], Mapping):
+            raise ValueError("redator remoto retornou choices fora do contrato")
+        message = choices[0].get("message")
+        if not isinstance(message, Mapping) or message.get("refusal"):
+            raise ValueError("redator remoto recusou ou retornou message inválida")
+        content = message.get("content")
+        if not isinstance(content, str) or not content.strip() or len(content) > 20_000:
+            raise ValueError("redator remoto retornou texto inválido")
+        return content.strip()
 
     def _parse_proposal(self, payload: Mapping[str, Any]) -> Proposal:
         choices = payload.get("choices")

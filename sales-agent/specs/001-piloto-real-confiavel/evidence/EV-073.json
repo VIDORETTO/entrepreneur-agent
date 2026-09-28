@@ -22,10 +22,10 @@
     "specs/001-piloto-real-confiavel/spec.md",
     "specs/001-piloto-real-confiavel/plan.md"
   ],
-  "limitations": "",
+  "limitations": "Evidence invalidated because an input changed.",
   "observations": "Fake usage pricing and latency fields verified by 23 adapter tests.",
   "procedure": ".venv/bin/python -m pytest -q tests/test_model_adapter.py",
-  "result": "passed",
+  "result": "stale",
   "tested_revision": "local:a6491f0180742c07abf7912f03fe38aefba0ba0703936097a9b5a06e9ae610e6",
   "ticket": "TK-008",
   "timestamp": "2026-09-28T16:14:27+00:00"

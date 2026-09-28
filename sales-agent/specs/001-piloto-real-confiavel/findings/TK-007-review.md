@@ -37,3 +37,5 @@ contrato local, não um serviço de mídia real.
 
 Regressão final: 197 testes passaram; Ruff passou. Evidências atuais:
 EV-040, EV-041 e EV-042.
+
+Revalidação após TK-009: os comandos de regressão específicos do ticket foram executados e passaram; a alteração em conversation.py preservou os aceites anteriores. Evidências atuais EV-090–EV-093, conforme o ticket. Sem novo achado bloqueante.

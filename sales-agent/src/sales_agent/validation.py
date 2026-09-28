@@ -62,6 +62,8 @@ def validate_package(package: Mapping[str, Any]) -> Dict[str, Any]:
     non_text_policy = package.get("non_text_policy", "ask_text")
     if not isinstance(non_text_policy, str) or non_text_policy not in {"ask_text", "offer_human"}:
         raise PackageError("non_text_policy inválida")
+    if package.get("draft_mode", "off") not in {"on", "off"}:
+        raise PackageError("draft_mode inválido")
     business = package["business"]
     if not isinstance(business, Mapping):
         raise PackageError("business deve ser um objeto")

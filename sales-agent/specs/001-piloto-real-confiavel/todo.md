@@ -95,8 +95,8 @@ Status: `ready` | Bloqueado por: TK-008
 - [ ] TK-009.6 Executar regressão completa (`python -m pytest -q`, `ruff check src tests`) e atualizar documentação da interface.
 - [ ] TK-009.7 Registrar evidência (`hybrid.py evidence add --executed`) e checkpoint; não marcar checklist de reviewer.
 
-## [ ] TK-012 — TK-012 — Avaliação com 80 casos, holdout protegido e pass^k
-Status: `ready` | Bloqueado por: TK-008
+## [x] TK-012 — TK-012 — Avaliação com 80 casos, holdout protegido e pass^k
+Status: `done` | Bloqueado por: TK-008
 
 - [ ] TK-012.1 Escrever o primeiro caso (AC-035) na seam indicada em `plan.md`; observar red pelo motivo previsto em `tdd.md`.
 - [ ] TK-012.2 Implementar o mínimo para green de AC-035; próximo caso só após green.

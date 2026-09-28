@@ -8,6 +8,7 @@
     "package_version": {"type": "string", "minLength": 1},
     "lifecycle": {"enum": ["draft", "active"]},
     "non_text_policy": {"enum": ["ask_text", "offer_human"]},
+    "draft_mode": {"enum": ["off", "on"]},
     "business": {
       "type": "object",
       "required": ["id", "name", "buyer_types"],

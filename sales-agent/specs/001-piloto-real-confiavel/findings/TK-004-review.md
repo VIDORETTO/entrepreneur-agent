@@ -28,3 +28,5 @@ recebe teste de serviço específico em TK-005/AC-012.
 
 Regressão executada: 181 testes passaram e Ruff passou. A migração aditiva
 elevou o schema SQLite de 10 para 11; a suíte de migração existente passou.
+
+Revalidação após TK-009: os comandos de regressão específicos do ticket foram executados e passaram; a alteração em conversation.py preservou os aceites anteriores. Evidências atuais EV-090–EV-093, conforme o ticket. Sem novo achado bloqueante.

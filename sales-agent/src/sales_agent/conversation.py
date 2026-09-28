@@ -9,9 +9,12 @@ from __future__ import annotations
 
 import re
 import threading
+import time
+from datetime import datetime
 from typing import Any, Callable, Dict, List, Mapping, Optional
 
 from .commerce import CommerceError, SimulatedCommerce
+from .drafting import ClaimVerifier, ResponseRequirements
 from .knowledge import KnowledgeBackend, PersistentFarolKnowledge
 from .model import ModelAdapter, RuleBasedModel
 from .skills import SkillCatalog
@@ -68,6 +71,7 @@ class SellerEngine:
         with self._lock:
             previous = self.store.get_event(business_id, conversation_id, event_id)
             if previous:
+                previous = self._confirmed_race_result(business_id, conversation_id, event_id, previous)
                 previous = dict(previous)
                 previous["duplicate"] = True
                 return EngineResult(
@@ -84,6 +88,7 @@ class SellerEngine:
             state = self.store.load_conversation(business_id, conversation_id, str(event["contact_id"]))
             starting_version = int(state.get("version", 0))
             result = self._decide(package, state, event)
+            self._maybe_draft(package, event, result)
             state = result.state
             if event.get("turn"):
                 state["turn"] = dict(event["turn"])
@@ -238,6 +243,13 @@ class SellerEngine:
             )
             if commit_status == "duplicate":
                 replay = replay or payload
+                replay = self._confirmed_race_result(business_id, conversation_id, event_id, replay)
+                if replay.get("action") is None and (replay.get("state", {}).get("pending") or {}).get("type") == "effect_in_progress":
+                    effect_key = (replay.get("state", {}).get("pending") or {}).get("effect_key")
+                    if effect_key:
+                        current_effect = self.commerce.query_effect(str(effect_key))
+                        if current_effect and current_effect.get("status") == "confirmed":
+                            replay = self.store.get_event(business_id, conversation_id, event_id) or replay
                 return EngineResult(
                     event_id=event_id,
                     conversation_id=conversation_id,
@@ -253,6 +265,7 @@ class SellerEngine:
                 # being prepared. Persist the event for audit, but do not put
                 # the stale response or effect in the outbox.
                 stale_action = result.action
+                pending_effect_key = (result.state.get("pending") or {}).get("effect_key")
                 original_trace = list(result.trace)
                 for _ in range(5):
                     latest = self.store.load_conversation(business_id, conversation_id, str(event["contact_id"]))
@@ -360,9 +373,19 @@ class SellerEngine:
                         },
                     )
                     if stale_status == "committed":
+                        if stale_action is None and pending_effect_key:
+                            effect = self.commerce.query_effect(str(pending_effect_key))
+                            if effect and effect.get("status") == "confirmed":
+                                stored = self.store.get_event(business_id, conversation_id, event_id)
+                                if stored and stored.get("action"):
+                                    return EngineResult(event_id=event_id, conversation_id=conversation_id,
+                                                        response=stored["response"], action=stored["action"],
+                                                        state=stored.get("state", result.state),
+                                                        evidence=stored.get("evidence", []), trace=stored.get("trace", []))
                         return result
                     if stale_status == "duplicate":
                         stale_replay = stale_replay or result.as_dict()
+                        stale_replay = self._confirmed_race_result(business_id, conversation_id, event_id, stale_replay)
                         return EngineResult(
                             event_id=event_id,
                             conversation_id=conversation_id,
@@ -374,7 +397,30 @@ class SellerEngine:
                             trace=stale_replay.get("trace", []) + [{"type": "deduplicated_stale_race"}],
                         )
                 raise ConversationError("a conversa mudou repetidamente durante a conciliação; tente novamente")
+            if (result.state.get("pending") or {}).get("type") == "effect_in_progress":
+                deadline = time.monotonic() + 0.2
+                while time.monotonic() < deadline:
+                    recorded = self.store.get_event(business_id, conversation_id, event_id)
+                    if recorded and recorded.get("action"):
+                        return EngineResult(event_id=event_id, conversation_id=conversation_id,
+                                            response=recorded["response"], action=recorded["action"],
+                                            state=recorded.get("state", result.state),
+                                            evidence=recorded.get("evidence", []), trace=recorded.get("trace", []))
+                    time.sleep(0.005)
             return result
+
+    def _confirmed_race_result(self, business_id: str, conversation_id: str, event_id: str,
+                               recorded: Mapping[str, Any]) -> Mapping[str, Any]:
+        if recorded.get("action"):
+            return recorded
+        pending = (recorded.get("state") or {}).get("pending") or {}
+        if pending.get("type") != "effect_in_progress" or not pending.get("effect_key"):
+            return recorded
+        effect = self.commerce.query_effect(str(pending["effect_key"]))
+        if not effect or effect.get("status") != "confirmed":
+            return recorded
+        current = self.store.get_event(business_id, conversation_id, event_id)
+        return current if current and current.get("action") else recorded
 
     def resume(
         self,
@@ -1527,6 +1573,60 @@ class SellerEngine:
             "general": ("",),
         }.get(topic, (topic,))
         return any(term in content for term in terms)
+
+    def _maybe_draft(self, package: Mapping[str, Any], event: Mapping[str, Any], result: EngineResult) -> None:
+        if package.get("draft_mode", "off") != "on" or not result.response:
+            return
+        if result.state.get("status") == "human_paused" or any(
+            item.get("type") in {"model_contract_failed", "model_error", "channel_event_rejected"}
+            for item in result.trace
+        ):
+            return
+        draft_response = getattr(self.model, "draft_response", None)
+        if not callable(draft_response):
+            result.trace.append({"type": "draft_fallback", "reason": "drafter_unavailable"})
+            return
+        trusted_evidence = []
+        for item in result.evidence:
+            if not isinstance(item, Mapping):
+                continue
+            if not item.get("source_id") or not item.get("source_version"):
+                continue
+            source = next((row for row in self.store.list_sources(str(package["business"]["id"]))
+                           if row.get("source_id") == item.get("source_id")
+                           and row.get("source_version") == item.get("source_version")
+                           and row.get("status") == "approved" and row.get("review_status") == "approved"
+                           and row.get("active")
+                           and (not row.get("valid_from") or datetime.fromisoformat(str(row["valid_from"]).replace("Z", "+00:00"))
+                                <= datetime.fromisoformat(self.store.clock.now().replace("Z", "+00:00")))
+                           and (not row.get("valid_until") or datetime.fromisoformat(str(row["valid_until"]).replace("Z", "+00:00"))
+                                >= datetime.fromisoformat(self.store.clock.now().replace("Z", "+00:00")))), None)
+            if source is not None and all(
+                key not in item or str(item.get(key) or "") == str(source.get(key) or "")
+                for key in ("scope", "audience", "subject", "generation")
+            ):
+                trusted_evidence.append(dict(item))
+        requirements = ResponseRequirements.from_result(
+            str(event.get("text", "")), EngineResult(result.event_id, result.conversation_id, result.response,
+                                                      action=result.action, state=result.state, evidence=trusted_evidence),
+        )
+        feedback: list[dict[str, str]] = []
+        for attempt in range(2):
+            try:
+                draft = draft_response(requirements, feedback)
+            except Exception:
+                result.trace.append({"type": "draft_fallback", "reason": "drafter_error"})
+                return
+            if not isinstance(draft, str) or not draft.strip() or len(draft) > MAX_EVENT_TEXT_LENGTH:
+                feedback = [{"kind": "invalid_draft", "value": "empty_or_too_long"}]
+            else:
+                feedback = ClaimVerifier.verify(draft, requirements)
+            if not feedback:
+                result.response = draft.strip()
+                result.trace.append({"type": "draft_accepted", "attempt": attempt + 1})
+                return
+            result.trace.append({"type": "claim_unsupported", "attempt": attempt + 1, "claims": feedback})
+        result.trace.append({"type": "draft_fallback", "reason": "verification_failed"})
 
     @staticmethod
     def _result(

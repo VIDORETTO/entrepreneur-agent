@@ -36,3 +36,5 @@ evidências atuais. A regressão final passou com 205 testes e Ruff verde.
 Revalidação após TK-012: `cli.py` ganhou apenas opções de `evaluate`; o caminho
 `model-check` e o contrato HTTP não mudaram. EV-070–EV-074 reconfirmaram os
 cinco ACs com 23 testes do adaptador. Sem novo achado bloqueante.
+
+Revalidação após TK-009: os comandos de regressão específicos do ticket foram executados e passaram; a alteração em conversation.py preservou os aceites anteriores. Evidências atuais EV-090–EV-093, conforme o ticket. Sem novo achado bloqueante.

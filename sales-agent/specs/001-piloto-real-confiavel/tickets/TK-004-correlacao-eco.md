@@ -5,7 +5,7 @@ id: TK-004
 effort: 001-piloto-real-confiavel
 type: delivery
 status: done
-ticket_revision: 20
+ticket_revision: 24
 requires: ["TK-003"]
 requirement_refs: ["FR-004"]
 acceptance_refs: ["AC-007", "AC-008", "AC-009"]
@@ -13,8 +13,12 @@ spec_revision: 2
 plan_revision: 2
 owned_areas: ["src/sales_agent/channel.py", "src/sales_agent/storage.py", "tests/test_chatwoot_contract.py"]
 verification_status: passed
-last_update: EV-056 revalidou após TK-008; revisão anterior aplicável
+last_update: Evidence invalidated after an input changed.
 ---
+
+
+
+
 
 
 

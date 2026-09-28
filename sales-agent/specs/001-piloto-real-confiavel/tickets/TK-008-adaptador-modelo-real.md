@@ -5,7 +5,7 @@ id: TK-008
 effort: 001-piloto-real-confiavel
 type: delivery
 status: done
-ticket_revision: 14
+ticket_revision: 18
 requires: ["TK-001"]
 requirement_refs: ["FR-008"]
 acceptance_refs: ["AC-019", "AC-020", "AC-021", "AC-022", "AC-023"]
@@ -15,6 +15,10 @@ owned_areas: ["src/sales_agent/model.py", "src/sales_agent/cli.py", "tests/test_
 verification_status: passed
 last_update: Evidence invalidated after an input changed.
 ---
+
+
+
+
 
 
 

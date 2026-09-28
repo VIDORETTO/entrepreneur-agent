@@ -1,0 +1,30 @@
+{
+  "acceptance_refs": [
+    "AC-013",
+    "AC-014",
+    "AC-015"
+  ],
+  "environment": "OS=Linux-5.14.0-687.36.1.el9_8.x86_64-x86_64-with-glibc2.34; Python=3.12.14",
+  "evidence_refs": [],
+  "execution_status": "executed",
+  "id": "EV-091",
+  "input_fingerprints": {
+    "specs/001-piloto-real-confiavel/plan.md": "a069d7b1d149ba604d47c2cb8035b6bfe0e9dc7471acd4eb697cbcab209ab66e",
+    "specs/001-piloto-real-confiavel/spec.md": "057aed7c1e1360d8f71167caca6af45c61c0ddf7114ce1d2eb8ce7d6dd5858ba",
+    "src/sales_agent/conversation.py": "911132324004eadbc2c4721d11e608d89c962b657e9adafc95c9f513d26a897b",
+    "tests/test_channel_window.py": "b084efbe7e3fbf73587f286944dcbbb4b9f86a7c92e75cfb1f970eb6a2530f81"
+  },
+  "input_paths": [
+    "src/sales_agent/conversation.py",
+    "tests/test_channel_window.py",
+    "specs/001-piloto-real-confiavel/spec.md",
+    "specs/001-piloto-real-confiavel/plan.md"
+  ],
+  "limitations": "",
+  "observations": "Window and delivery contracts revalidated in 94-test combined suite.",
+  "procedure": ".venv/bin/python -m pytest -q tests/test_channel_window.py tests/test_delivery_and_governance.py",
+  "result": "passed",
+  "tested_revision": "local:da9a64d4ab5b20a288481692505f690e4a0ace84034fe7d55fc92b253f892aea",
+  "ticket": "TK-006",
+  "timestamp": "2026-09-28T17:15:57+00:00"
+}

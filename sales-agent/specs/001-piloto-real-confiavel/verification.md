@@ -717,7 +717,7 @@
 - Evidence refs: none
 - Limitations: Only local fake HTTP contract; no real OpenAI credential call Evidence invalidated because an input changed.
 
-## EV-056 — passed
+## EV-056 — stale
 
 - Ticket: `TK-004`
 - Acceptance: `AC-007`, `AC-008`, `AC-009`
@@ -728,9 +728,9 @@
 - Timestamp: `2026-09-28T15:50:47+00:00`
 - Observations: 37 passed with latency trace added; echo and takeover behavior unchanged.
 - Evidence refs: none
-- Limitations: none recorded
+- Limitations: Evidence invalidated because an input changed.
 
-## EV-057 — passed
+## EV-057 — stale
 
 - Ticket: `TK-006`
 - Acceptance: `AC-013`, `AC-014`, `AC-015`
@@ -741,9 +741,9 @@
 - Timestamp: `2026-09-28T15:50:47+00:00`
 - Observations: 29 passed with latency trace added; WhatsApp window unchanged.
 - Evidence refs: none
-- Limitations: none recorded
+- Limitations: Evidence invalidated because an input changed.
 
-## EV-058 — passed
+## EV-058 — stale
 
 - Ticket: `TK-007`
 - Acceptance: `AC-016`, `AC-017`, `AC-018`
@@ -754,7 +754,7 @@
 - Timestamp: `2026-09-28T15:50:47+00:00`
 - Observations: 33 passed with latency trace added; non-text handling unchanged.
 - Evidence refs: none
-- Limitations: none recorded
+- Limitations: Evidence invalidated because an input changed.
 
 ## EV-059 — stale
 
@@ -899,7 +899,7 @@
 - Evidence refs: none
 - Limitations: Evidence invalidated because an input changed.
 
-## EV-070 — passed
+## EV-070 — stale
 
 - Ticket: `TK-008`
 - Acceptance: `AC-019`
@@ -910,9 +910,9 @@
 - Timestamp: `2026-09-28T16:14:26+00:00`
 - Observations: HTTP fake confirms separate system/user roles and strict json_schema request; 23 model adapter tests passed.
 - Evidence refs: none
-- Limitations: none recorded
+- Limitations: Evidence invalidated because an input changed.
 
-## EV-071 — passed
+## EV-071 — stale
 
 - Ticket: `TK-008`
 - Acceptance: `AC-020`
@@ -923,9 +923,9 @@
 - Timestamp: `2026-09-28T16:14:27+00:00`
 - Observations: One invalid then valid fake response uses exactly one repair; 23 adapter tests passed.
 - Evidence refs: none
-- Limitations: none recorded
+- Limitations: Evidence invalidated because an input changed.
 
-## EV-072 — passed
+## EV-072 — stale
 
 - Ticket: `TK-008`
 - Acceptance: `AC-021`
@@ -936,9 +936,9 @@
 - Timestamp: `2026-09-28T16:14:27+00:00`
 - Observations: Two invalid fake responses fail closed with model_contract_failed and no commercial action; 23 adapter tests passed.
 - Evidence refs: none
-- Limitations: none recorded
+- Limitations: Evidence invalidated because an input changed.
 
-## EV-073 — passed
+## EV-073 — stale
 
 - Ticket: `TK-008`
 - Acceptance: `AC-022`
@@ -949,9 +949,9 @@
 - Timestamp: `2026-09-28T16:14:27+00:00`
 - Observations: Fake usage pricing and latency fields verified by 23 adapter tests.
 - Evidence refs: none
-- Limitations: none recorded
+- Limitations: Evidence invalidated because an input changed.
 
-## EV-074 — passed
+## EV-074 — stale
 
 - Ticket: `TK-008`
 - Acceptance: `AC-023`
@@ -962,7 +962,7 @@
 - Timestamp: `2026-09-28T16:14:27+00:00`
 - Observations: Both openai and openai-compatible local fake server contracts pass; no real provider call.
 - Evidence refs: none
-- Limitations: none recorded
+- Limitations: Evidence invalidated because an input changed.
 
 ## EV-075 — stale
 
@@ -1106,3 +1106,107 @@
 - Observations: Python 3.10.21 rejected >=3.11; Python 3.11.16 and 3.14.7 each passed 208 tests; build and twine passed. No real CI run.
 - Evidence refs: none
 - Limitations: Git push is prohibited by the goal, so GitHub Actions has not run.
+
+## EV-086 — passed
+
+- Ticket: `TK-009`
+- Acceptance: `AC-024`
+- Procedure: `python3.12 -m pytest -q tests/test_grounded_drafting.py tests/test_channel_pilot_supervisor.py`
+- Execution: `executed`
+- Environment: OS=Linux-5.14.0-687.36.1.el9_8.x86_64-x86_64-with-glibc2.34; Python=3.12.14
+- Tested revision: `local:af793e0042976c31d60cef4ac3ef84a9688b8f8313394e0c3c16947ada8cec27`
+- Timestamp: `2026-09-28T17:15:41+00:00`
+- Observations: Quoted R$79.90 natural draft was delivered; test_supported_natural_draft_reaches_buyer passed.
+- Evidence refs: none
+- Limitations: none recorded
+
+## EV-087 — passed
+
+- Ticket: `TK-009`
+- Acceptance: `AC-025`
+- Procedure: `python3.12 -m pytest -q tests/test_grounded_drafting.py tests/test_channel_pilot_supervisor.py`
+- Execution: `executed`
+- Environment: OS=Linux-5.14.0-687.36.1.el9_8.x86_64-x86_64-with-glibc2.34; Python=3.12.14
+- Tested revision: `local:af793e0042976c31d60cef4ac3ef84a9688b8f8313394e0c3c16947ada8cec27`
+- Timestamp: `2026-09-28T17:15:41+00:00`
+- Observations: Unsupported 10% discount twice fell back to deterministic template and trace claim_unsupported.
+- Evidence refs: none
+- Limitations: none recorded
+
+## EV-088 — passed
+
+- Ticket: `TK-009`
+- Acceptance: `AC-026`
+- Procedure: `python3.12 -m pytest -q tests/test_grounded_drafting.py tests/test_channel_pilot_supervisor.py`
+- Execution: `executed`
+- Environment: OS=Linux-5.14.0-687.36.1.el9_8.x86_64-x86_64-with-glibc2.34; Python=3.12.14
+- Tested revision: `local:af793e0042976c31d60cef4ac3ef84a9688b8f8313394e0c3c16947ada8cec27`
+- Timestamp: `2026-09-28T17:15:41+00:00`
+- Observations: Missing required variant question and requested access duration both fell back to template.
+- Evidence refs: none
+- Limitations: none recorded
+
+## EV-089 — passed
+
+- Ticket: `TK-009`
+- Acceptance: `AC-027`
+- Procedure: `python3.12 -m pytest -q tests/test_grounded_drafting.py tests/test_channel_pilot_supervisor.py`
+- Execution: `executed`
+- Environment: OS=Linux-5.14.0-687.36.1.el9_8.x86_64-x86_64-with-glibc2.34; Python=3.12.14
+- Tested revision: `local:af793e0042976c31d60cef4ac3ef84a9688b8f8313394e0c3c16947ada8cec27`
+- Timestamp: `2026-09-28T17:15:41+00:00`
+- Observations: Unapproved https://pague-aqui.example was rejected; engine-issued checkout link remained.
+- Evidence refs: none
+- Limitations: none recorded
+
+## EV-090 — passed
+
+- Ticket: `TK-004`
+- Acceptance: `AC-007`, `AC-008`, `AC-009`
+- Procedure: `.venv/bin/python -m pytest -q tests/test_chatwoot_contract.py tests/test_conversation_contract.py`
+- Execution: `executed`
+- Environment: OS=Linux-5.14.0-687.36.1.el9_8.x86_64-x86_64-with-glibc2.34; Python=3.12.14
+- Tested revision: `local:0c52431b3a03bd3cdf61fe6daadf4d7826d5c139481b2c266694ceeb50dc2b38`
+- Timestamp: `2026-09-28T17:15:56+00:00`
+- Observations: Chatwoot echo and conversation contracts revalidated in 94-test combined suite.
+- Evidence refs: none
+- Limitations: none recorded
+
+## EV-091 — passed
+
+- Ticket: `TK-006`
+- Acceptance: `AC-013`, `AC-014`, `AC-015`
+- Procedure: `.venv/bin/python -m pytest -q tests/test_channel_window.py tests/test_delivery_and_governance.py`
+- Execution: `executed`
+- Environment: OS=Linux-5.14.0-687.36.1.el9_8.x86_64-x86_64-with-glibc2.34; Python=3.12.14
+- Tested revision: `local:da9a64d4ab5b20a288481692505f690e4a0ace84034fe7d55fc92b253f892aea`
+- Timestamp: `2026-09-28T17:15:57+00:00`
+- Observations: Window and delivery contracts revalidated in 94-test combined suite.
+- Evidence refs: none
+- Limitations: none recorded
+
+## EV-092 — passed
+
+- Ticket: `TK-007`
+- Acceptance: `AC-016`, `AC-017`, `AC-018`
+- Procedure: `.venv/bin/python -m pytest -q tests/test_non_text_messages.py tests/test_conversation_contract.py`
+- Execution: `executed`
+- Environment: OS=Linux-5.14.0-687.36.1.el9_8.x86_64-x86_64-with-glibc2.34; Python=3.12.14
+- Tested revision: `local:8cb7b592494861f3a84e7ef49a523aea6a86e182addfbf2f62560df8fa7c3875`
+- Timestamp: `2026-09-28T17:15:57+00:00`
+- Observations: Non-text and conversation contracts revalidated in 94-test combined suite.
+- Evidence refs: none
+- Limitations: none recorded
+
+## EV-093 — passed
+
+- Ticket: `TK-008`
+- Acceptance: `AC-019`, `AC-020`, `AC-021`, `AC-022`, `AC-023`
+- Procedure: `.venv/bin/python -m pytest -q tests/test_model_adapter.py`
+- Execution: `executed`
+- Environment: OS=Linux-5.14.0-687.36.1.el9_8.x86_64-x86_64-with-glibc2.34; Python=3.12.14
+- Tested revision: `local:d07e04f2487e98b55f15e9a8403a34ae4357fc13230d7c23fb8faf568ca1267d`
+- Timestamp: `2026-09-28T17:15:57+00:00`
+- Observations: Model adapter contract revalidated in 94-test combined suite.
+- Evidence refs: none
+- Limitations: none recorded

@@ -4,29 +4,27 @@
     "AC-008",
     "AC-009"
   ],
-  "environment": "OS=Linux-5.14.0-687.36.1.el9_8.x86_64-x86_64-with-glibc2.34; Python=3.9.25",
+  "environment": "OS=Linux-5.14.0-687.36.1.el9_8.x86_64-x86_64-with-glibc2.34; Python=3.12.14",
   "evidence_refs": [],
   "execution_status": "executed",
-  "id": "EV-056",
+  "id": "EV-090",
   "input_fingerprints": {
     "specs/001-piloto-real-confiavel/plan.md": "a069d7b1d149ba604d47c2cb8035b6bfe0e9dc7471acd4eb697cbcab209ab66e",
     "specs/001-piloto-real-confiavel/spec.md": "057aed7c1e1360d8f71167caca6af45c61c0ddf7114ce1d2eb8ce7d6dd5858ba",
-    "src/sales_agent/conversation.py": "1c5c88588cdd1e07f89e7dfed202834d259f9beffadc5cb81d97ba1eb81151ae",
-    "tests/test_chatwoot_contract.py": "f463f991ea6d96314bae4d6e9fd416dad68cbbf9ef84d1850483e029345ce440",
+    "src/sales_agent/conversation.py": "911132324004eadbc2c4721d11e608d89c962b657e9adafc95c9f513d26a897b",
     "tests/test_conversation_contract.py": "9a9fd38d2b8bbde2807e564b15f40a3c1c3192257b66091cc8819978299dbc59"
   },
   "input_paths": [
     "src/sales_agent/conversation.py",
-    "tests/test_chatwoot_contract.py",
     "tests/test_conversation_contract.py",
     "specs/001-piloto-real-confiavel/spec.md",
     "specs/001-piloto-real-confiavel/plan.md"
   ],
-  "limitations": "Evidence invalidated because an input changed.",
-  "observations": "37 passed with latency trace added; echo and takeover behavior unchanged.",
+  "limitations": "",
+  "observations": "Chatwoot echo and conversation contracts revalidated in 94-test combined suite.",
   "procedure": ".venv/bin/python -m pytest -q tests/test_chatwoot_contract.py tests/test_conversation_contract.py",
-  "result": "stale",
-  "tested_revision": "local:4bd0fe0ae4a354872964b17d573a304cd61952e3192c73a0b6f003b3a1d5428c",
+  "result": "passed",
+  "tested_revision": "local:0c52431b3a03bd3cdf61fe6daadf4d7826d5c139481b2c266694ceeb50dc2b38",
   "ticket": "TK-004",
-  "timestamp": "2026-09-28T15:50:47+00:00"
+  "timestamp": "2026-09-28T17:15:56+00:00"
 }
