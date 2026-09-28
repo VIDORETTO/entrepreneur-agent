@@ -18,7 +18,7 @@ from typing import Any, Dict, List, Mapping, Optional, Tuple, Union
 from .clock import Clock, SystemClock
 from .types import empty_conversation
 
-DATABASE_SCHEMA_VERSION = 12
+DATABASE_SCHEMA_VERSION = 13
 OUTBOX_STATUSES = {"pending", "processing", "sent", "cancelled", "dead_letter", "unknown", "observed", "window_closed"}
 EFFECT_TRANSITIONS = {
     "reserved": {"unknown", "confirmed", "failed"},
@@ -322,6 +322,10 @@ class StateStore:
                     correction_limit INTEGER NOT NULL DEFAULT 1,
                     updated_at TEXT NOT NULL
                 );
+                CREATE TABLE IF NOT EXISTS privacy_audit (
+                    id TEXT PRIMARY KEY, business_id TEXT NOT NULL, pseudonym TEXT NOT NULL,
+                    operation TEXT NOT NULL, count INTEGER NOT NULL, created_at TEXT NOT NULL
+                );
                 """
             )
             self._migrate_schema(db)
@@ -461,6 +465,10 @@ class StateStore:
                 reason TEXT NOT NULL,
                 authority TEXT NOT NULL,
                 created_at TEXT NOT NULL
+            );
+            CREATE TABLE IF NOT EXISTS privacy_audit (
+                id TEXT PRIMARY KEY, business_id TEXT NOT NULL, pseudonym TEXT NOT NULL,
+                operation TEXT NOT NULL, count INTEGER NOT NULL, created_at TEXT NOT NULL
             );
             """
         )
@@ -753,7 +761,7 @@ class StateStore:
         business_id = str(event["business_id"])
         conversation_id = str(event["conversation_id"])
         event_id = str(event["event_id"])
-        now_value = datetime.now(timezone.utc)
+        now_value = datetime.fromisoformat(self.clock.now().replace("Z", "+00:00"))
         now = now_value.isoformat(timespec="seconds")
         with self._lock, self.connect() as db:
             db.execute("BEGIN IMMEDIATE")

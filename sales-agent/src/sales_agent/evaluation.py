@@ -22,6 +22,7 @@ from .config import ConfigurationManager, load_manifest, seed_examples, seed_pac
 from .conversation import SellerEngine
 from .knowledge import PersistentFarolKnowledge
 from .model import ModelAdapter, RuleBasedModel, UntrustedModel
+from .privacy import redact_data
 from .skills import SkillCatalog
 from .storage import StateStore
 from .validation import package_fingerprint, validate_package
@@ -813,6 +814,9 @@ class EvaluationRunner:
         self.candidate_business_id = candidate_business_id or package_business_id or None
 
     def run(self) -> Dict[str, Any]:
+        return redact_data(self._run_unredacted())
+
+    def _run_unredacted(self) -> Dict[str, Any]:
         if self.split != "contract":
             return self._run_split()
         golden = self._golden_set()

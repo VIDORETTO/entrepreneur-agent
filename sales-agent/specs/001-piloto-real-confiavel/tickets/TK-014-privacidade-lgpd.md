@@ -1,19 +1,23 @@
 ---
 schema: hybrid/ticket
-schema_version: "1.0"
+schema_version: 1.0
 id: TK-014
 effort: 001-piloto-real-confiavel
 type: delivery
-status: ready
-ticket_revision: 1
-requires: [TK-001]
-requirement_refs: [FR-015]
-acceptance_refs: [AC-045, AC-046, AC-047, AC-048]
+status: done
+ticket_revision: 5
+requires: ["TK-001"]
+requirement_refs: ["FR-015"]
+acceptance_refs: ["AC-045", "AC-046", "AC-047", "AC-048"]
 spec_revision: 2
 plan_revision: 2
-owned_areas: [src/sales_agent/privacy.py, src/sales_agent/storage.py, src/sales_agent/cli.py, tests/test_privacy.py, docs/OPERATIONS.md]
-verification_status: not_run
+owned_areas: ["src/sales_agent/privacy.py", "src/sales_agent/storage.py", "src/sales_agent/cli.py", "tests/test_privacy.py", "docs/OPERATIONS.md"]
+verification_status: passed
 ---
+
+
+
+
 
 # TK-014 — Exportação, eliminação, retenção e redação de dados pessoais
 

@@ -21,6 +21,7 @@ from .evaluation import EvaluationRunner, model_contract_check
 from .governance import PilotController, QualitySupervisor
 from .knowledge import FarolArtifactImporter, PersistentFarolKnowledge, StableFarolAdapter
 from .model import HTTPModelAdapter, RuleBasedModel, load_model_config
+from .privacy import PrivacyManager, redact_data
 from .service import ChannelServer, ServiceConfig
 from .skills import SkillCatalog
 from .storage import StateStore
@@ -494,7 +495,7 @@ def command_pilot_configure(args: argparse.Namespace) -> int:
 
 
 def command_pilot_inspect(args: argparse.Namespace) -> int:
-    _print(PilotController(_store(args)).inspect(args.business_id, args.channel))
+    _print(redact_data(PilotController(_store(args)).inspect(args.business_id, args.channel)))
     return 0
 
 
@@ -505,13 +506,13 @@ def command_pilot_interrupt(args: argparse.Namespace) -> int:
 
 def command_supervisor_list(args: argparse.Namespace) -> int:
     reviews = _store(args).list_supervisor_reviews(args.candidate_id)
-    _print({"reviews": reviews, "count": len(reviews), "mode": "observation-only"})
+    _print(redact_data({"reviews": reviews, "count": len(reviews), "mode": "observation-only"}))
     return 0
 
 
 def command_supervisor_report(args: argparse.Namespace) -> int:
     supervisor = QualitySupervisor(_store(args), scope_key=args.scope_key)
-    _print(supervisor.report(args.candidate_id))
+    _print(redact_data(supervisor.report(args.candidate_id)))
     return 0
 
 
@@ -701,6 +702,21 @@ def command_outbox_reconcile(args: argparse.Namespace) -> int:
 def command_effects_list(args: argparse.Namespace) -> int:
     items = _store(args).list_effects(args.status)
     _print({"items": items, "count": len(items)})
+    return 0
+
+
+def command_privacy_export(args: argparse.Namespace) -> int:
+    _print(PrivacyManager(_store(args)).export(args.business_id, args.contact))
+    return 0
+
+
+def command_privacy_erase(args: argparse.Namespace) -> int:
+    _print(PrivacyManager(_store(args)).erase(args.business_id, args.contact))
+    return 0
+
+
+def command_privacy_purge(args: argparse.Namespace) -> int:
+    _print(PrivacyManager(_store(args)).purge(args.business_id, before=args.before))
     return 0
 
 
@@ -938,6 +954,21 @@ def build_parser() -> argparse.ArgumentParser:
     effects_reconcile.add_argument("--resolution", choices=["confirmed", "failed"], required=True)
     effects_reconcile.add_argument("--details", help="objeto JSON com evidência da resolução")
     effects_reconcile.set_defaults(func=command_effects_reconcile)
+
+    privacy = sub.add_parser("privacy", help="acesso, eliminação e retenção de dados pessoais locais")
+    privacy_sub = privacy.add_subparsers(dest="privacy_command", required=True)
+    privacy_export = privacy_sub.add_parser("export")
+    privacy_export.add_argument("--business-id", required=True)
+    privacy_export.add_argument("--contact", required=True)
+    privacy_export.set_defaults(func=command_privacy_export)
+    privacy_erase = privacy_sub.add_parser("erase")
+    privacy_erase.add_argument("--business-id", required=True)
+    privacy_erase.add_argument("--contact", required=True)
+    privacy_erase.set_defaults(func=command_privacy_erase)
+    privacy_purge = privacy_sub.add_parser("purge")
+    privacy_purge.add_argument("--business-id", required=True)
+    privacy_purge.add_argument("--before", help="corte ISO-8601 com fuso; padrão usa retenção do pacote")
+    privacy_purge.set_defaults(func=command_privacy_purge)
 
     turns = sub.add_parser("turn", help="receber e processar turnos duráveis")
     turns_sub = turns.add_subparsers(dest="turn_command", required=True)

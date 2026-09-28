@@ -1,5 +1,5 @@
 {
-  "active_ticket": "TK-013",
+  "active_ticket": "TK-014",
   "authorization_refs": [],
   "baseline": {
     "kind": "git",
@@ -26,7 +26,7 @@
       "revision": 2
     }
   },
-  "last_evidence": "EV-106",
+  "last_evidence": "EV-110",
   "last_invalidation": {
     "evidence": [
       "EV-080",
@@ -45,11 +45,11 @@
     "timestamp": "2026-09-28T17:32:26+00:00"
   },
   "mode": "standard",
-  "next_action": "Iniciar TK-013 na ordem R5",
+  "next_action": "Iniciar TK-014 na ordem R5",
   "pending_questions": [],
   "phase": "implementation",
-  "revision": 32,
+  "revision": 33,
   "schema_version": "1.0",
   "status": "active",
-  "updated_at": "2026-09-28T18:06:45+00:00"
+  "updated_at": "2026-09-28T18:15:55+00:00"
 }

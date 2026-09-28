@@ -220,3 +220,9 @@ libera uma nova tentativa com outra chave idempotente. Se uma correção de
 conversa conflitar com um checkout já preparado, a reversão só é aceita com
 `cancelled: true` e uma `resolution_source` não vazia; até lá o motor bloqueia
 novas alterações de pedido e novos checkouts.
+
+## Privacidade local
+
+`vendedor --data-dir DIR privacy export --business-id ID --contact CONTATO` exporta as conversas e eventos do contato indicado. `privacy erase` remove esse histórico e anonimiza os efeitos persistidos com um HMAC local; o segredo fica em `DIR/privacy.key` com permissão privada. A operação registra um evento em `privacy_audit` e mantém contadores agregados. Faça um backup operacional antes da eliminação, pois ela é irreversível no banco ativo.
+
+`privacy purge --business-id ID` usa `privacy.retention_days` do pacote (padrão 180 dias); `0` desativa o expurgo automático. `--before` permite um corte ISO-8601 explícito com fuso. Intenções de entrega pendentes permanecem na outbox até conciliação; o expurgo remove eventos antigos e limpa o histórico da conversa correspondente. A exportação usa JSON e os relatórios de avaliação substituem telefones, e-mails e documentos reconhecidos por `[REDACTED]`.

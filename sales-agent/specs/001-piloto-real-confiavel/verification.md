@@ -1431,3 +1431,107 @@
 - Observations: Focused human access and conversation tests passed; full suite 233 passed
 - Evidence refs: none
 - Limitations: none recorded
+
+## EV-111 — passed
+
+- Ticket: `TK-014`
+- Acceptance: `AC-045`
+- Procedure: `python3.12 -m pytest -q tests/test_privacy.py`
+- Execution: `executed`
+- Environment: OS=Linux-5.14.0-687.36.1.el9_8.x86_64-x86_64-with-glibc2.34; Python=3.12.14
+- Tested revision: `local:6d2040a124bd61b746a4125b137aa55cca8baaa100ba7e4ee47784cab62d7bb3`
+- Timestamp: `2026-09-28T18:24:51+00:00`
+- Observations: 4 privacy tests passed; full regression 237 passed; Ruff passed
+- Evidence refs: none
+- Limitations: none recorded
+
+## EV-112 — passed
+
+- Ticket: `TK-014`
+- Acceptance: `AC-046`
+- Procedure: `python3.12 -m pytest -q tests/test_privacy.py`
+- Execution: `executed`
+- Environment: OS=Linux-5.14.0-687.36.1.el9_8.x86_64-x86_64-with-glibc2.34; Python=3.12.14
+- Tested revision: `local:6d2040a124bd61b746a4125b137aa55cca8baaa100ba7e4ee47784cab62d7bb3`
+- Timestamp: `2026-09-28T18:24:51+00:00`
+- Observations: 4 privacy tests passed; full regression 237 passed; Ruff passed
+- Evidence refs: none
+- Limitations: none recorded
+
+## EV-113 — passed
+
+- Ticket: `TK-014`
+- Acceptance: `AC-047`
+- Procedure: `python3.12 -m pytest -q tests/test_privacy.py`
+- Execution: `executed`
+- Environment: OS=Linux-5.14.0-687.36.1.el9_8.x86_64-x86_64-with-glibc2.34; Python=3.12.14
+- Tested revision: `local:6d2040a124bd61b746a4125b137aa55cca8baaa100ba7e4ee47784cab62d7bb3`
+- Timestamp: `2026-09-28T18:24:51+00:00`
+- Observations: 4 privacy tests passed; full regression 237 passed; Ruff passed
+- Evidence refs: none
+- Limitations: none recorded
+
+## EV-114 — passed
+
+- Ticket: `TK-014`
+- Acceptance: `AC-048`
+- Procedure: `python3.12 -m pytest -q tests/test_privacy.py`
+- Execution: `executed`
+- Environment: OS=Linux-5.14.0-687.36.1.el9_8.x86_64-x86_64-with-glibc2.34; Python=3.12.14
+- Tested revision: `local:6d2040a124bd61b746a4125b137aa55cca8baaa100ba7e4ee47784cab62d7bb3`
+- Timestamp: `2026-09-28T18:24:52+00:00`
+- Observations: 4 privacy tests passed; full regression 237 passed; Ruff passed
+- Evidence refs: none
+- Limitations: none recorded
+
+## EV-115 — passed
+
+- Ticket: `TK-014`
+- Acceptance: `AC-047`
+- Procedure: `python3.12 -m pytest -q tests/test_privacy.py tests/test_channel_pilot_supervisor.py tests/test_cli_and_evaluation.py`
+- Execution: `executed`
+- Environment: OS=Linux-5.14.0-687.36.1.el9_8.x86_64-x86_64-with-glibc2.34; Python=3.12.14
+- Tested revision: `local:8bb5e3b54dd8e051f8bce20b76a2591693aaaf887965dea3bc5c2e567af00c57`
+- Timestamp: `2026-09-28T18:27:07+00:00`
+- Observations: 54 affected tests passed after report output redaction
+- Evidence refs: none
+- Limitations: none recorded
+
+## EV-116 — passed
+
+- Ticket: `TK-014`
+- Acceptance: `AC-045`, `AC-046`
+- Procedure: `python3.12 -m pytest -q tests/test_privacy.py`
+- Execution: `executed`
+- Environment: OS=Linux-5.14.0-687.36.1.el9_8.x86_64-x86_64-with-glibc2.34; Python=3.12.14
+- Tested revision: `local:b170b0330a352eda9f501fe952426f6426fc1c3e5a97edb55dd433e6b976565b`
+- Timestamp: `2026-09-28T18:27:39+00:00`
+- Observations: 5 privacy tests passed including inbound messages queued before a conversation exists
+- Evidence refs: none
+- Limitations: none recorded
+
+## EV-117 — passed
+
+- Ticket: `TK-014`
+- Acceptance: `AC-047`
+- Procedure: `python3.12 -m pytest -q tests/test_privacy.py`
+- Execution: `executed`
+- Environment: OS=Linux-5.14.0-687.36.1.el9_8.x86_64-x86_64-with-glibc2.34; Python=3.12.14
+- Tested revision: `local:b170b0330a352eda9f501fe952426f6426fc1c3e5a97edb55dd433e6b976565b`
+- Timestamp: `2026-09-28T18:30:02+00:00`
+- Observations: 5 privacy tests and final full regression 238 tests passed
+- Evidence refs: none
+- Limitations: none recorded
+
+## EV-118 — passed
+
+- Ticket: `TK-014`
+- Acceptance: `AC-048`
+- Procedure: `python3.12 -m pytest -q tests/test_privacy.py`
+- Execution: `executed`
+- Environment: OS=Linux-5.14.0-687.36.1.el9_8.x86_64-x86_64-with-glibc2.34; Python=3.12.14
+- Tested revision: `local:b170b0330a352eda9f501fe952426f6426fc1c3e5a97edb55dd433e6b976565b`
+- Timestamp: `2026-09-28T18:30:03+00:00`
+- Observations: 5 privacy tests and final full regression 238 tests passed
+- Evidence refs: none
+- Limitations: none recorded

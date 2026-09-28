@@ -65,6 +65,9 @@ def validate_package(package: Mapping[str, Any]) -> Dict[str, Any]:
         raise PackageError("non_text_policy inválida")
     if package.get("draft_mode", "off") not in {"on", "off"}:
         raise PackageError("draft_mode inválido")
+    privacy = package.get("privacy", {})
+    if not isinstance(privacy, Mapping) or isinstance(privacy.get("retention_days", 180), bool) or not isinstance(privacy.get("retention_days", 180), int) or privacy.get("retention_days", 180) < 0:
+        raise PackageError("privacy.retention_days inválido")
     loop_policy = package.get("loop_policy", {})
     if not isinstance(loop_policy, Mapping) or isinstance(loop_policy.get("fallback_limit", 2), bool) or not isinstance(loop_policy.get("fallback_limit", 2), int) or loop_policy.get("fallback_limit", 2) < 1:
         raise PackageError("loop_policy.fallback_limit inválido")
