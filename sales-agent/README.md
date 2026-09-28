@@ -11,10 +11,10 @@ checkout, transferência ou uso de dados sem validação.
 
 ## Instalação
 
-Requer Python 3.9 ou superior. A instalação base não precisa de serviço externo:
+Requer Python 3.11 ou superior. A instalação base não precisa de serviço externo:
 
 ```bash
-python3 -m venv .venv
+python3.12 -m venv .venv
 . .venv/bin/activate
 python -m pip install -e .
 vendedor doctor

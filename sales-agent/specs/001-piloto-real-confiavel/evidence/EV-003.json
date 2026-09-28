@@ -5,9 +5,9 @@
   "environment": "OS=Linux-5.14.0-687.36.1.el9_8.x86_64-x86_64-with-glibc2.34; Python=3.12.14",
   "evidence_refs": [],
   "execution_status": "executed",
-  "id": "EV-002",
+  "id": "EV-003",
   "input_fingerprints": {
-    "pyproject.toml": "a600b7af2099bc2f8359868c93fa335d6bf25f69cee6348fb17a43951f7e090b",
+    "pyproject.toml": "650cf8b8b45cf93db83308909c6499f2d9a1da2e7dc4cd3da8d44f140b7a8ae7",
     "specs/001-piloto-real-confiavel/plan.md": "a069d7b1d149ba604d47c2cb8035b6bfe0e9dc7471acd4eb697cbcab209ab66e",
     "specs/001-piloto-real-confiavel/spec.md": "057aed7c1e1360d8f71167caca6af45c61c0ddf7114ce1d2eb8ce7d6dd5858ba",
     "tests/conftest.py": "0f8fcccb0a906eb3e8af46bf9b67f2e203e7fb40fb19e491974460fdccf9a6ca"
@@ -18,11 +18,11 @@
     "specs/001-piloto-real-confiavel/spec.md",
     "specs/001-piloto-real-confiavel/plan.md"
   ],
-  "limitations": "Evidence invalidated because an input changed.",
-  "observations": "Normal and +400-day process clock suites: 172 passed each; Ruff all checks passed; CI job changed at parent .github/workflows/sales-agent-ci.yml",
-  "procedure": ".venv/bin/python -m pytest -q && .venv/bin/python -m pytest -q --clock-shift-days=400 && .venv/bin/ruff check src tests",
-  "result": "stale",
-  "tested_revision": "local:edbf5cb446eecda310a1194e679af0c10785c4edbaa13bb8b3c668e6f717d820",
+  "limitations": "",
+  "observations": "After Python floor metadata change, 172 passed under +400-day process clock",
+  "procedure": ".venv/bin/python -m pytest -q --clock-shift-days=400",
+  "result": "passed",
+  "tested_revision": "local:a656916fbfe6dfeaf23429291505bc4f751aa55f43ef9ea02fae5103a506bd53",
   "ticket": "TK-001",
-  "timestamp": "2026-09-28T14:13:52+00:00"
+  "timestamp": "2026-09-28T14:19:32+00:00"
 }

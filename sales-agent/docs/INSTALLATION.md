@@ -1,5 +1,9 @@
 # Instalação e atualização
 
+Requer Python 3.11 ou superior. Para desenvolvimento local, use `python3.12`
+ao criar o ambiente virtual. A matriz de CI verifica 3.11 e 3.14 e confirma
+que o instalador recusa 3.10.
+
 1. Crie ambiente virtual e instale o projeto com `python -m pip install -e .`
    (ou `python -m pip install .` para instalar a wheel).
 2. Execute `vendedor doctor` para diagnosticar Python, SQLite, diretório

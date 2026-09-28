@@ -3,7 +3,7 @@
 ## Verificação rápida
 
 ```bash
-python3 -m pip install -e .
+python3.12 -m pip install -e .
 vendedor doctor
 python -m pip install -e ".[dev]"
 python -m pytest -q

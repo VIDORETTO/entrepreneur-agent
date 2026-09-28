@@ -5,7 +5,7 @@ id: TK-001
 effort: 001-piloto-real-confiavel
 type: delivery
 status: done
-ticket_revision: 5
+ticket_revision: 8
 requires: []
 requirement_refs: ["FR-001"]
 acceptance_refs: ["AC-001", "AC-002"]
@@ -13,8 +13,11 @@ spec_revision: 2
 plan_revision: 2
 owned_areas: ["src/sales_agent/storage.py", "tests/conftest.py", "tests/test_knowledge_and_configuration.py"]
 verification_status: passed
-last_update: "Revisão Standards e Spec sem achados bloqueantes: findings/TK-001-review.md"
+last_update: EV-003 revalidou AC-002 após alteração compatível em pyproject; revisão TK-001 permanece aplicável
 ---
+
+
+
 
 
 

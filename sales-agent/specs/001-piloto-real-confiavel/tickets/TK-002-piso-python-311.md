@@ -1,19 +1,22 @@
 ---
 schema: hybrid/ticket
-schema_version: "1.0"
+schema_version: 1.0
 id: TK-002
 effort: 001-piloto-real-confiavel
 type: delivery
-status: ready
-ticket_revision: 1
-requires: [TK-001]
-requirement_refs: [FR-002]
-acceptance_refs: [AC-003]
+status: implemented
+ticket_revision: 3
+requires: ["TK-001"]
+requirement_refs: ["FR-002"]
+acceptance_refs: ["AC-003"]
 spec_revision: 2
 plan_revision: 2
-owned_areas: [pyproject.toml, ../.github/workflows/sales-agent-ci.yml, docs/INSTALLATION.md, README.md]
-verification_status: not_run
+owned_areas: ["pyproject.toml", "../.github/workflows/sales-agent-ci.yml", "docs/INSTALLATION.md", "README.md"]
+verification_status: partial
+last_update: "Instalador 3.10 rejeita; suites 3.11 e 3.14 passam localmente; execução do workflow CI indisponível sem push, proibido pelo GOAL-PROMPT"
 ---
+
+
 
 # TK-002 — Piso Python 3.11 e matriz de CI atualizada
 
@@ -64,9 +67,9 @@ Oráculo: valores literais de `spec.md` e `tdd.md` (casos com expectativa litera
 
 Depende de: TK-001 (status `done`).
 
-- [ ] TK-002.1 Escrever o primeiro caso (AC-003) na seam indicada em `plan.md`; observar red pelo motivo previsto em `tdd.md`.
-- [ ] TK-002.2 Implementar o mínimo para green de AC-003; próximo caso só após green.
-- [ ] TK-002.3 Executar regressão completa (`python -m pytest -q`, `ruff check src tests`) e atualizar documentação da interface.
+- [ ] TK-002.1 Escrever o primeiro caso (AC-003) na seam indicada em `plan.md`; observar red pelo motivo previsto em `tdd.md` (red observado manualmente no instalador; caso de CI ainda não executado).
+- [x] TK-002.2 Implementar o mínimo para green de AC-003; próximo caso só após green.
+- [x] TK-002.3 Executar regressão completa (`python -m pytest -q`, `ruff check src tests`) e atualizar documentação da interface.
 - [ ] TK-002.4 Registrar evidência (`hybrid.py evidence add --executed`) e checkpoint; não marcar checklist de reviewer.
 
 ## Validação

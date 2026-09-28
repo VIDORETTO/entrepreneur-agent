@@ -7,7 +7,7 @@ name = "vendedor-adaptavel"
 version = "0.1.0"
 description = "Vendedor comercial local com estado explícito, políticas e evidências verificáveis"
 readme = "README.md"
-requires-python = ">=3.9"
+requires-python = ">=3.11"
 license = "MIT"
 license-files = ["LICENSE"]
 authors = [{name = "Vendedor Adaptável contributors"}]
@@ -17,10 +17,10 @@ classifiers = [
   "Environment :: Console",
   "Operating System :: OS Independent",
   "Programming Language :: Python :: 3",
-  "Programming Language :: Python :: 3.9",
-  "Programming Language :: Python :: 3.10",
   "Programming Language :: Python :: 3.11",
   "Programming Language :: Python :: 3.12",
+  "Programming Language :: Python :: 3.13",
+  "Programming Language :: Python :: 3.14",
   "Topic :: Office/Business",
 ]
 dependencies = []
@@ -81,7 +81,7 @@ show_missing = true
 skip_covered = true
 
 [tool.ruff]
-target-version = "py39"
+target-version = "py311"
 line-length = 120
 
 [tool.ruff.lint]
