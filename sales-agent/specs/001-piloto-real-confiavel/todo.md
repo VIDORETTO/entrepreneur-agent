@@ -135,8 +135,8 @@ Status: `done` | Bloqueado por: TK-004
 - [x] TK-007.5 Executar regressão completa (`python -m pytest -q`, `ruff check src tests`) e atualizar documentação da interface.
 - [x] TK-007.6 Registrar evidência (`hybrid.py evidence add --executed`) e checkpoint; não marcar checklist de reviewer.
 
-## [ ] TK-010 — TK-010 — Resistência a injeção de prompt e vazamento de instruções
-Status: `ready` | Bloqueado por: TK-009
+## [x] TK-010 — TK-010 — Resistência a injeção de prompt e vazamento de instruções
+Status: `done` | Bloqueado por: TK-009
 
 - [ ] TK-010.1 Escrever o primeiro caso (AC-028) na seam indicada em `plan.md`; observar red pelo motivo previsto em `tdd.md`.
 - [ ] TK-010.2 Implementar o mínimo para green de AC-028; próximo caso só após green.

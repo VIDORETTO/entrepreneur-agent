@@ -6,6 +6,7 @@ import hashlib
 import json
 import math
 import os
+import re
 import sqlite3
 import threading
 import unicodedata
@@ -17,7 +18,7 @@ from typing import Any, Dict, List, Mapping, Optional, Tuple, Union
 from .clock import Clock, SystemClock
 from .types import empty_conversation
 
-DATABASE_SCHEMA_VERSION = 11
+DATABASE_SCHEMA_VERSION = 12
 OUTBOX_STATUSES = {"pending", "processing", "sent", "cancelled", "dead_letter", "unknown", "observed", "window_closed"}
 EFFECT_TRANSITIONS = {
     "reserved": {"unknown", "confirmed", "failed"},
@@ -469,11 +470,44 @@ class StateStore:
         operating_mode_columns = {row["name"] for row in db.execute("PRAGMA table_info(operating_modes)").fetchall()}
         if "evaluated_package_fingerprint" not in operating_mode_columns:
             db.execute("ALTER TABLE operating_modes ADD COLUMN evaluated_package_fingerprint TEXT")
+        try:
+            db.executescript(
+                """
+                CREATE VIRTUAL TABLE IF NOT EXISTS sources_fts USING fts5(
+                    title, content, content='knowledge_sources', content_rowid='rowid',
+                    tokenize='unicode61 remove_diacritics 2'
+                );
+                CREATE TRIGGER IF NOT EXISTS sources_fts_insert AFTER INSERT ON knowledge_sources BEGIN
+                    INSERT INTO sources_fts(rowid, title, content) VALUES (new.rowid, new.title, new.content);
+                END;
+                CREATE TRIGGER IF NOT EXISTS sources_fts_delete AFTER DELETE ON knowledge_sources BEGIN
+                    INSERT INTO sources_fts(sources_fts, rowid, title, content)
+                    VALUES ('delete', old.rowid, old.title, old.content);
+                END;
+                CREATE TRIGGER IF NOT EXISTS sources_fts_update AFTER UPDATE ON knowledge_sources BEGIN
+                    INSERT INTO sources_fts(sources_fts, rowid, title, content)
+                    VALUES ('delete', old.rowid, old.title, old.content);
+                    INSERT INTO sources_fts(rowid, title, content) VALUES (new.rowid, new.title, new.content);
+                END;
+                """
+            )
+            if version < 12:
+                db.execute("INSERT INTO sources_fts(sources_fts) VALUES ('rebuild')")
+        except sqlite3.OperationalError as exc:
+            if "no such module: fts5" not in str(exc).lower():
+                raise
         db.execute("PRAGMA user_version = %d" % DATABASE_SCHEMA_VERSION)
+
 
     def schema_version(self) -> int:
         with self.connect() as db:
             return int(db.execute("PRAGMA user_version").fetchone()[0])
+
+    def fts5_available(self) -> bool:
+        with self.connect() as db:
+            return db.execute(
+                "SELECT 1 FROM sqlite_master WHERE name = 'sources_fts' AND type = 'table'"
+            ).fetchone() is not None
 
     def integrity_report(self) -> Dict[str, Any]:
         with self.connect() as db:
@@ -2064,41 +2098,56 @@ class StateStore:
             as_of = normalize_iso_datetime(as_of or self.clock.now())
         except ValueError:
             return []
-        with self.connect() as db:
-            rows = db.execute(
-                "SELECT * FROM knowledge_sources WHERE business_id = ? AND status = 'approved' "
-                "AND review_status = 'approved' AND active = 1",
-                (business_id,),
-            ).fetchall()
-        query_tokens = {token.casefold() for token in query.split() if token.strip()}
+        tokens = re.findall(r"[^\W_]+", query, flags=re.UNICODE)
+        if not tokens or max_results <= 0:
+            return []
         requested_topics = _requested_topics(query)
+        with self.connect() as db:
+            fts_available = db.execute(
+                "SELECT 1 FROM sqlite_master WHERE name = 'sources_fts' AND type = 'table'"
+            ).fetchone() is not None
+            filters = (
+                "s.business_id = ? AND s.status = 'approved' AND s.review_status = 'approved' "
+                "AND s.active = 1 AND (s.valid_from IS NULL OR s.valid_from <= ?) "
+                "AND (s.valid_until IS NULL OR s.valid_until > ?) "
+                "AND NOT EXISTS (SELECT 1 FROM knowledge_revocations r WHERE r.business_id = s.business_id "
+                "AND r.source_id = s.source_id AND (r.source_version IS NULL OR r.source_version = s.source_version))"
+            )
+            params: List[Any] = [business_id, as_of, as_of]
+            if audience:
+                filters += " AND s.audience = ?"
+                params.append(audience)
+            if scope:
+                filters += " AND s.scope = ?"
+                params.append(scope)
+            if subject:
+                filters += " AND s.subject = ?"
+                params.append(subject)
+            if fts_available:
+                match = " OR ".join('"%s"' % token for token in tokens)
+                rows = db.execute(
+                    "SELECT s.*, -bm25(sources_fts, 2.0, 1.0) AS rank_score "
+                    "FROM sources_fts JOIN knowledge_sources s ON s.rowid = sources_fts.rowid "
+                    "WHERE sources_fts MATCH ? AND " + filters + " ORDER BY bm25(sources_fts, 2.0, 1.0) "
+                    "LIMIT ?",
+                    (match, *params, max(max_results * 10, 50) if requested_topics else max_results),
+                ).fetchall()
+            else:
+                rows = db.execute("SELECT s.*, 0.0 AS rank_score FROM knowledge_sources s WHERE " + filters, params).fetchall()
+        query_tokens = {_plain_text(token) for token in tokens}
         hits = []
         for row in rows:
-            try:
-                valid_from = normalize_iso_datetime(row["valid_from"]) if row["valid_from"] else None
-                valid_until = normalize_iso_datetime(row["valid_until"]) if row["valid_until"] else None
-            except ValueError:
-                continue
-            if valid_from and valid_from > as_of:
-                continue
-            if valid_until and valid_until <= as_of:
-                continue
-            if audience and row["audience"] != audience:
-                continue
-            if scope and row["scope"] != scope:
-                continue
-            if subject and row["subject"] != subject:
-                continue
             content = row["content"]
-            haystack = (row["title"] + " " + content).casefold()
-            plain_haystack = _plain_text(haystack)
+            plain_haystack = _plain_text(row["title"] + " " + content)
             if requested_topics and not any(any(term in plain_haystack for term in topic) for topic in requested_topics):
                 continue
-            overlap = sum(1 for token in query_tokens if token in haystack)
-            phrase = 1 if query.casefold() in haystack else 0
-            score = float(overlap) + phrase * 0.5
-            if score <= 0:
-                continue
+            if fts_available:
+                score = float(row["rank_score"])
+            else:
+                overlap = sum(1 for token in query_tokens if token in plain_haystack)
+                score = float(overlap) + (0.5 if _plain_text(query) in plain_haystack else 0.0)
+                if score <= 0:
+                    continue
             hits.append(
                 {
                     "evidence_id": "%s:%s:%s" % (business_id, row["source_id"], row["source_version"]),
@@ -2120,7 +2169,8 @@ class StateStore:
                     "review_status": row["review_status"],
                 }
             )
-        hits.sort(key=lambda item: (-item["score"], item["source_id"], item["source_version"]))
+        if not fts_available:
+            hits.sort(key=lambda item: (-item["score"], item["source_id"], item["source_version"]))
         return hits[:max_results]
 
     def list_sources(self, business_id: str) -> List[Dict[str, Any]]:

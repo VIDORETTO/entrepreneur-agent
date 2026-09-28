@@ -1,19 +1,23 @@
 ---
 schema: hybrid/ticket
-schema_version: "1.0"
+schema_version: 1.0
 id: TK-011
 effort: 001-piloto-real-confiavel
 type: delivery
-status: ready
-ticket_revision: 1
-requires: [TK-001]
-requirement_refs: [FR-011]
-acceptance_refs: [AC-031, AC-032, AC-033, AC-034]
+status: done
+ticket_revision: 5
+requires: ["TK-001"]
+requirement_refs: ["FR-011"]
+acceptance_refs: ["AC-031", "AC-032", "AC-033", "AC-034"]
 spec_revision: 2
 plan_revision: 2
-owned_areas: [src/sales_agent/storage.py, src/sales_agent/knowledge.py, src/sales_agent/evaluation.py, evaluation/retrieval_set.json, tests/test_retrieval.py]
-verification_status: not_run
+owned_areas: ["src/sales_agent/storage.py", "src/sales_agent/knowledge.py", "src/sales_agent/evaluation.py", "evaluation/retrieval_set.json", "tests/test_retrieval.py"]
+verification_status: passed
 ---
+
+
+
+
 
 # TK-011 — Recuperação BM25 com acentos normalizados e recall medido
 

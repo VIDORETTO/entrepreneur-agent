@@ -1,0 +1,368 @@
+{
+  "version": "2026-09-28.1",
+  "business_id": "retrieval-eval",
+  "sources": [
+    {
+      "id": "garantia",
+      "title": "garantia",
+      "content": "garantia de 30 dias"
+    },
+    {
+      "id": "troca",
+      "title": "troca",
+      "content": "troca em até 7 dias"
+    },
+    {
+      "id": "devolucao",
+      "title": "devolucao",
+      "content": "devolução após pedido"
+    },
+    {
+      "id": "reembolso",
+      "title": "reembolso",
+      "content": "reembolso em 5 dias"
+    },
+    {
+      "id": "frete",
+      "title": "frete",
+      "content": "frete para capitais"
+    },
+    {
+      "id": "entrega",
+      "title": "entrega",
+      "content": "entrega em 3 dias"
+    },
+    {
+      "id": "retirada",
+      "title": "retirada",
+      "content": "retirada na loja"
+    },
+    {
+      "id": "embalagem",
+      "title": "embalagem",
+      "content": "embalagem reciclável"
+    },
+    {
+      "id": "tamanho",
+      "title": "tamanho",
+      "content": "tamanho médio disponível"
+    },
+    {
+      "id": "cor",
+      "title": "cor",
+      "content": "cor azul disponível"
+    },
+    {
+      "id": "estoque",
+      "title": "estoque",
+      "content": "estoque atualizado diariamente"
+    },
+    {
+      "id": "reserva",
+      "title": "reserva",
+      "content": "reserva por 2 horas"
+    },
+    {
+      "id": "parcelamento",
+      "title": "parcelamento",
+      "content": "parcelamento em 3 vezes"
+    },
+    {
+      "id": "pix",
+      "title": "pix",
+      "content": "pix com confirmação"
+    },
+    {
+      "id": "boleto",
+      "title": "boleto",
+      "content": "boleto vence amanhã"
+    },
+    {
+      "id": "cartao",
+      "title": "cartao",
+      "content": "cartão aceito"
+    },
+    {
+      "id": "suporte",
+      "title": "suporte",
+      "content": "suporte por mensagem"
+    },
+    {
+      "id": "horario",
+      "title": "horario",
+      "content": "horário das 9 às 18"
+    },
+    {
+      "id": "acesso",
+      "title": "acesso",
+      "content": "acesso por 12 meses"
+    },
+    {
+      "id": "cancelamento",
+      "title": "cancelamento",
+      "content": "cancelamento solicitado no portal"
+    },
+    {
+      "id": "instalacao",
+      "title": "instalacao",
+      "content": "instalação em 2 passos"
+    },
+    {
+      "id": "licenca",
+      "title": "licenca",
+      "content": "licença individual"
+    },
+    {
+      "id": "certificado",
+      "title": "certificado",
+      "content": "certificado após conclusão"
+    },
+    {
+      "id": "matricula",
+      "title": "matricula",
+      "content": "matrícula imediata"
+    },
+    {
+      "id": "material",
+      "title": "material",
+      "content": "material digital incluso"
+    },
+    {
+      "id": "aulas",
+      "title": "aulas",
+      "content": "aulas gravadas disponíveis"
+    },
+    {
+      "id": "consultoria",
+      "title": "consultoria",
+      "content": "consultoria de 1 hora"
+    },
+    {
+      "id": "orcamento",
+      "title": "orcamento",
+      "content": "orçamento válido por 15 dias"
+    },
+    {
+      "id": "agenda",
+      "title": "agenda",
+      "content": "agenda aberta segunda"
+    },
+    {
+      "id": "visita",
+      "title": "visita",
+      "content": "visita técnica gratuita"
+    },
+    {
+      "id": "contrato",
+      "title": "contrato",
+      "content": "contrato assinado digitalmente"
+    },
+    {
+      "id": "nota",
+      "title": "nota",
+      "content": "nota fiscal enviada por email"
+    }
+  ],
+  "questions": [
+    {
+      "id": "R01",
+      "query": "garantia",
+      "expected_source_id": "garantia"
+    },
+    {
+      "id": "R02",
+      "query": "troca",
+      "expected_source_id": "troca"
+    },
+    {
+      "id": "R03",
+      "query": "devolucao",
+      "expected_source_id": "devolucao"
+    },
+    {
+      "id": "R04",
+      "query": "reembolso",
+      "expected_source_id": "reembolso"
+    },
+    {
+      "id": "R05",
+      "query": "frete",
+      "expected_source_id": "frete"
+    },
+    {
+      "id": "R06",
+      "query": "entrega",
+      "expected_source_id": "entrega"
+    },
+    {
+      "id": "R07",
+      "query": "retirada",
+      "expected_source_id": "retirada"
+    },
+    {
+      "id": "R08",
+      "query": "embalagem",
+      "expected_source_id": "embalagem"
+    },
+    {
+      "id": "R09",
+      "query": "tamanho",
+      "expected_source_id": "tamanho"
+    },
+    {
+      "id": "R10",
+      "query": "cor",
+      "expected_source_id": "cor"
+    },
+    {
+      "id": "R11",
+      "query": "estoque",
+      "expected_source_id": "estoque"
+    },
+    {
+      "id": "R12",
+      "query": "reserva",
+      "expected_source_id": "reserva"
+    },
+    {
+      "id": "R13",
+      "query": "parcelamento",
+      "expected_source_id": "parcelamento"
+    },
+    {
+      "id": "R14",
+      "query": "pix",
+      "expected_source_id": "pix"
+    },
+    {
+      "id": "R15",
+      "query": "boleto",
+      "expected_source_id": "boleto"
+    },
+    {
+      "id": "R16",
+      "query": "cartao",
+      "expected_source_id": "cartao"
+    },
+    {
+      "id": "R17",
+      "query": "suporte",
+      "expected_source_id": "suporte"
+    },
+    {
+      "id": "R18",
+      "query": "horario",
+      "expected_source_id": "horario"
+    },
+    {
+      "id": "R19",
+      "query": "acesso",
+      "expected_source_id": "acesso"
+    },
+    {
+      "id": "R20",
+      "query": "cancelamento",
+      "expected_source_id": "cancelamento"
+    },
+    {
+      "id": "R21",
+      "query": "instalacao",
+      "expected_source_id": "instalacao"
+    },
+    {
+      "id": "R22",
+      "query": "licenca",
+      "expected_source_id": "licenca"
+    },
+    {
+      "id": "R23",
+      "query": "certificado",
+      "expected_source_id": "certificado"
+    },
+    {
+      "id": "R24",
+      "query": "matricula",
+      "expected_source_id": "matricula"
+    },
+    {
+      "id": "R25",
+      "query": "material",
+      "expected_source_id": "material"
+    },
+    {
+      "id": "R26",
+      "query": "aulas",
+      "expected_source_id": "aulas"
+    },
+    {
+      "id": "R27",
+      "query": "consultoria",
+      "expected_source_id": "consultoria"
+    },
+    {
+      "id": "R28",
+      "query": "orcamento",
+      "expected_source_id": "orcamento"
+    },
+    {
+      "id": "R29",
+      "query": "agenda",
+      "expected_source_id": "agenda"
+    },
+    {
+      "id": "R30",
+      "query": "visita",
+      "expected_source_id": "visita"
+    },
+    {
+      "id": "R31",
+      "query": "contrato",
+      "expected_source_id": "contrato"
+    },
+    {
+      "id": "R32",
+      "query": "nota",
+      "expected_source_id": "nota"
+    },
+    {
+      "id": "R33",
+      "query": "xilofone",
+      "expected_source_id": null
+    },
+    {
+      "id": "R34",
+      "query": "astronomia",
+      "expected_source_id": null
+    },
+    {
+      "id": "R35",
+      "query": "mergulho",
+      "expected_source_id": null
+    },
+    {
+      "id": "R36",
+      "query": "apicultura",
+      "expected_source_id": null
+    },
+    {
+      "id": "R37",
+      "query": "meteorito",
+      "expected_source_id": null
+    },
+    {
+      "id": "R38",
+      "query": "jardinagem",
+      "expected_source_id": null
+    },
+    {
+      "id": "R39",
+      "query": "locomotiva",
+      "expected_source_id": null
+    },
+    {
+      "id": "R40",
+      "query": "arqueologia",
+      "expected_source_id": null
+    }
+  ]
+}

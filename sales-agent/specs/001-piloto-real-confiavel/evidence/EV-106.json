@@ -1,0 +1,32 @@
+{
+  "acceptance_refs": [
+    "AC-034"
+  ],
+  "environment": "OS=Linux-5.14.0-687.36.1.el9_8.x86_64-x86_64-with-glibc2.34; Python=3.12.14",
+  "evidence_refs": [],
+  "execution_status": "executed",
+  "id": "EV-106",
+  "input_fingerprints": {
+    "evaluation/retrieval_set.json": "b3e497373dfded540c39b7db0c78a878219b60ac5b8f9f8b88e7befe2f90323a",
+    "specs/001-piloto-real-confiavel/plan.md": "a069d7b1d149ba604d47c2cb8035b6bfe0e9dc7471acd4eb697cbcab209ab66e",
+    "specs/001-piloto-real-confiavel/spec.md": "057aed7c1e1360d8f71167caca6af45c61c0ddf7114ce1d2eb8ce7d6dd5858ba",
+    "src/sales_agent/evaluation.py": "813afd00a4f89556f0c4e9477fa562946edc1c230e11ea7b1725bf07de6cbd8f",
+    "src/sales_agent/storage.py": "334d84b28634cdd79d94b3e415b9f4fd3afd653f74b823c288693ec0cb589eb8",
+    "tests/test_retrieval.py": "affbf0c291ee6e2828a79131ac795f2a083e2c4b5383f9c11672a60b3756bea6"
+  },
+  "input_paths": [
+    "src/sales_agent/storage.py",
+    "src/sales_agent/evaluation.py",
+    "evaluation/retrieval_set.json",
+    "tests/test_retrieval.py",
+    "specs/001-piloto-real-confiavel/spec.md",
+    "specs/001-piloto-real-confiavel/plan.md"
+  ],
+  "limitations": "",
+  "observations": "40 versioned questions; recall@5 32/32 and correct abstention 8/8",
+  "procedure": "python3.12 -m pytest -q tests/test_retrieval.py",
+  "result": "passed",
+  "tested_revision": "local:427fd1a3b99d2347d48cd881f5fe27a0a4e71df4fad76b9cbd3e8f04ddbbd4f7",
+  "ticket": "TK-011",
+  "timestamp": "2026-09-28T18:05:57+00:00"
+}

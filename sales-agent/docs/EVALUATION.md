@@ -46,6 +46,8 @@ Os testes também exercitam deduplicação persistente, correção de cotação,
 isolamento e revogação de fontes, transferência, follow-up, retomada,
 restauração e rejeição de proposta de modelo incapaz.
 
+O `evaluation/retrieval_set.json` contém 40 perguntas versionadas (32 respondíveis e 8 sem resposta). A avaliação `dev` e `holdout` informa `evaluation.retrieval.recall_at_5` (`hit`, `total`, `rate`) e `evaluation.retrieval.abstention` (`correct`, `total`, `rate`). Essas métricas usam a recuperação SQLite local e não medem o modelo remoto.
+
 O `evaluation/golden_set.json` acompanha a distribuição e mantém casos
 sintéticos de pertinência, versões, revogação, intervenção humana, canal,
 correção e segurança do modelo. Relatórios de instalação usam a cópia em

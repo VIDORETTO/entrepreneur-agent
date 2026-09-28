@@ -68,6 +68,7 @@ def command_doctor(args: argparse.Namespace) -> int:
         "python": sys.version.split()[0],
         "python_supported": sys.version_info >= (3, 11),
         "sqlite": __import__("sqlite3").sqlite_version,
+        "fts5": "available" if store.fts5_available() else "unavailable; using token-overlap fallback",
         "data_dir": str(store.data_dir),
         "data_dir_writable": os.access(str(store.data_dir), os.W_OK),
         "businesses": [item["business"]["id"] for item in store.list_businesses()],

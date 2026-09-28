@@ -1087,6 +1087,8 @@ class EvaluationRunner:
             "backend": {"name": self.backend_name, "mode": "persistent-local"},
             "channel": {"name": self.channel, "mode": "local-evaluation"},
             "evaluation": {"split": self.split, "repeat": self.repeat, "corpus_version": corpus.get("version"),
+                           "retrieval": (self.evaluate_retrieval() if (self.corpus_dir / "retrieval_set.json").is_file()
+                                         else {"status": "not_available", "reason": "retrieval_set.json absent"}),
                            "distribution": dict(Counter(case["category"] for case in records)),
                            "holdout_sha256": holdout_sha256, "holdout_changed": holdout_changed,
                            "holdout_reference_available": bool(previous_hash) if self.split == "holdout" else None,
@@ -1097,6 +1099,38 @@ class EvaluationRunner:
             "summary": {"total": len(records), "passed": success_cases, "failed": len(records) - success_cases,
                         "critical_failures": critical_failures}, "cases": records,
             "limitations": ["canal e comércio simulados localmente; qualidade remota exige execução com credencial real"],
+        }
+
+    def evaluate_retrieval(self) -> Dict[str, Any]:
+        """Measure the versioned lexical retrieval set with public knowledge queries."""
+
+        corpus = json.loads((self.corpus_dir / "retrieval_set.json").read_text(encoding="utf-8"))
+        sources = corpus.get("sources", [])
+        questions = corpus.get("questions", [])
+        if len(questions) < 40 or sum(item.get("expected_source_id") is None for item in questions) < 8:
+            raise ValueError("conjunto de recuperação incompleto")
+        with tempfile.TemporaryDirectory(prefix="vendedor-retrieval-", dir=str(self.data_dir)) as temporary:
+            knowledge = PersistentFarolKnowledge(StateStore(Path(temporary)))
+            business_id = str(corpus["business_id"])
+            for source in sources:
+                knowledge.ingest(business_id, str(source["id"]), "v1", str(source["content"]),
+                                 title=str(source["title"]))
+            recall_hit = recall_total = abstention_correct = abstention_total = 0
+            for question in questions:
+                hits = knowledge.search(business_id, str(question["query"]), 5)
+                expected = question.get("expected_source_id")
+                if expected is None:
+                    abstention_total += 1
+                    abstention_correct += not bool(hits)
+                else:
+                    recall_total += 1
+                    recall_hit += any(hit["source_id"] == expected for hit in hits)
+        return {
+            "version": corpus["version"],
+            "recall_at_5": {"hit": recall_hit, "total": recall_total,
+                            "rate": recall_hit / recall_total if recall_total else 0.0},
+            "abstention": {"correct": abstention_correct, "total": abstention_total,
+                            "rate": abstention_correct / abstention_total if abstention_total else 0.0},
         }
 
     @staticmethod

@@ -1,0 +1,28 @@
+{
+  "acceptance_refs": [
+    "AC-031"
+  ],
+  "environment": "OS=Linux-5.14.0-687.36.1.el9_8.x86_64-x86_64-with-glibc2.34; Python=3.12.14",
+  "evidence_refs": [],
+  "execution_status": "executed",
+  "id": "EV-103",
+  "input_fingerprints": {
+    "specs/001-piloto-real-confiavel/plan.md": "a069d7b1d149ba604d47c2cb8035b6bfe0e9dc7471acd4eb697cbcab209ab66e",
+    "specs/001-piloto-real-confiavel/spec.md": "057aed7c1e1360d8f71167caca6af45c61c0ddf7114ce1d2eb8ce7d6dd5858ba",
+    "src/sales_agent/storage.py": "334d84b28634cdd79d94b3e415b9f4fd3afd653f74b823c288693ec0cb589eb8",
+    "tests/test_retrieval.py": "affbf0c291ee6e2828a79131ac795f2a083e2c4b5383f9c11672a60b3756bea6"
+  },
+  "input_paths": [
+    "src/sales_agent/storage.py",
+    "tests/test_retrieval.py",
+    "specs/001-piloto-real-confiavel/spec.md",
+    "specs/001-piloto-real-confiavel/plan.md"
+  ],
+  "limitations": "",
+  "observations": "garantía and GARANTIA both retrieved the approved warranty source; 4 focused tests passed",
+  "procedure": "python3.12 -m pytest -q tests/test_retrieval.py",
+  "result": "passed",
+  "tested_revision": "local:feda33d21c8b505b20d08233b6b33316cd53b1b111f880a733908c4311203a3f",
+  "ticket": "TK-011",
+  "timestamp": "2026-09-28T18:05:47+00:00"
+}

@@ -1327,3 +1327,55 @@
 - Observations: 23 model adapter tests passed.
 - Evidence refs: none
 - Limitations: none recorded
+
+## EV-103 — passed
+
+- Ticket: `TK-011`
+- Acceptance: `AC-031`
+- Procedure: `python3.12 -m pytest -q tests/test_retrieval.py`
+- Execution: `executed`
+- Environment: OS=Linux-5.14.0-687.36.1.el9_8.x86_64-x86_64-with-glibc2.34; Python=3.12.14
+- Tested revision: `local:feda33d21c8b505b20d08233b6b33316cd53b1b111f880a733908c4311203a3f`
+- Timestamp: `2026-09-28T18:05:47+00:00`
+- Observations: garantía and GARANTIA both retrieved the approved warranty source; 4 focused tests passed
+- Evidence refs: none
+- Limitations: none recorded
+
+## EV-104 — passed
+
+- Ticket: `TK-011`
+- Acceptance: `AC-032`
+- Procedure: `python3.12 -m pytest -q tests/test_retrieval.py`
+- Execution: `executed`
+- Environment: OS=Linux-5.14.0-687.36.1.el9_8.x86_64-x86_64-with-glibc2.34; Python=3.12.14
+- Tested revision: `local:427fd1a3b99d2347d48cd881f5fe27a0a4e71df4fad76b9cbd3e8f04ddbbd4f7`
+- Timestamp: `2026-09-28T18:05:57+00:00`
+- Observations: Revoked, foreign business, expired and other audience sources excluded
+- Evidence refs: none
+- Limitations: none recorded
+
+## EV-105 — passed
+
+- Ticket: `TK-011`
+- Acceptance: `AC-033`
+- Procedure: `python3.12 -m pytest -q tests/test_retrieval.py`
+- Execution: `executed`
+- Environment: OS=Linux-5.14.0-687.36.1.el9_8.x86_64-x86_64-with-glibc2.34; Python=3.12.14
+- Tested revision: `local:427fd1a3b99d2347d48cd881f5fe27a0a4e71df4fad76b9cbd3e8f04ddbbd4f7`
+- Timestamp: `2026-09-28T18:05:57+00:00`
+- Observations: 5000 synthetic sources and 100 queries; test asserted p95 below 50 ms
+- Evidence refs: none
+- Limitations: none recorded
+
+## EV-106 — passed
+
+- Ticket: `TK-011`
+- Acceptance: `AC-034`
+- Procedure: `python3.12 -m pytest -q tests/test_retrieval.py`
+- Execution: `executed`
+- Environment: OS=Linux-5.14.0-687.36.1.el9_8.x86_64-x86_64-with-glibc2.34; Python=3.12.14
+- Tested revision: `local:427fd1a3b99d2347d48cd881f5fe27a0a4e71df4fad76b9cbd3e8f04ddbbd4f7`
+- Timestamp: `2026-09-28T18:05:57+00:00`
+- Observations: 40 versioned questions; recall@5 32/32 and correct abstention 8/8
+- Evidence refs: none
+- Limitations: none recorded
