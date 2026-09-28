@@ -41,8 +41,8 @@ Status: `done` | Bloqueado por: TK-001
 - [x] TK-008.7 Executar regressão completa (`python -m pytest -q`, `ruff check src tests`) e atualizar documentação da interface.
 - [x] TK-008.8 Registrar evidência (`hybrid.py evidence add --executed`) e checkpoint; não marcar checklist de reviewer.
 
-## [ ] TK-011 — TK-011 — Recuperação BM25 com acentos normalizados e recall medido
-Status: `ready` | Bloqueado por: TK-001
+## [x] TK-011 — TK-011 — Recuperação BM25 com acentos normalizados e recall medido
+Status: `done` | Bloqueado por: TK-001
 
 - [ ] TK-011.1 Escrever o primeiro caso (AC-031) na seam indicada em `plan.md`; observar red pelo motivo previsto em `tdd.md`.
 - [ ] TK-011.2 Implementar o mínimo para green de AC-031; próximo caso só após green.

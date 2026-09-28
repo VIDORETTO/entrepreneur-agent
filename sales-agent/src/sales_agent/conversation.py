@@ -10,8 +10,9 @@ from __future__ import annotations
 import re
 import threading
 import time
-from datetime import datetime
+from datetime import datetime, timedelta
 from typing import Any, Callable, Dict, List, Mapping, Optional
+from zoneinfo import ZoneInfo
 
 from .commerce import CommerceError, SimulatedCommerce
 from .drafting import ClaimVerifier, ResponseRequirements, injection_signals
@@ -645,6 +646,18 @@ class SellerEngine:
                 "latency_ms": proposal.raw.get("latency_ms") if isinstance(proposal.raw, Mapping) else None,
             }
         )
+        if proposal.intent == "unknown" and not proposal.offer_id and not proposal.topics:
+            state["fallback_count"] = int(state.get("fallback_count", 0)) + 1
+            if state["fallback_count"] >= int(package.get("loop_policy", {}).get("fallback_limit", 2)) + 1:
+                state["pending"] = {"type": "human_offer", "reason": "loop_detected"}
+                return self._result(event, state, "Posso chamar uma pessoa para ajudar. Quer falar com um atendente?",
+                                    trace=trace + [{"type": "loop_detected", "reason": "repeated_fallback"}])
+        else:
+            state["fallback_count"] = 0
+        if re.search(r"já falei|ja falei|você não entende|voce nao entende|cansei de repetir", text.casefold()) and proposal.intent != "human":
+            state["pending"] = {"type": "human_offer", "reason": "frustration"}
+            return self._result(event, state, "Entendo. Posso chamar uma pessoa para ajudar.",
+                                trace=trace + [{"type": "loop_detected", "reason": "frustration"}])
         if isinstance(proposal.raw, Mapping) and proposal.raw.get("model_contract_failed"):
             trace.append({"type": "model_contract_failed", "model": proposal.model_name, "calls": proposal.raw.get("model_calls")})
             if proposal.raw.get("model_timeout"):
@@ -866,7 +879,9 @@ class SellerEngine:
                     "pending": pending_context,
                 },
             }
-            return self._result(event, state, "Vou encaminhar você para uma pessoa, sem pedir outra qualificação.", action, trace)
+            response = "Vou encaminhar você para uma pessoa, sem pedir outra qualificação."
+            response += self._service_hours_message(package)
+            return self._result(event, state, response, action, trace)
 
         if proposal.intent == "thanks":
             response = "Por nada!"
@@ -1639,6 +1654,29 @@ class SellerEngine:
                 return
             result.trace.append({"type": "claim_unsupported", "attempt": attempt + 1, "claims": feedback})
         result.trace.append({"type": "draft_fallback", "reason": "verification_failed"})
+
+    def _service_hours_message(self, package: Mapping[str, Any]) -> str:
+        hours = package.get("service_hours")
+        if not isinstance(hours, Mapping):
+            return " Disponibilidade do atendimento humano não informada."
+        now = datetime.fromisoformat(self.store.clock.now().replace("Z", "+00:00")).astimezone(
+            ZoneInfo(str(hours["timezone"]))
+        )
+        intervals = hours["intervals"]
+        for days_ahead in range(8):
+            day = now + timedelta(days=days_ahead)
+            for interval in intervals.get(day.strftime("%A").lower(), []):
+                start_hour, start_minute = map(int, interval["start"].split(":"))
+                end_hour, end_minute = map(int, interval["end"].split(":"))
+                opening = day.replace(hour=start_hour, minute=start_minute, second=0, microsecond=0)
+                closing = day.replace(hour=end_hour, minute=end_minute, second=0, microsecond=0)
+                if opening <= now < closing:
+                    return " O atendimento humano está dentro do horário informado."
+                if opening > now:
+                    when = "amanhã" if days_ahead == 1 else "hoje" if days_ahead == 0 else day.strftime("%A")
+                    time_label = f"{start_hour}h" + (f"{start_minute:02d}" if start_minute else "")
+                    return f" O próximo horário de atendimento é {when} às {time_label}."
+        return " Disponibilidade do atendimento humano não informada."
 
     @staticmethod
     def _result(

@@ -1379,3 +1379,55 @@
 - Observations: 40 versioned questions; recall@5 32/32 and correct abstention 8/8
 - Evidence refs: none
 - Limitations: none recorded
+
+## EV-107 — passed
+
+- Ticket: `TK-013`
+- Acceptance: `AC-041`
+- Procedure: `python3.12 -m pytest -q tests/test_human_access.py tests/test_conversation_contract.py`
+- Execution: `executed`
+- Environment: OS=Linux-5.14.0-687.36.1.el9_8.x86_64-x86_64-with-glibc2.34; Python=3.12.14
+- Tested revision: `local:f397799bb8c0527bd7c64413155d1eb6e49c834b30a269b5e38ef9fb002b7877`
+- Timestamp: `2026-09-28T18:15:20+00:00`
+- Observations: Focused human access and conversation tests passed; full suite 233 passed
+- Evidence refs: none
+- Limitations: none recorded
+
+## EV-108 — passed
+
+- Ticket: `TK-013`
+- Acceptance: `AC-042`
+- Procedure: `python3.12 -m pytest -q tests/test_human_access.py tests/test_conversation_contract.py`
+- Execution: `executed`
+- Environment: OS=Linux-5.14.0-687.36.1.el9_8.x86_64-x86_64-with-glibc2.34; Python=3.12.14
+- Tested revision: `local:f397799bb8c0527bd7c64413155d1eb6e49c834b30a269b5e38ef9fb002b7877`
+- Timestamp: `2026-09-28T18:15:21+00:00`
+- Observations: Focused human access and conversation tests passed; full suite 233 passed
+- Evidence refs: none
+- Limitations: none recorded
+
+## EV-109 — passed
+
+- Ticket: `TK-013`
+- Acceptance: `AC-043`
+- Procedure: `python3.12 -m pytest -q tests/test_human_access.py tests/test_conversation_contract.py`
+- Execution: `executed`
+- Environment: OS=Linux-5.14.0-687.36.1.el9_8.x86_64-x86_64-with-glibc2.34; Python=3.12.14
+- Tested revision: `local:f397799bb8c0527bd7c64413155d1eb6e49c834b30a269b5e38ef9fb002b7877`
+- Timestamp: `2026-09-28T18:15:21+00:00`
+- Observations: Focused human access and conversation tests passed; full suite 233 passed
+- Evidence refs: none
+- Limitations: none recorded
+
+## EV-110 — passed
+
+- Ticket: `TK-013`
+- Acceptance: `AC-044`
+- Procedure: `python3.12 -m pytest -q tests/test_human_access.py tests/test_conversation_contract.py`
+- Execution: `executed`
+- Environment: OS=Linux-5.14.0-687.36.1.el9_8.x86_64-x86_64-with-glibc2.34; Python=3.12.14
+- Tested revision: `local:f397799bb8c0527bd7c64413155d1eb6e49c834b30a269b5e38ef9fb002b7877`
+- Timestamp: `2026-09-28T18:15:21+00:00`
+- Observations: Focused human access and conversation tests passed; full suite 233 passed
+- Evidence refs: none
+- Limitations: none recorded

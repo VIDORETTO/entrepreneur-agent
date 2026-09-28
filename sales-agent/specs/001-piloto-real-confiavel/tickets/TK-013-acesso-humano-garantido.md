@@ -1,19 +1,23 @@
 ---
 schema: hybrid/ticket
-schema_version: "1.0"
+schema_version: 1.0
 id: TK-013
 effort: 001-piloto-real-confiavel
 type: delivery
-status: ready
-ticket_revision: 1
-requires: [TK-001]
-requirement_refs: [FR-014]
-acceptance_refs: [AC-041, AC-042, AC-043, AC-044]
+status: done
+ticket_revision: 5
+requires: ["TK-001"]
+requirement_refs: ["FR-014"]
+acceptance_refs: ["AC-041", "AC-042", "AC-043", "AC-044"]
 spec_revision: 2
 plan_revision: 2
-owned_areas: [src/sales_agent/conversation.py, src/sales_agent/config.py, schemas/business-package.schema.json, tests/test_human_access.py]
-verification_status: not_run
+owned_areas: ["src/sales_agent/conversation.py", "src/sales_agent/config.py", "schemas/business-package.schema.json", "tests/test_human_access.py"]
+verification_status: passed
 ---
+
+
+
+
 
 # TK-013 — Acesso humano garantido, horário real e detecção de loop
 

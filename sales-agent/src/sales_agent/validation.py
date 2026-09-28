@@ -5,6 +5,7 @@ from __future__ import annotations
 import hashlib
 import json
 import math
+import re
 from datetime import datetime
 from numbers import Real
 from typing import Any, Dict, Mapping
@@ -64,6 +65,29 @@ def validate_package(package: Mapping[str, Any]) -> Dict[str, Any]:
         raise PackageError("non_text_policy inválida")
     if package.get("draft_mode", "off") not in {"on", "off"}:
         raise PackageError("draft_mode inválido")
+    loop_policy = package.get("loop_policy", {})
+    if not isinstance(loop_policy, Mapping) or isinstance(loop_policy.get("fallback_limit", 2), bool) or not isinstance(loop_policy.get("fallback_limit", 2), int) or loop_policy.get("fallback_limit", 2) < 1:
+        raise PackageError("loop_policy.fallback_limit inválido")
+    hours = package.get("service_hours")
+    if hours is not None:
+        from zoneinfo import ZoneInfo, ZoneInfoNotFoundError
+
+        if not isinstance(hours, Mapping) or not isinstance(hours.get("timezone"), str) or not isinstance(hours.get("intervals"), Mapping):
+            raise PackageError("service_hours inválido")
+        try:
+            ZoneInfo(hours["timezone"])
+        except ZoneInfoNotFoundError as exc:
+            raise PackageError("service_hours.timezone inválido") from exc
+        weekdays = {"monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"}
+        for day, intervals in hours["intervals"].items():
+            if day not in weekdays or not isinstance(intervals, list):
+                raise PackageError("service_hours.intervals inválido")
+            for interval in intervals:
+                if not isinstance(interval, Mapping) or any(
+                    not isinstance(interval.get(key), str) or not re.fullmatch(r"(?:[01]\d|2[0-3]):[0-5]\d", interval[key])
+                    for key in ("start", "end")
+                ) or interval["start"] >= interval["end"]:
+                    raise PackageError("service_hours.interval inválido")
     business = package["business"]
     if not isinstance(business, Mapping):
         raise PackageError("business deve ser um objeto")

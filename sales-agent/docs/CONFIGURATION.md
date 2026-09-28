@@ -92,3 +92,7 @@ quando `model` não está no JSON. Os preços são por milhão de tokens de entr
 e saída e nunca são fixos no adaptador. Após duas propostas inválidas, o
 fallback registra `model_contract_failed` e não autoriza efeitos comerciais.
 Uma recusa explícita do provedor segue a mesma falha fechada.
+
+### Atendimento humano
+
+O pacote pode definir `service_hours` com `timezone` IANA e `intervals` por dia da semana em inglês (`monday` a `sunday`), cada um com `start` e `end` em `HH:MM`. Em transferência fora do horário, a resposta informa a próxima abertura calculada no fuso configurado. Sem horário, informa que a disponibilidade não foi declarada. `loop_policy.fallback_limit` controla quantos fallbacks consecutivos são tolerados antes de oferecer atendimento humano no turno seguinte; o padrão é 2.

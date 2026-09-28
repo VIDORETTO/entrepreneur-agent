@@ -9,6 +9,18 @@
     "lifecycle": {"enum": ["draft", "active"]},
     "non_text_policy": {"enum": ["ask_text", "offer_human"]},
     "draft_mode": {"enum": ["off", "on"]},
+    "loop_policy": {"type": "object", "properties": {"fallback_limit": {"type": "integer", "minimum": 1}}},
+    "service_hours": {
+      "type": "object", "required": ["timezone", "intervals"],
+      "properties": {
+        "timezone": {"type": "string", "minLength": 1},
+        "intervals": {"type": "object", "additionalProperties": {
+          "type": "array", "items": {"type": "object", "required": ["start", "end"],
+          "properties": {"start": {"type": "string", "pattern": "^([01][0-9]|2[0-3]):[0-5][0-9]$"},
+                         "end": {"type": "string", "pattern": "^([01][0-9]|2[0-3]):[0-5][0-9]$"}}
+        }}}
+      }
+    },
     "business": {
       "type": "object",
       "required": ["id", "name", "buyer_types"],
