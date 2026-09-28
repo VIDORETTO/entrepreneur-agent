@@ -2,29 +2,27 @@
   "acceptance_refs": [
     "AC-001"
   ],
-  "environment": "OS=Linux-5.14.0-687.36.1.el9_8.x86_64-x86_64-with-glibc2.34; Python=3.9.25",
+  "environment": "OS=Linux-5.14.0-687.36.1.el9_8.x86_64-x86_64-with-glibc2.34; Python=3.12.14",
   "evidence_refs": [],
   "execution_status": "executed",
-  "id": "EV-023",
+  "id": "EV-078",
   "input_fingerprints": {
     "specs/001-piloto-real-confiavel/plan.md": "a069d7b1d149ba604d47c2cb8035b6bfe0e9dc7471acd4eb697cbcab209ab66e",
     "specs/001-piloto-real-confiavel/spec.md": "057aed7c1e1360d8f71167caca6af45c61c0ddf7114ce1d2eb8ce7d6dd5858ba",
-    "src/sales_agent/clock.py": "a7f050b9272e43d853e91925f6e7cb4d3e50ce2ade2a89db21ae0a6f8eb5d680",
-    "src/sales_agent/storage.py": "68ce1d1d41c7a39df0d3a31705685f8351674aacc12659165890e8642297b74c",
+    "src/sales_agent/storage.py": "5aa586dcc30177ea5de026807f158ce0fbb73eccfa674157611650a9edb3803b",
     "tests/test_knowledge_and_configuration.py": "9104849c1ca0c9b2f1229f83d7afc7e1111ef298a10df62b57cc43dba233e45c"
   },
   "input_paths": [
     "src/sales_agent/storage.py",
-    "src/sales_agent/clock.py",
     "tests/test_knowledge_and_configuration.py",
     "specs/001-piloto-real-confiavel/spec.md",
     "specs/001-piloto-real-confiavel/plan.md"
   ],
-  "limitations": "Evidence invalidated because an input changed.",
-  "observations": "Farol clock test remained green after the added inbound timestamp read; 1 passed.",
+  "limitations": "",
+  "observations": "Farol offset date and generation replacement test passed after commit_event null-action guard.",
   "procedure": ".venv/bin/python -m pytest -q tests/test_knowledge_and_configuration.py::test_farol_manifest_normalizes_offset_dates_and_replaces_previous_generation",
-  "result": "stale",
-  "tested_revision": "local:db257a7000f9072e660136d5078da709cfc24de8230c663b4e8b4aaae4f4f0c3",
+  "result": "passed",
+  "tested_revision": "local:e800e6d6b056fa7e18f3bab82d6fb6d9fadf6461069b5d3711317111cad5ed56",
   "ticket": "TK-001",
-  "timestamp": "2026-09-28T15:14:36+00:00"
+  "timestamp": "2026-09-28T16:30:32+00:00"
 }

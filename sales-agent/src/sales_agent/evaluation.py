@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import copy
+import hashlib
 import json
 import platform
 import re
@@ -11,6 +12,7 @@ import subprocess
 import sys
 import tempfile
 import time
+from collections import Counter
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Dict, List, Mapping, Optional
@@ -755,9 +757,28 @@ class EvaluationRunner:
         channel: str = "evaluation",
         candidate_package: Optional[Mapping[str, Any]] = None,
         candidate_business_id: Optional[str] = None,
+        split: str = "contract",
+        repeat: int = 1,
+        corpus_dir: Optional[Path] = None,
+        previous_report: Optional[Mapping[str, Any]] = None,
     ):
         self.data_dir = Path(data_dir).expanduser().resolve()
         self.data_dir.mkdir(parents=True, exist_ok=True)
+        if split not in {"contract", "dev", "holdout"}:
+            raise ValueError("split de avaliação desconhecido: %s" % split)
+        if repeat < 1:
+            raise ValueError("repeat precisa ser positivo")
+        self.split = split
+        self.repeat = repeat
+        if previous_report is not None and not isinstance(previous_report, Mapping):
+            raise ValueError("relatório anterior inválido")
+        if corpus_dir is not None:
+            self.corpus_dir = Path(corpus_dir)
+        else:
+            checkout_corpus = Path(__file__).resolve().parents[2] / "evaluation"
+            installed_corpus = Path(sys.prefix) / "share" / "vendedor-adaptavel" / "evaluation"
+            self.corpus_dir = checkout_corpus if checkout_corpus.is_dir() else installed_corpus
+        self.previous_report = previous_report
         if not isinstance(channel, str) or not channel.strip() or len(channel) > 100:
             raise ValueError("canal de avaliação inválido")
         if backend_name != "sqlite-farol-v1":
@@ -792,6 +813,8 @@ class EvaluationRunner:
         self.candidate_business_id = candidate_business_id or package_business_id or None
 
     def run(self) -> Dict[str, Any]:
+        if self.split != "contract":
+            return self._run_split()
         golden = self._golden_set()
         if not isinstance(golden, Mapping) or not isinstance(golden.get("cases"), list):
             golden = {"version": "invalid", "cases": []}
@@ -956,6 +979,178 @@ class EvaluationRunner:
                 "a recuperação persistente local é demonstrada; o RAG opcional upstream do Farol não foi executado neste relatório",
             ],
         }
+
+    def _run_split(self) -> Dict[str, Any]:
+        """Run each public scenario in a fresh local store for each repetition."""
+        corpus_path = self.corpus_dir / (self.split + ".json")
+        raw_corpus = corpus_path.read_bytes()
+        corpus = json.loads(raw_corpus)
+        if not isinstance(corpus, dict) or not isinstance(corpus.get("cases"), list):
+            raise ValueError("corpus de avaliação inválido")
+        declarations = corpus["cases"]
+        if len({case.get("id") for case in declarations}) != len(declarations):
+            raise ValueError("IDs repetidos no corpus")
+        thresholds = json.loads((self.corpus_dir / "thresholds.json").read_text(encoding="utf-8"))
+        if not isinstance(thresholds, dict) or not {"critical_failures", "minimum_pass_rate", "max_latency_ms"} <= thresholds.keys():
+            raise ValueError("limiares de avaliação inválidos")
+        golden_cases: Dict[str, Any] = {}
+        selected: List[Dict[str, Any]] = []
+        if self.split == "dev":
+            golden = self._golden_set()
+            golden_cases = {item["id"]: item for item in golden.get("cases", [])}
+            categories = {
+                "direct": {1, 2, 3, 8, 14, 15},
+                "price": {4, 5, 6, 7, 11, 12, 13},
+                "combination": {9, 31},
+                "memory": {10, 19, 26, 28, 33},
+                "actions": {16, 17, 18, 20, 34, 37, 38},
+                "human": {21, 22, 23, 24},
+                "installation": {25, 27, 29, 30, 32, 35, 36},
+            }
+            for position, case in enumerate(CASES, 1):
+                category = next(name for name, values in categories.items() if position in values)
+                selected.append({**case, "category": category, "legacy": True})
+        for case in declarations:
+            if not isinstance(case, dict) or not isinstance(case.get("turns"), list) or not case["turns"]:
+                raise ValueError("caso declarativo inválido")
+            if case.get("initial_state") != "fresh" or not isinstance(case.get("allowed_operations"), list):
+                raise ValueError("estado inicial ou operações disponíveis ausentes")
+            if not case.get("evidence"):
+                raise ValueError("evidência esperada ausente")
+            if case.get("category") not in {"direct", "price", "combination", "memory", "actions", "human", "installation"}:
+                raise ValueError("categoria de caso inválida")
+            selected.append(case)
+        if len({case["id"] for case in selected}) != len(selected):
+            raise ValueError("IDs repetidos entre casos")
+
+        records = []
+        for case in selected:
+            repetitions = []
+            for repetition in range(self.repeat):
+                with tempfile.TemporaryDirectory(prefix="vendedor-eval-", dir=str(self.data_dir)) as temporary:
+                    context = EvaluationContext(Path(temporary), model=self._new_model(), channel=self.channel,
+                                                candidate_package=self.candidate_package)
+                    started = time.perf_counter()
+                    try:
+                        if case.get("legacy"):
+                            case["fn"](context)
+                            verdict = _golden_verification(context, golden_cases.get(case["id"], {}), case_id=case["id"])
+                            if not verdict["passed"]:
+                                raise AssertionError("verificação independente do golden set falhou")
+                        else:
+                            self._run_declarative(context, case)
+                        status, error = "passed", None
+                    except Exception as exc:
+                        status, error = "failed", str(exc)[:500]
+                    duration_ms = round((time.perf_counter() - started) * 1000, 3)
+                    model_costs = [trace.get("cost") for item in context.observations for trace in item.get("trace", [])
+                                   if isinstance(trace, Mapping) and trace.get("type") == "model_proposal"]
+                    cost = round(sum(float(value) for value in model_costs if isinstance(value, (int, float))), 8)
+                    repetitions.append({"number": repetition + 1, "status": status, "duration_ms": duration_ms,
+                                        "cost": cost if model_costs and any(value is not None for value in model_costs) else None,
+                                        "error": error, "observations": context.observations})
+            successful = sum(item["status"] == "passed" for item in repetitions)
+            observed_costs = [item["cost"] for item in repetitions if item["cost"] is not None]
+            records.append({"id": case["id"], "category": case["category"], "critical": bool(case["critical"]),
+                            "definition": golden_cases.get(case["id"], {}) if case.get("legacy") else case,
+                            "status": "passed" if successful == self.repeat else "failed", "repetitions": repetitions,
+                            "pass_at_1": self._ratio(successful, self.repeat),
+                            "pass_power_k": self._ratio(int(successful == self.repeat), 1),
+                            "cost": round(sum(observed_costs), 8) if observed_costs else None,
+                            "latency_p95_ms": self._p95([item["duration_ms"] for item in repetitions])})
+        all_runs = [item for case in records for item in case["repetitions"]]
+        adapter_failures = sum(
+            trace.get("type") in {"model_contract_failed", "model_error", "model_timeout"}
+            for item in all_runs for observation in item["observations"]
+            for trace in observation.get("trace", []) if isinstance(trace, Mapping)
+        )
+        success_runs = sum(item["status"] == "passed" for item in all_runs)
+        success_cases = sum(case["status"] == "passed" for case in records)
+        critical_failures = sum(case["critical"] and case["status"] == "failed" for case in records)
+        holdout_sha256 = hashlib.sha256(raw_corpus).hexdigest() if self.split == "holdout" else None
+        previous_hash = (self.previous_report or {}).get("evaluation", {}).get("holdout_sha256")
+        holdout_changed = bool(previous_hash and holdout_sha256 and previous_hash != holdout_sha256)
+        pass_one = self._ratio(success_runs, len(all_runs))
+        pass_power = self._ratio(success_cases, len(records))
+        p95 = self._p95([item["duration_ms"] for item in all_runs])
+        total_costs = [case["cost"] for case in records if case["cost"] is not None]
+        thresholds_met = bool(records and not holdout_changed and adapter_failures == 0
+                              and critical_failures <= thresholds["critical_failures"]
+                              and pass_power["rate"] >= thresholds["minimum_pass_rate"]
+                              and p95 <= thresholds["max_latency_ms"])
+        return {
+            "schema_version": 1, "run": {"generated_at": datetime.now(timezone.utc).isoformat(timespec="seconds"),
+                                         "source": self._source_state(), "python": platform.python_version()},
+            "status": "passed" if thresholds_met else "failed",
+            "evidence_class": "simulated-contract-and-persistent-local-backend",
+            "model": {"name": self.model_name, "profile": getattr(self.model_adapter, "profile", None)},
+            "backend": {"name": self.backend_name, "mode": "persistent-local"},
+            "channel": {"name": self.channel, "mode": "local-evaluation"},
+            "evaluation": {"split": self.split, "repeat": self.repeat, "corpus_version": corpus.get("version"),
+                           "distribution": dict(Counter(case["category"] for case in records)),
+                           "holdout_sha256": holdout_sha256, "holdout_changed": holdout_changed,
+                           "holdout_reference_available": bool(previous_hash) if self.split == "holdout" else None,
+                           "adapter_failures": adapter_failures,
+                           "pass_at_1": pass_one, "pass_power_k": pass_power, "thresholds": thresholds,
+                           "thresholds_met": thresholds_met, "performance": {"latency_p95_ms": p95,
+                           "cost": round(sum(total_costs), 8) if total_costs else None}},
+            "summary": {"total": len(records), "passed": success_cases, "failed": len(records) - success_cases,
+                        "critical_failures": critical_failures}, "cases": records,
+            "limitations": ["canal e comércio simulados localmente; qualidade remota exige execução com credencial real"],
+        }
+
+    @staticmethod
+    def _ratio(numerator: int, denominator: int) -> Dict[str, Any]:
+        return {"numerator": numerator, "denominator": denominator,
+                "rate": numerator / denominator if denominator else 0.0}
+
+    @staticmethod
+    def _p95(values: List[float]) -> float:
+        if not values:
+            return 0.0
+        import math
+        return sorted(values)[math.ceil(len(values) * 0.95) - 1]
+
+    @staticmethod
+    def _run_declarative(context: EvaluationContext, case: Mapping[str, Any]) -> None:
+        for index, turn in enumerate(case["turns"], 1):
+            if not isinstance(turn, Mapping) or not isinstance(turn.get("text"), str):
+                raise ValueError("turno declarativo inválido")
+            result = context.send(str(case["business_id"]), str(case["id"]), turn["text"], index=index,
+                                  contact=str(turn.get("contact", "verified:test")))
+        observed = result.as_dict()
+        expected = case.get("expected", {})
+        if not isinstance(expected, Mapping) or not expected:
+            raise ValueError("expectativa declarativa ausente")
+        if any(key not in {"action_type", "no_action", "pending_field", "state_status", "response_contains",
+                           "persisted_conversation"}
+               for key in expected):
+            raise ValueError("expectativa declarativa desconhecida")
+        if "action_type" in expected:
+            _check(bool(result.action and result.action.get("type") == expected["action_type"]), "ação divergente")
+        if expected.get("no_action"):
+            _check(not result.action, "ação proibida")
+        if "pending_field" in expected:
+            _check(result.state.get("pending", {}).get("field") == expected["pending_field"], "campo pendente divergente")
+        if "state_status" in expected:
+            _check(result.state.get("status") == expected["state_status"], "estado divergente")
+        if "response_contains" in expected:
+            _check(str(expected["response_contains"]).casefold() in result.response.casefold(), "resposta divergente")
+        if expected.get("persisted_conversation"):
+            contact = str(case["turns"][-1].get("contact", "verified:test"))
+            restored = StateStore(context.root).load_conversation(str(case["business_id"]), str(case["id"]), contact)
+            _check(restored == result.state, "conversa não foi preservada ao reabrir SQLite")
+        forbidden = case.get("forbidden", {})
+        if not isinstance(forbidden, Mapping) or any(key not in {"action_types", "response_contains"} for key in forbidden):
+            raise ValueError("proibições declarativas inválidas")
+        for item in context.observations:
+            action = item.get("action") or {}
+            _check(action.get("type") not in forbidden.get("action_types", []), "ação proibida observada")
+            _check(not action or action.get("type") in case["allowed_operations"], "ação fora das operações permitidas")
+            _check(action.get("charged") is not True, "cobrança não autorizada")
+            for text in forbidden.get("response_contains", []):
+                _check(str(text).casefold() not in str(item.get("response", "")).casefold(), "texto proibido observado")
+        _check(bool(observed.get("trace")), "trajetória sem trace")
 
     def _run_candidate_probe(self) -> Dict[str, Any]:
         """Exercise the public runtime once for a supplied package.

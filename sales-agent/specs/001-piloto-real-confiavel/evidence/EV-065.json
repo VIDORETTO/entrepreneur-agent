@@ -1,0 +1,36 @@
+{
+  "acceptance_refs": [
+    "AC-036"
+  ],
+  "environment": "OS=Linux-5.14.0-687.36.1.el9_8.x86_64-x86_64-with-glibc2.34; Python=3.12.14",
+  "evidence_refs": [],
+  "execution_status": "executed",
+  "id": "EV-065",
+  "input_fingerprints": {
+    "evaluation/dev.json": "1f78c64b03c5383f46fd560edfe0aae045f9a7a3a59fe0657766bb1c485138c2",
+    "evaluation/holdout.json": "18426add14592573b9bed759ded083ed25f916d98b740382a49d13d9ed3af69a",
+    "evaluation/thresholds.json": "fa7896eeb940108854da1f2bed46a99cf64f4245bcf623b36b356f6f6c999e2b",
+    "specs/001-piloto-real-confiavel/plan.md": "a069d7b1d149ba604d47c2cb8035b6bfe0e9dc7471acd4eb697cbcab209ab66e",
+    "specs/001-piloto-real-confiavel/spec.md": "057aed7c1e1360d8f71167caca6af45c61c0ddf7114ce1d2eb8ce7d6dd5858ba",
+    "src/sales_agent/cli.py": "c26674f6a0c901905ea52cf234214f1ab8398a6bc0623c49cb176f8ed3a720d8",
+    "src/sales_agent/evaluation.py": "e0c44c3776c48e75a753e8a2b63257302f4978326d6b59b2bd1b50a3a9046e82",
+    "tests/test_cli_and_evaluation.py": "ecea0429074aaebf8d7b7fbd8eff7adaf2b73f7624dbcfebc4db32019fe263c3"
+  },
+  "input_paths": [
+    "src/sales_agent/evaluation.py",
+    "src/sales_agent/cli.py",
+    "tests/test_cli_and_evaluation.py",
+    "evaluation/dev.json",
+    "evaluation/holdout.json",
+    "evaluation/thresholds.json",
+    "specs/001-piloto-real-confiavel/spec.md",
+    "specs/001-piloto-real-confiavel/plan.md"
+  ],
+  "limitations": "Evidence invalidated because an input changed.",
+  "observations": "A copied holdout was modified after an initial report. SHA-256 comparison marked holdout_changed true and thresholds_met false; dev execution did not read the reserved file.",
+  "procedure": "python3.12 -m pytest -q tests/test_cli_and_evaluation.py",
+  "result": "stale",
+  "tested_revision": "local:a6bc976d3dfa4e965f1e08050f76aa9426eb8a32c3e0913ab0e3fe307ba4dd63",
+  "ticket": "TK-012",
+  "timestamp": "2026-09-28T16:07:20+00:00"
+}

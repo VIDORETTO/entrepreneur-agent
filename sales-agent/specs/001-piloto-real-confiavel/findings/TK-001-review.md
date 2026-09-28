@@ -21,3 +21,8 @@ tickets seguintes, conforme limite expresso do TK-001.
 
 Limite: o job novo ainda não foi executado no GitHub Actions; a prova de
 AC-002 é a execução local do mesmo comando e a configuração inspecionada.
+
+Revalidação após TK-012: EV-078 confirmou AC-001, e EV-083 confirmou AC-002
+com 208 testes sob deslocamento de 400 dias. O guard de ação nula em
+`commit_event` corrige uma corrida revelada pela suíte multiprocesso; dez
+execuções focadas e a suíte completa passaram. Sem novo achado bloqueante.

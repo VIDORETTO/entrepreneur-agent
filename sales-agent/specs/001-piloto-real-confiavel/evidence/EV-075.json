@@ -5,24 +5,26 @@
   "environment": "OS=Linux-5.14.0-687.36.1.el9_8.x86_64-x86_64-with-glibc2.34; Python=3.12.14",
   "evidence_refs": [],
   "execution_status": "executed",
-  "id": "EV-003",
+  "id": "EV-075",
   "input_fingerprints": {
-    "pyproject.toml": "650cf8b8b45cf93db83308909c6499f2d9a1da2e7dc4cd3da8d44f140b7a8ae7",
+    "pyproject.toml": "e8d91c1f1ada6a4a1ed28703a0e713db90d5ef4e7f6f3d4b9eb9f75971dc6024",
     "specs/001-piloto-real-confiavel/plan.md": "a069d7b1d149ba604d47c2cb8035b6bfe0e9dc7471acd4eb697cbcab209ab66e",
     "specs/001-piloto-real-confiavel/spec.md": "057aed7c1e1360d8f71167caca6af45c61c0ddf7114ce1d2eb8ce7d6dd5858ba",
-    "tests/conftest.py": "0f8fcccb0a906eb3e8af46bf9b67f2e203e7fb40fb19e491974460fdccf9a6ca"
+    "tests/conftest.py": "0f8fcccb0a906eb3e8af46bf9b67f2e203e7fb40fb19e491974460fdccf9a6ca",
+    "tests/test_service.py": "72250aecc1295c5f820fc4597b35c7c9b9d8b04d5e823838f6c6e72c53d0c4cd"
   },
   "input_paths": [
     "tests/conftest.py",
+    "tests/test_service.py",
     "pyproject.toml",
     "specs/001-piloto-real-confiavel/spec.md",
     "specs/001-piloto-real-confiavel/plan.md"
   ],
   "limitations": "Evidence invalidated because an input changed.",
-  "observations": "After Python floor metadata change, 172 passed under +400-day process clock",
+  "observations": "208 passed with process clock shifted 400 days. Service subprocess signature fixture uses unshifted time via time_machine escape hatch because the subprocess has its own clock; production clock logic unchanged.",
   "procedure": ".venv/bin/python -m pytest -q --clock-shift-days=400",
   "result": "stale",
-  "tested_revision": "local:a656916fbfe6dfeaf23429291505bc4f751aa55f43ef9ea02fae5103a506bd53",
+  "tested_revision": "local:c37b2c7c6ed31014d1d1e896a4c7fcf978c3d06ef6a477b9c5cfa213eb5badb2",
   "ticket": "TK-001",
-  "timestamp": "2026-09-28T14:19:32+00:00"
+  "timestamp": "2026-09-28T16:19:36+00:00"
 }

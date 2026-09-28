@@ -5,16 +5,18 @@ id: TK-002
 effort: 001-piloto-real-confiavel
 type: delivery
 status: implemented
-ticket_revision: 3
+ticket_revision: 5
 requires: ["TK-001"]
 requirement_refs: ["FR-002"]
 acceptance_refs: ["AC-003"]
 spec_revision: 2
 plan_revision: 2
 owned_areas: ["pyproject.toml", "../.github/workflows/sales-agent-ci.yml", "docs/INSTALLATION.md", "README.md"]
-verification_status: partial
-last_update: "Instalador 3.10 rejeita; suites 3.11 e 3.14 passam localmente; execução do workflow CI indisponível sem push, proibido pelo GOAL-PROMPT"
+verification_status: stale
+last_update: Evidence invalidated after an input changed.
 ---
+
+
 
 
 

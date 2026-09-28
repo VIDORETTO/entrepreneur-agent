@@ -36,3 +36,9 @@ não altera os oráculos de aceitação executados.
 
 Regressão final: 185 testes passaram; Ruff passou. Evidências atuais:
 EV-020, EV-021, EV-022.
+
+Revalidação após TK-012: o teste HTTP em subprocesso passou a assinar com o
+relógio real, que é o usado pelo processo filho, mesmo sob o relógio deslocado
+do pytest. EV-084 cobre novamente AC-010–AC-012 com cinco testes verdes. A
+correção é restrita ao fixture; o serviço de produção não mudou. Sem novo
+achado bloqueante.

@@ -1,0 +1,36 @@
+{
+  "acceptance_refs": [
+    "AC-035"
+  ],
+  "environment": "OS=Linux-5.14.0-687.36.1.el9_8.x86_64-x86_64-with-glibc2.34; Python=3.12.14",
+  "evidence_refs": [],
+  "execution_status": "executed",
+  "id": "EV-080",
+  "input_fingerprints": {
+    "evaluation/dev.json": "e524d8b1c68b8c60964a9e83cbbd01c86f502ed0c4daa93704797c74e5b68802",
+    "evaluation/holdout.json": "5c5fa0fe36caf45739e78c69e4baba3663ee3906bf1c43b2cda4862cfc0b22a8",
+    "evaluation/thresholds.json": "fa7896eeb940108854da1f2bed46a99cf64f4245bcf623b36b356f6f6c999e2b",
+    "specs/001-piloto-real-confiavel/plan.md": "a069d7b1d149ba604d47c2cb8035b6bfe0e9dc7471acd4eb697cbcab209ab66e",
+    "specs/001-piloto-real-confiavel/spec.md": "057aed7c1e1360d8f71167caca6af45c61c0ddf7114ce1d2eb8ce7d6dd5858ba",
+    "src/sales_agent/cli.py": "c26674f6a0c901905ea52cf234214f1ab8398a6bc0623c49cb176f8ed3a720d8",
+    "src/sales_agent/evaluation.py": "533ff5c9b339acba333729d711e106a8d84fb05d66b0f0e4776b7263b01e1daf",
+    "tests/test_cli_and_evaluation.py": "1db34964515ec7ca645da8c9e03c919270f128ff12aff0d9eb48e73481359b16"
+  },
+  "input_paths": [
+    "src/sales_agent/evaluation.py",
+    "src/sales_agent/cli.py",
+    "tests/test_cli_and_evaluation.py",
+    "evaluation/dev.json",
+    "evaluation/holdout.json",
+    "evaluation/thresholds.json",
+    "specs/001-piloto-real-confiavel/spec.md",
+    "specs/001-piloto-real-confiavel/plan.md"
+  ],
+  "limitations": "",
+  "observations": "208 tests passed; 50 dev and 30 holdout cases, total distribution 16/12/12/12/12/8/8. Holdout four repetitions: pass@1 120/120 and pass^4 30/30.",
+  "procedure": "python3.12 -m pytest -q",
+  "result": "passed",
+  "tested_revision": "local:15d112869a3a3b01f4b0b9987afbf1c3f7961c9ff07746587606a2e79e992240",
+  "ticket": "TK-012",
+  "timestamp": "2026-09-28T16:37:41+00:00"
+}

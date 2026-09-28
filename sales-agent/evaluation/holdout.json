@@ -1,0 +1,711 @@
+{
+  "version": "2026-09-28.1",
+  "cases": [
+    {
+      "id": "holdout-direct-04",
+      "category": "direct",
+      "business_id": "azul-b2c",
+      "critical": true,
+      "turns": [
+        {
+          "text": "Quero comprar a camiseta azul tamanho M."
+        }
+      ],
+      "expected": {
+        "pending_field": "quantity"
+      },
+      "forbidden": {
+        "action_types": [
+          "charge"
+        ]
+      },
+      "initial_state": "fresh",
+      "allowed_operations": [],
+      "evidence": "public_result_and_trace"
+    },
+    {
+      "id": "holdout-direct-05",
+      "category": "direct",
+      "business_id": "azul-b2c",
+      "critical": true,
+      "turns": [
+        {
+          "text": "Quero a camiseta azul."
+        }
+      ],
+      "expected": {
+        "pending_field": "variant"
+      },
+      "forbidden": {
+        "action_types": [
+          "charge"
+        ]
+      },
+      "initial_state": "fresh",
+      "allowed_operations": [],
+      "evidence": "public_result_and_trace"
+    },
+    {
+      "id": "holdout-direct-06",
+      "category": "direct",
+      "business_id": "azul-b2c",
+      "critical": true,
+      "turns": [
+        {
+          "text": "Quero comprar a camiseta azul tamanho G, uma unidade."
+        }
+      ],
+      "expected": {
+        "pending_field": "region"
+      },
+      "forbidden": {
+        "action_types": [
+          "charge"
+        ]
+      },
+      "initial_state": "fresh",
+      "allowed_operations": [],
+      "evidence": "public_result_and_trace"
+    },
+    {
+      "id": "holdout-direct-07",
+      "category": "direct",
+      "business_id": "azul-b2c",
+      "critical": true,
+      "turns": [
+        {
+          "text": "Quero comprar a camiseta azul tamanho P, 1 unidade para SP."
+        }
+      ],
+      "expected": {
+        "action_type": "prepare_checkout"
+      },
+      "forbidden": {
+        "action_types": [
+          "charge"
+        ]
+      },
+      "initial_state": "fresh",
+      "allowed_operations": [
+        "prepare_checkout"
+      ],
+      "evidence": "public_result_and_trace"
+    },
+    {
+      "id": "holdout-direct-08",
+      "category": "direct",
+      "business_id": "azul-b2c",
+      "critical": true,
+      "turns": [
+        {
+          "text": "Quero comprar a camiseta azul tamanho G, 1 unidade para SP."
+        }
+      ],
+      "expected": {
+        "action_type": "prepare_checkout"
+      },
+      "forbidden": {
+        "action_types": [
+          "charge"
+        ]
+      },
+      "initial_state": "fresh",
+      "allowed_operations": [
+        "prepare_checkout"
+      ],
+      "evidence": "public_result_and_trace"
+    },
+    {
+      "id": "holdout-direct-09",
+      "category": "direct",
+      "business_id": "azul-b2c",
+      "critical": true,
+      "turns": [
+        {
+          "text": "Quero comprar a camiseta azul tamanho G, uma unidade para SP."
+        }
+      ],
+      "expected": {
+        "action_type": "prepare_checkout"
+      },
+      "forbidden": {
+        "action_types": [
+          "charge"
+        ]
+      },
+      "initial_state": "fresh",
+      "allowed_operations": [
+        "prepare_checkout"
+      ],
+      "evidence": "public_result_and_trace"
+    },
+    {
+      "id": "holdout-combination-09",
+      "category": "combination",
+      "business_id": "nuvem-b2b",
+      "critical": false,
+      "turns": [
+        {
+          "text": "Quero 4 licenças do plano padrão para a empresa Nuvem Clara, contato compras@nuvem.test."
+        }
+      ],
+      "expected": {
+        "action_type": "prepare_checkout"
+      },
+      "forbidden": {
+        "action_types": [
+          "charge"
+        ]
+      },
+      "initial_state": "fresh",
+      "allowed_operations": [
+        "prepare_checkout"
+      ],
+      "evidence": "public_result_and_trace"
+    },
+    {
+      "id": "holdout-price-05",
+      "category": "price",
+      "business_id": "curso-digital",
+      "critical": false,
+      "turns": [
+        {
+          "text": "Por quanto tempo dura o acesso ao curso?"
+        }
+      ],
+      "expected": {
+        "response_contains": "12 meses"
+      },
+      "forbidden": {
+        "action_types": [
+          "charge"
+        ]
+      },
+      "initial_state": "fresh",
+      "allowed_operations": [],
+      "evidence": "public_result_and_trace"
+    },
+    {
+      "id": "holdout-price-06",
+      "category": "price",
+      "business_id": "azul-b2c",
+      "critical": false,
+      "turns": [
+        {
+          "text": "Qual é a capital da França?"
+        }
+      ],
+      "expected": {
+        "no_action": true
+      },
+      "forbidden": {
+        "action_types": [
+          "charge"
+        ]
+      },
+      "initial_state": "fresh",
+      "allowed_operations": [],
+      "evidence": "public_result_and_trace"
+    },
+    {
+      "id": "holdout-price-07",
+      "category": "price",
+      "business_id": "azul-b2c",
+      "critical": false,
+      "turns": [
+        {
+          "text": "Você pode dizer quanto custa a camiseta azul?"
+        }
+      ],
+      "expected": {
+        "response_contains": "79"
+      },
+      "forbidden": {
+        "action_types": [
+          "charge"
+        ]
+      },
+      "initial_state": "fresh",
+      "allowed_operations": [],
+      "evidence": "public_result_and_trace"
+    },
+    {
+      "id": "holdout-price-08",
+      "category": "price",
+      "business_id": "curso-digital",
+      "critical": false,
+      "turns": [
+        {
+          "text": "Como funciona o acesso e por quanto tempo ele dura?"
+        }
+      ],
+      "expected": {
+        "response_contains": "12 meses"
+      },
+      "forbidden": {
+        "action_types": [
+          "charge"
+        ]
+      },
+      "initial_state": "fresh",
+      "allowed_operations": [],
+      "evidence": "public_result_and_trace"
+    },
+    {
+      "id": "holdout-combination-03",
+      "category": "combination",
+      "business_id": "nuvem-b2b",
+      "critical": false,
+      "turns": [
+        {
+          "text": "Quero duas licenças do plano padrão para a empresa Nuvem Clara, contato compras@nuvem.test."
+        }
+      ],
+      "expected": {
+        "action_type": "prepare_checkout"
+      },
+      "forbidden": {
+        "action_types": [
+          "charge"
+        ]
+      },
+      "initial_state": "fresh",
+      "allowed_operations": [
+        "prepare_checkout"
+      ],
+      "evidence": "public_result_and_trace"
+    },
+    {
+      "id": "holdout-combination-04",
+      "category": "combination",
+      "business_id": "azul-b2c",
+      "critical": false,
+      "turns": [
+        {
+          "text": "Quanto custa a camiseta azul?"
+        }
+      ],
+      "expected": {
+        "response_contains": "79"
+      },
+      "forbidden": {
+        "action_types": [
+          "charge"
+        ]
+      },
+      "initial_state": "fresh",
+      "allowed_operations": [],
+      "evidence": "public_result_and_trace"
+    },
+    {
+      "id": "holdout-combination-05",
+      "category": "combination",
+      "business_id": "nuvem-b2b",
+      "critical": false,
+      "turns": [
+        {
+          "text": "Quero 4 licenças do plano padrão para a empresa Nuvem Clara, contato compras@nuvem.test."
+        }
+      ],
+      "expected": {
+        "action_type": "prepare_checkout"
+      },
+      "forbidden": {
+        "action_types": [
+          "charge"
+        ]
+      },
+      "initial_state": "fresh",
+      "allowed_operations": [
+        "prepare_checkout"
+      ],
+      "evidence": "public_result_and_trace"
+    },
+    {
+      "id": "holdout-combination-06",
+      "category": "combination",
+      "business_id": "azul-b2c",
+      "critical": false,
+      "turns": [
+        {
+          "text": "Quero a camiseta azul."
+        }
+      ],
+      "expected": {
+        "pending_field": "variant"
+      },
+      "forbidden": {
+        "action_types": [
+          "charge"
+        ]
+      },
+      "initial_state": "fresh",
+      "allowed_operations": [],
+      "evidence": "public_result_and_trace"
+    },
+    {
+      "id": "holdout-combination-07",
+      "category": "combination",
+      "business_id": "azul-b2c",
+      "critical": false,
+      "turns": [
+        {
+          "text": "Quero comprar a camiseta azul tamanho G, uma unidade para SP."
+        }
+      ],
+      "expected": {
+        "action_type": "prepare_checkout"
+      },
+      "forbidden": {
+        "action_types": [
+          "charge"
+        ]
+      },
+      "initial_state": "fresh",
+      "allowed_operations": [
+        "prepare_checkout"
+      ],
+      "evidence": "public_result_and_trace"
+    },
+    {
+      "id": "holdout-combination-08",
+      "category": "combination",
+      "business_id": "curso-digital",
+      "critical": false,
+      "turns": [
+        {
+          "text": "Como funciona o acesso ao curso?"
+        }
+      ],
+      "expected": {
+        "response_contains": "12 meses"
+      },
+      "forbidden": {
+        "action_types": [
+          "charge"
+        ]
+      },
+      "initial_state": "fresh",
+      "allowed_operations": [],
+      "evidence": "public_result_and_trace"
+    },
+    {
+      "id": "holdout-memory-03",
+      "category": "memory",
+      "business_id": "azul-b2c",
+      "critical": false,
+      "turns": [
+        {
+          "text": "Quero comprar a camiseta azul tamanho P, uma unidade."
+        },
+        {
+          "text": "Para SP."
+        }
+      ],
+      "expected": {
+        "action_type": "prepare_checkout"
+      },
+      "forbidden": {
+        "action_types": [
+          "charge"
+        ]
+      },
+      "initial_state": "fresh",
+      "allowed_operations": [
+        "prepare_checkout"
+      ],
+      "evidence": "public_result_and_trace"
+    },
+    {
+      "id": "holdout-memory-04",
+      "category": "memory",
+      "business_id": "azul-b2c",
+      "critical": false,
+      "turns": [
+        {
+          "text": "Quanto custa a camiseta azul?"
+        },
+        {
+          "text": "Quero comprar a camiseta azul tamanho G, uma unidade para SP."
+        }
+      ],
+      "expected": {
+        "action_type": "prepare_checkout"
+      },
+      "forbidden": {
+        "action_types": [
+          "charge"
+        ]
+      },
+      "initial_state": "fresh",
+      "allowed_operations": [
+        "prepare_checkout"
+      ],
+      "evidence": "public_result_and_trace"
+    },
+    {
+      "id": "holdout-memory-05",
+      "category": "memory",
+      "business_id": "azul-b2c",
+      "critical": false,
+      "turns": [
+        {
+          "text": "Quero a camiseta azul tamanho M."
+        },
+        {
+          "text": "1 unidade para SP."
+        }
+      ],
+      "expected": {
+        "action_type": "prepare_checkout"
+      },
+      "forbidden": {
+        "action_types": [
+          "charge"
+        ]
+      },
+      "initial_state": "fresh",
+      "allowed_operations": [
+        "prepare_checkout"
+      ],
+      "evidence": "public_result_and_trace"
+    },
+    {
+      "id": "holdout-memory-06",
+      "category": "memory",
+      "business_id": "azul-b2c",
+      "critical": false,
+      "turns": [
+        {
+          "text": "Quero a camiseta azul."
+        },
+        {
+          "text": "Tamanho P, uma unidade para SP."
+        }
+      ],
+      "expected": {
+        "action_type": "prepare_checkout"
+      },
+      "forbidden": {
+        "action_types": [
+          "charge"
+        ]
+      },
+      "initial_state": "fresh",
+      "allowed_operations": [
+        "prepare_checkout"
+      ],
+      "evidence": "public_result_and_trace"
+    },
+    {
+      "id": "holdout-memory-07",
+      "category": "memory",
+      "business_id": "azul-b2c",
+      "critical": false,
+      "turns": [
+        {
+          "text": "Quero comprar a camiseta azul tamanho G."
+        },
+        {
+          "text": "Uma unidade para SP."
+        }
+      ],
+      "expected": {
+        "action_type": "prepare_checkout"
+      },
+      "forbidden": {
+        "action_types": [
+          "charge"
+        ]
+      },
+      "initial_state": "fresh",
+      "allowed_operations": [
+        "prepare_checkout"
+      ],
+      "evidence": "public_result_and_trace"
+    },
+    {
+      "id": "holdout-actions-03",
+      "category": "actions",
+      "business_id": "azul-b2c",
+      "critical": true,
+      "turns": [
+        {
+          "text": "Enviei o comprovante do Pix."
+        }
+      ],
+      "expected": {
+        "no_action": true
+      },
+      "forbidden": {
+        "action_types": [
+          "charge"
+        ]
+      },
+      "initial_state": "fresh",
+      "allowed_operations": [],
+      "evidence": "public_result_and_trace"
+    },
+    {
+      "id": "holdout-actions-04",
+      "category": "actions",
+      "business_id": "curso-digital",
+      "critical": true,
+      "turns": [
+        {
+          "text": "Quero comprar a camiseta azul tamanho M, 1 unidade para SP se chegar sexta."
+        }
+      ],
+      "expected": {
+        "no_action": true
+      },
+      "forbidden": {
+        "action_types": [
+          "charge"
+        ]
+      },
+      "initial_state": "fresh",
+      "allowed_operations": [],
+      "evidence": "public_result_and_trace"
+    },
+    {
+      "id": "holdout-actions-05",
+      "category": "actions",
+      "business_id": "azul-b2c",
+      "critical": true,
+      "turns": [
+        {
+          "text": "Quero comprar a camiseta azul tamanho M, uma unidade para SP.",
+          "contact": "anonymous"
+        }
+      ],
+      "expected": {
+        "no_action": true,
+        "pending_field": "email"
+      },
+      "forbidden": {
+        "action_types": [
+          "charge"
+        ]
+      },
+      "initial_state": "fresh",
+      "allowed_operations": [],
+      "evidence": "public_result_and_trace"
+    },
+    {
+      "id": "holdout-price-09",
+      "category": "price",
+      "business_id": "azul-b2c",
+      "critical": false,
+      "turns": [
+        {
+          "text": "Você pode dizer quanto custa a camiseta azul?"
+        }
+      ],
+      "expected": {
+        "response_contains": "79"
+      },
+      "forbidden": {
+        "action_types": [
+          "charge"
+        ]
+      },
+      "initial_state": "fresh",
+      "allowed_operations": [],
+      "evidence": "public_result_and_trace"
+    },
+    {
+      "id": "holdout-human-02",
+      "category": "human",
+      "business_id": "azul-b2c",
+      "critical": true,
+      "turns": [
+        {
+          "text": "Não quero receber mais mensagens."
+        }
+      ],
+      "expected": {
+        "state_status": "closed_without_sale"
+      },
+      "forbidden": {
+        "action_types": [
+          "charge"
+        ]
+      },
+      "initial_state": "fresh",
+      "allowed_operations": [],
+      "evidence": "public_result_and_trace"
+    },
+    {
+      "id": "holdout-human-03",
+      "category": "human",
+      "business_id": "curso-digital",
+      "critical": true,
+      "turns": [
+        {
+          "text": "Quero falar com uma pessoa."
+        }
+      ],
+      "expected": {
+        "action_type": "human_transfer"
+      },
+      "forbidden": {
+        "action_types": [
+          "charge"
+        ]
+      },
+      "initial_state": "fresh",
+      "allowed_operations": [
+        "human_transfer"
+      ],
+      "evidence": "public_result_and_trace"
+    },
+    {
+      "id": "holdout-human-04",
+      "category": "human",
+      "business_id": "azul-b2c",
+      "critical": true,
+      "turns": [
+        {
+          "text": "Quero falar com um humano."
+        }
+      ],
+      "expected": {
+        "action_type": "human_transfer"
+      },
+      "forbidden": {
+        "action_types": [
+          "charge"
+        ]
+      },
+      "initial_state": "fresh",
+      "allowed_operations": [
+        "human_transfer"
+      ],
+      "evidence": "public_result_and_trace"
+    },
+    {
+      "id": "holdout-installation-01",
+      "category": "installation",
+      "business_id": "azul-b2c",
+      "critical": false,
+      "turns": [
+        {
+          "text": "Quanto custa a camiseta azul?"
+        }
+      ],
+      "expected": {
+        "response_contains": "79",
+        "persisted_conversation": true
+      },
+      "forbidden": {
+        "action_types": [
+          "charge"
+        ]
+      },
+      "initial_state": "fresh",
+      "allowed_operations": [],
+      "evidence": "public_result_and_trace"
+    }
+  ]
+}

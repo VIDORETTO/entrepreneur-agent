@@ -1,5 +1,24 @@
 # Avaliação
 
+`vendedor evaluate --split dev --repeat 4 --output reports/evaluation-latest.json`
+executa os 38 cenários de contrato e 12 casos declarativos. O conjunto reservado
+é executado apenas com `--split holdout` e contém 30 casos. Juntos, os 80 casos
+seguem a distribuição do plano §17.1. Cada repetição usa SQLite temporário e
+registra resultado, custo observado do adaptador e duração. O relatório traz
+pass@1 (acertos entre todas as execuções), pass^k (casos que passaram em todas
+as repetições), numerador e denominador por caso e agregados, p95, falhas
+críticas e limiares de `evaluation/thresholds.json`.
+
+Para conferir se o reservado mudou desde um relatório aprovado, execute
+`vendedor evaluate --split holdout --repeat 4 --previous-report caminho/do/relatorio.json
+--output reports/holdout-latest.json`. O SHA-256 do arquivo reservado aparece
+somente no relatório do split `holdout`. Uma mudança marca `holdout_changed`
+e impede `thresholds_met`. Sem `--previous-report`, o relatório não dispõe de
+uma referência anterior para afirmar mudança. O arquivo reservado não é lido
+na execução `dev`. `--model-config` aceita o mesmo JSON `env:NOME` usado por
+`model-check`; a credencial é resolvida em memória. `--split contract` preserva
+o relatório histórico de 38 cenários.
+
 `vendedor evaluate` executa os 38 cenários AC do contrato e emite JSON com caso,
 status, criticidade, backend, adaptador de modelo, limitações, versão do pacote,
 runtime e revisão Git quando disponível. `run.source.dirty: true` indica que o

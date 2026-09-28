@@ -28,7 +28,7 @@
 - Evidence refs: none
 - Limitations: Evidence invalidated because an input changed.
 
-## EV-003 — passed
+## EV-003 — stale
 
 - Ticket: `TK-001`
 - Acceptance: `AC-002`
@@ -39,9 +39,9 @@
 - Timestamp: `2026-09-28T14:19:32+00:00`
 - Observations: After Python floor metadata change, 172 passed under +400-day process clock
 - Evidence refs: none
-- Limitations: none recorded
+- Limitations: Evidence invalidated because an input changed.
 
-## EV-004 — partial
+## EV-004 — stale
 
 - Ticket: `TK-002`
 - Acceptance: `AC-003`
@@ -52,7 +52,7 @@
 - Timestamp: `2026-09-28T14:19:56+00:00`
 - Observations: pip 3.10.21 rejects Python>=3.11; 3.11.16 and 3.14.7 each pass 172 tests; build and twine pass
 - Evidence refs: none
-- Limitations: GitHub Actions workflow not executed; goal prohibits git push
+- Limitations: GitHub Actions workflow not executed; goal prohibits git push Evidence invalidated because an input changed.
 
 ## EV-005 — stale
 
@@ -288,7 +288,7 @@
 - Evidence refs: none
 - Limitations: Evidence invalidated because an input changed.
 
-## EV-023 — passed
+## EV-023 — stale
 
 - Ticket: `TK-001`
 - Acceptance: `AC-001`
@@ -299,7 +299,7 @@
 - Timestamp: `2026-09-28T15:14:36+00:00`
 - Observations: Farol clock test remained green after the added inbound timestamp read; 1 passed.
 - Evidence refs: none
-- Limitations: none recorded
+- Limitations: Evidence invalidated because an input changed.
 
 ## EV-024 — stale
 
@@ -483,7 +483,7 @@
 - Evidence refs: none
 - Limitations: Evidence invalidated because an input changed.
 
-## EV-038 — passed
+## EV-038 — stale
 
 - Ticket: `TK-005`
 - Acceptance: `AC-010`, `AC-011`, `AC-012`
@@ -494,7 +494,7 @@
 - Timestamp: `2026-09-28T15:33:16+00:00`
 - Observations: 5 passed after optional transcriber config; service ACK, readiness and SIGTERM restart contracts remain green.
 - Evidence refs: none
-- Limitations: none recorded
+- Limitations: Evidence invalidated because an input changed.
 
 ## EV-039 — stale
 
@@ -756,7 +756,7 @@
 - Evidence refs: none
 - Limitations: none recorded
 
-## EV-059 — passed
+## EV-059 — stale
 
 - Ticket: `TK-008`
 - Acceptance: `AC-019`
@@ -767,9 +767,9 @@
 - Timestamp: `2026-09-28T15:50:48+00:00`
 - Observations: System and user roles separated; buyer text delimited and strict JSON schema sent.
 - Evidence refs: none
-- Limitations: Local fake HTTP only; real OpenAI call not run
+- Limitations: Local fake HTTP only; real OpenAI call not run Evidence invalidated because an input changed.
 
-## EV-060 — passed
+## EV-060 — stale
 
 - Ticket: `TK-008`
 - Acceptance: `AC-020`
@@ -780,9 +780,9 @@
 - Timestamp: `2026-09-28T15:50:48+00:00`
 - Observations: Invalid then valid response repaired with exactly two calls.
 - Evidence refs: none
-- Limitations: Local fake HTTP only; real OpenAI call not run
+- Limitations: Local fake HTTP only; real OpenAI call not run Evidence invalidated because an input changed.
 
-## EV-061 — passed
+## EV-061 — stale
 
 - Ticket: `TK-008`
 - Acceptance: `AC-021`
@@ -793,9 +793,9 @@
 - Timestamp: `2026-09-28T15:50:48+00:00`
 - Observations: Two invalid responses yielded model_contract_failed trace and no action.
 - Evidence refs: none
-- Limitations: Local fake HTTP only; real OpenAI call not run
+- Limitations: Local fake HTTP only; real OpenAI call not run Evidence invalidated because an input changed.
 
-## EV-062 — passed
+## EV-062 — stale
 
 - Ticket: `TK-008`
 - Acceptance: `AC-022`
@@ -806,9 +806,9 @@
 - Timestamp: `2026-09-28T15:50:48+00:00`
 - Observations: Usage 1000/200 with configured prices 1/5 per million yielded cost 0.002; latency tracked.
 - Evidence refs: none
-- Limitations: Local fake HTTP only; real OpenAI call not run
+- Limitations: Local fake HTTP only; real OpenAI call not run Evidence invalidated because an input changed.
 
-## EV-063 — passed
+## EV-063 — stale
 
 - Ticket: `TK-008`
 - Acceptance: `AC-023`
@@ -819,4 +819,290 @@
 - Timestamp: `2026-09-28T15:50:49+00:00`
 - Observations: Both OpenAI and compatible profiles passed local HTTP contract with model/profile metadata; no real API call.
 - Evidence refs: none
-- Limitations: Local fake HTTP only; real OpenAI call not run
+- Limitations: Local fake HTTP only; real OpenAI call not run Evidence invalidated because an input changed.
+
+## EV-064 — stale
+
+- Ticket: `TK-012`
+- Acceptance: `AC-035`
+- Procedure: `python3.12 -m pytest -q tests/test_cli_and_evaluation.py`
+- Execution: `executed`
+- Environment: OS=Linux-5.14.0-687.36.1.el9_8.x86_64-x86_64-with-glibc2.34; Python=3.12.14
+- Tested revision: `local:a6bc976d3dfa4e965f1e08050f76aa9426eb8a32c3e0913ab0e3fe307ba4dd63`
+- Timestamp: `2026-09-28T16:07:19+00:00`
+- Observations: 50 dev and 30 holdout cases; four holdout repetitions yielded pass@1 120/120 and pass^4 30/30. Combined distribution 16/12/12/12/12/8/8; no critical failure.
+- Evidence refs: none
+- Limitations: Evidence invalidated because an input changed.
+
+## EV-065 — stale
+
+- Ticket: `TK-012`
+- Acceptance: `AC-036`
+- Procedure: `python3.12 -m pytest -q tests/test_cli_and_evaluation.py`
+- Execution: `executed`
+- Environment: OS=Linux-5.14.0-687.36.1.el9_8.x86_64-x86_64-with-glibc2.34; Python=3.12.14
+- Tested revision: `local:a6bc976d3dfa4e965f1e08050f76aa9426eb8a32c3e0913ab0e3fe307ba4dd63`
+- Timestamp: `2026-09-28T16:07:20+00:00`
+- Observations: A copied holdout was modified after an initial report. SHA-256 comparison marked holdout_changed true and thresholds_met false; dev execution did not read the reserved file.
+- Evidence refs: none
+- Limitations: Evidence invalidated because an input changed.
+
+## EV-066 — stale
+
+- Ticket: `TK-012`
+- Acceptance: `AC-037`
+- Procedure: `python3.12 -m pytest -q tests/test_cli_and_evaluation.py`
+- Execution: `executed`
+- Environment: OS=Linux-5.14.0-687.36.1.el9_8.x86_64-x86_64-with-glibc2.34; Python=3.12.14
+- Tested revision: `local:a6bc976d3dfa4e965f1e08050f76aa9426eb8a32c3e0913ab0e3fe307ba4dd63`
+- Timestamp: `2026-09-28T16:07:20+00:00`
+- Observations: A fake model failed one critical case on repetition four: pass@1 3/4, pass^4 0/1, thresholds_met false.
+- Evidence refs: none
+- Limitations: Evidence invalidated because an input changed.
+
+## EV-067 — stale
+
+- Ticket: `TK-012`
+- Acceptance: `AC-035`
+- Procedure: `python3.12 -m pytest -q`
+- Execution: `executed`
+- Environment: OS=Linux-5.14.0-687.36.1.el9_8.x86_64-x86_64-with-glibc2.34; Python=3.12.14
+- Tested revision: `local:ec7333c175291bca3b58039ae9282528fce02315d35f4d3331c5c46a0146187d`
+- Timestamp: `2026-09-28T16:14:11+00:00`
+- Observations: Full suite 208 passed after retry of an unrelated intermittent multiprocess assertion. Dev 50/50; holdout 30/30 across 4 repetitions, pass@1 120/120 and pass^4 30/30; total 80 cases.
+- Evidence refs: none
+- Limitations: Evidence invalidated because an input changed.
+
+## EV-068 — stale
+
+- Ticket: `TK-012`
+- Acceptance: `AC-036`
+- Procedure: `python3.12 -m pytest -q`
+- Execution: `executed`
+- Environment: OS=Linux-5.14.0-687.36.1.el9_8.x86_64-x86_64-with-glibc2.34; Python=3.12.14
+- Tested revision: `local:ec7333c175291bca3b58039ae9282528fce02315d35f4d3331c5c46a0146187d`
+- Timestamp: `2026-09-28T16:14:11+00:00`
+- Observations: Copied reserved corpus mutation yielded holdout_changed=true and thresholds_met=false. Dev split reads dev and golden files, not holdout.
+- Evidence refs: none
+- Limitations: Evidence invalidated because an input changed.
+
+## EV-069 — stale
+
+- Ticket: `TK-012`
+- Acceptance: `AC-037`
+- Procedure: `python3.12 -m pytest -q`
+- Execution: `executed`
+- Environment: OS=Linux-5.14.0-687.36.1.el9_8.x86_64-x86_64-with-glibc2.34; Python=3.12.14
+- Tested revision: `local:ec7333c175291bca3b58039ae9282528fce02315d35f4d3331c5c46a0146187d`
+- Timestamp: `2026-09-28T16:14:12+00:00`
+- Observations: Fake model failed one critical repetition: case pass@1=3/4, pass^4=0/1 and thresholds_met=false.
+- Evidence refs: none
+- Limitations: Evidence invalidated because an input changed.
+
+## EV-070 — passed
+
+- Ticket: `TK-008`
+- Acceptance: `AC-019`
+- Procedure: `.venv/bin/python -m pytest -q tests/test_model_adapter.py`
+- Execution: `executed`
+- Environment: OS=Linux-5.14.0-687.36.1.el9_8.x86_64-x86_64-with-glibc2.34; Python=3.12.14
+- Tested revision: `local:a6491f0180742c07abf7912f03fe38aefba0ba0703936097a9b5a06e9ae610e6`
+- Timestamp: `2026-09-28T16:14:26+00:00`
+- Observations: HTTP fake confirms separate system/user roles and strict json_schema request; 23 model adapter tests passed.
+- Evidence refs: none
+- Limitations: none recorded
+
+## EV-071 — passed
+
+- Ticket: `TK-008`
+- Acceptance: `AC-020`
+- Procedure: `.venv/bin/python -m pytest -q tests/test_model_adapter.py`
+- Execution: `executed`
+- Environment: OS=Linux-5.14.0-687.36.1.el9_8.x86_64-x86_64-with-glibc2.34; Python=3.12.14
+- Tested revision: `local:a6491f0180742c07abf7912f03fe38aefba0ba0703936097a9b5a06e9ae610e6`
+- Timestamp: `2026-09-28T16:14:27+00:00`
+- Observations: One invalid then valid fake response uses exactly one repair; 23 adapter tests passed.
+- Evidence refs: none
+- Limitations: none recorded
+
+## EV-072 — passed
+
+- Ticket: `TK-008`
+- Acceptance: `AC-021`
+- Procedure: `.venv/bin/python -m pytest -q tests/test_model_adapter.py`
+- Execution: `executed`
+- Environment: OS=Linux-5.14.0-687.36.1.el9_8.x86_64-x86_64-with-glibc2.34; Python=3.12.14
+- Tested revision: `local:a6491f0180742c07abf7912f03fe38aefba0ba0703936097a9b5a06e9ae610e6`
+- Timestamp: `2026-09-28T16:14:27+00:00`
+- Observations: Two invalid fake responses fail closed with model_contract_failed and no commercial action; 23 adapter tests passed.
+- Evidence refs: none
+- Limitations: none recorded
+
+## EV-073 — passed
+
+- Ticket: `TK-008`
+- Acceptance: `AC-022`
+- Procedure: `.venv/bin/python -m pytest -q tests/test_model_adapter.py`
+- Execution: `executed`
+- Environment: OS=Linux-5.14.0-687.36.1.el9_8.x86_64-x86_64-with-glibc2.34; Python=3.12.14
+- Tested revision: `local:a6491f0180742c07abf7912f03fe38aefba0ba0703936097a9b5a06e9ae610e6`
+- Timestamp: `2026-09-28T16:14:27+00:00`
+- Observations: Fake usage pricing and latency fields verified by 23 adapter tests.
+- Evidence refs: none
+- Limitations: none recorded
+
+## EV-074 — passed
+
+- Ticket: `TK-008`
+- Acceptance: `AC-023`
+- Procedure: `.venv/bin/python -m pytest -q tests/test_model_adapter.py`
+- Execution: `executed`
+- Environment: OS=Linux-5.14.0-687.36.1.el9_8.x86_64-x86_64-with-glibc2.34; Python=3.12.14
+- Tested revision: `local:a6491f0180742c07abf7912f03fe38aefba0ba0703936097a9b5a06e9ae610e6`
+- Timestamp: `2026-09-28T16:14:27+00:00`
+- Observations: Both openai and openai-compatible local fake server contracts pass; no real provider call.
+- Evidence refs: none
+- Limitations: none recorded
+
+## EV-075 — stale
+
+- Ticket: `TK-001`
+- Acceptance: `AC-002`
+- Procedure: `.venv/bin/python -m pytest -q --clock-shift-days=400`
+- Execution: `executed`
+- Environment: OS=Linux-5.14.0-687.36.1.el9_8.x86_64-x86_64-with-glibc2.34; Python=3.12.14
+- Tested revision: `local:c37b2c7c6ed31014d1d1e896a4c7fcf978c3d06ef6a477b9c5cfa213eb5badb2`
+- Timestamp: `2026-09-28T16:19:36+00:00`
+- Observations: 208 passed with process clock shifted 400 days. Service subprocess signature fixture uses unshifted time via time_machine escape hatch because the subprocess has its own clock; production clock logic unchanged.
+- Evidence refs: none
+- Limitations: Evidence invalidated because an input changed.
+
+## EV-076 — stale
+
+- Ticket: `TK-002`
+- Acceptance: `AC-003`
+- Procedure: `/tmp/vendedor-py310/bin/python -m pip install --dry-run --no-deps .; /tmp/vendedor-py311/bin/python -m pytest -q; /tmp/vendedor-py314/bin/python -m pytest -q; .venv/bin/python -m build; .venv/bin/twine check dist/*`
+- Execution: `executed`
+- Environment: OS=Linux-5.14.0-687.36.1.el9_8.x86_64-x86_64-with-glibc2.34; Python=3.12.14
+- Tested revision: `local:f205fa6b660cca1c1c73788c51643a7e49a9f34a4d789f1a939c5305e12c57b3`
+- Timestamp: `2026-09-28T16:25:27+00:00`
+- Observations: Python 3.10.21 rejects >=3.11; Python 3.11.16 and 3.14.7 each pass 208 tests; source and wheel build; twine check both pass. GitHub Actions workflow was not executed.
+- Evidence refs: none
+- Limitations: CI run needs a push, which the goal explicitly prohibits. Evidence invalidated because an input changed.
+
+## EV-077 — stale
+
+- Ticket: `TK-001`
+- Acceptance: `AC-002`
+- Procedure: `.venv/bin/python -m pytest -q --clock-shift-days=400`
+- Execution: `executed`
+- Environment: OS=Linux-5.14.0-687.36.1.el9_8.x86_64-x86_64-with-glibc2.34; Python=3.12.14
+- Tested revision: `local:f83a28c36718d1b34b972eb0150ac3a410b1ab640fe5fd1a3d19007321a1eb57`
+- Timestamp: `2026-09-28T16:29:38+00:00`
+- Observations: 208 passed with process clock shifted 400 days. Local service tests sign against the unshifted subprocess clock. A concurrent commit_event action mapping guard was also exercised by the suite.
+- Evidence refs: none
+- Limitations: Evidence invalidated because an input changed.
+
+## EV-078 — passed
+
+- Ticket: `TK-001`
+- Acceptance: `AC-001`
+- Procedure: `.venv/bin/python -m pytest -q tests/test_knowledge_and_configuration.py::test_farol_manifest_normalizes_offset_dates_and_replaces_previous_generation`
+- Execution: `executed`
+- Environment: OS=Linux-5.14.0-687.36.1.el9_8.x86_64-x86_64-with-glibc2.34; Python=3.12.14
+- Tested revision: `local:e800e6d6b056fa7e18f3bab82d6fb6d9fadf6461069b5d3711317111cad5ed56`
+- Timestamp: `2026-09-28T16:30:32+00:00`
+- Observations: Farol offset date and generation replacement test passed after commit_event null-action guard.
+- Evidence refs: none
+- Limitations: none recorded
+
+## EV-079 — stale
+
+- Ticket: `TK-005`
+- Acceptance: `AC-010`, `AC-011`, `AC-012`
+- Procedure: `.venv/bin/python -m pytest -q tests/test_service.py`
+- Execution: `executed`
+- Environment: OS=Linux-5.14.0-687.36.1.el9_8.x86_64-x86_64-with-glibc2.34; Python=3.12.14
+- Tested revision: `local:b7850f512ae3097aa04a8dd46bde752bd70c7287e60a200e55de378f2c954533`
+- Timestamp: `2026-09-28T16:30:32+00:00`
+- Observations: Five local service tests passed after subprocess timestamp fixture aligned with the service clock.
+- Evidence refs: none
+- Limitations: Evidence invalidated because an input changed.
+
+## EV-080 — passed
+
+- Ticket: `TK-012`
+- Acceptance: `AC-035`
+- Procedure: `python3.12 -m pytest -q`
+- Execution: `executed`
+- Environment: OS=Linux-5.14.0-687.36.1.el9_8.x86_64-x86_64-with-glibc2.34; Python=3.12.14
+- Tested revision: `local:15d112869a3a3b01f4b0b9987afbf1c3f7961c9ff07746587606a2e79e992240`
+- Timestamp: `2026-09-28T16:37:41+00:00`
+- Observations: 208 tests passed; 50 dev and 30 holdout cases, total distribution 16/12/12/12/12/8/8. Holdout four repetitions: pass@1 120/120 and pass^4 30/30.
+- Evidence refs: none
+- Limitations: none recorded
+
+## EV-081 — passed
+
+- Ticket: `TK-012`
+- Acceptance: `AC-036`
+- Procedure: `python3.12 -m pytest -q`
+- Execution: `executed`
+- Environment: OS=Linux-5.14.0-687.36.1.el9_8.x86_64-x86_64-with-glibc2.34; Python=3.12.14
+- Tested revision: `local:803c220d039411102030445f7a1273c9c0579b433f4cb175d961a3686eb126b3`
+- Timestamp: `2026-09-28T16:37:41+00:00`
+- Observations: Copied holdout changed after prior report produces holdout_changed true and thresholds_met false; dev does not read reserved file.
+- Evidence refs: none
+- Limitations: none recorded
+
+## EV-082 — passed
+
+- Ticket: `TK-012`
+- Acceptance: `AC-037`
+- Procedure: `python3.12 -m pytest -q`
+- Execution: `executed`
+- Environment: OS=Linux-5.14.0-687.36.1.el9_8.x86_64-x86_64-with-glibc2.34; Python=3.12.14
+- Tested revision: `local:dd64352487668932b05bbf3ea81c8bc6e501c6abc5b9e367d82bd86e1c3fd9ed`
+- Timestamp: `2026-09-28T16:37:41+00:00`
+- Observations: Fake model fails critical case on fourth repetition: pass@1 3/4, pass^4 0/1, threshold false.
+- Evidence refs: none
+- Limitations: none recorded
+
+## EV-083 — passed
+
+- Ticket: `TK-001`
+- Acceptance: `AC-002`
+- Procedure: `.venv/bin/python -m pytest -q --clock-shift-days=400`
+- Execution: `executed`
+- Environment: OS=Linux-5.14.0-687.36.1.el9_8.x86_64-x86_64-with-glibc2.34; Python=3.12.14
+- Tested revision: `local:9debd4d00b4639dc1897304a409d88145a505740fa9637cc2a2bef1586e5feee`
+- Timestamp: `2026-09-28T16:37:41+00:00`
+- Observations: 208 tests passed with process clock shifted 400 days; test service signature uses unshifted child process time.
+- Evidence refs: none
+- Limitations: none recorded
+
+## EV-084 — passed
+
+- Ticket: `TK-005`
+- Acceptance: `AC-010`, `AC-011`, `AC-012`
+- Procedure: `.venv/bin/python -m pytest -q tests/test_service.py`
+- Execution: `executed`
+- Environment: OS=Linux-5.14.0-687.36.1.el9_8.x86_64-x86_64-with-glibc2.34; Python=3.12.14
+- Tested revision: `local:e9dc077544525d5eb0202f9ff5ddc22e06966d1b1ca94f7190b4ff891fe02524`
+- Timestamp: `2026-09-28T16:37:42+00:00`
+- Observations: Five local service contract tests passed including ACK, readiness, and SIGTERM recovery.
+- Evidence refs: none
+- Limitations: none recorded
+
+## EV-085 — partial
+
+- Ticket: `TK-002`
+- Acceptance: `AC-003`
+- Procedure: `/tmp/vendedor-py310/bin/python -m pip install --dry-run --no-deps .; /tmp/vendedor-py311/bin/python -m pytest -q; /tmp/vendedor-py314/bin/python -m pytest -q; .venv/bin/python -m build; .venv/bin/twine check dist/*`
+- Execution: `executed`
+- Environment: OS=Linux-5.14.0-687.36.1.el9_8.x86_64-x86_64-with-glibc2.34; Python=3.12.14
+- Tested revision: `local:feb8d666796a91d6945c33eb7bf074bb98f178013526138dc9dc452d29ab4476`
+- Timestamp: `2026-09-28T16:41:13+00:00`
+- Observations: Python 3.10.21 rejected >=3.11; Python 3.11.16 and 3.14.7 each passed 208 tests; build and twine passed. No real CI run.
+- Evidence refs: none
+- Limitations: Git push is prohibited by the goal, so GitHub Actions has not run.

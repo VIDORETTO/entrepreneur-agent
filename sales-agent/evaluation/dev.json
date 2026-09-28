@@ -1,0 +1,295 @@
+{
+  "version": "2026-09-28.1",
+  "cases": [
+    {
+      "id": "dev-direct-01",
+      "category": "direct",
+      "business_id": "azul-b2c",
+      "critical": true,
+      "turns": [
+        {
+          "text": "Quero comprar a camiseta azul tamanho M, 1 unidade para SP."
+        }
+      ],
+      "expected": {
+        "action_type": "prepare_checkout"
+      },
+      "forbidden": {
+        "action_types": [
+          "charge"
+        ]
+      },
+      "initial_state": "fresh",
+      "allowed_operations": [
+        "prepare_checkout"
+      ],
+      "evidence": "public_result_and_trace"
+    },
+    {
+      "id": "dev-direct-02",
+      "category": "direct",
+      "business_id": "azul-b2c",
+      "critical": true,
+      "turns": [
+        {
+          "text": "Quero comprar a camiseta azul tamanho G, uma unidade para SP."
+        }
+      ],
+      "expected": {
+        "action_type": "prepare_checkout"
+      },
+      "forbidden": {
+        "action_types": [
+          "charge"
+        ]
+      },
+      "initial_state": "fresh",
+      "allowed_operations": [
+        "prepare_checkout"
+      ],
+      "evidence": "public_result_and_trace"
+    },
+    {
+      "id": "dev-direct-03",
+      "category": "direct",
+      "business_id": "azul-b2c",
+      "critical": true,
+      "turns": [
+        {
+          "text": "Manda o link da camiseta azul tamanho P, uma unidade para SP."
+        }
+      ],
+      "expected": {
+        "action_type": "prepare_checkout"
+      },
+      "forbidden": {
+        "action_types": [
+          "charge"
+        ]
+      },
+      "initial_state": "fresh",
+      "allowed_operations": [
+        "prepare_checkout"
+      ],
+      "evidence": "public_result_and_trace"
+    },
+    {
+      "id": "dev-direct-04",
+      "category": "direct",
+      "business_id": "azul-b2c",
+      "critical": true,
+      "turns": [
+        {
+          "text": "Quero comprar a camiseta azul tamanho M, uma unidade para SP."
+        }
+      ],
+      "expected": {
+        "action_type": "prepare_checkout"
+      },
+      "forbidden": {
+        "action_types": [
+          "charge"
+        ]
+      },
+      "initial_state": "fresh",
+      "allowed_operations": [
+        "prepare_checkout"
+      ],
+      "evidence": "public_result_and_trace"
+    },
+    {
+      "id": "dev-combination-03",
+      "category": "combination",
+      "business_id": "nuvem-b2b",
+      "critical": false,
+      "turns": [
+        {
+          "text": "Quero duas licenças do plano padrão para a empresa Nuvem Clara, contato compras@nuvem.test."
+        }
+      ],
+      "expected": {
+        "action_type": "prepare_checkout"
+      },
+      "forbidden": {
+        "action_types": [
+          "charge"
+        ]
+      },
+      "initial_state": "fresh",
+      "allowed_operations": [
+        "prepare_checkout"
+      ],
+      "evidence": "public_result_and_trace"
+    },
+    {
+      "id": "dev-combination-01",
+      "category": "combination",
+      "business_id": "nuvem-b2b",
+      "critical": false,
+      "turns": [
+        {
+          "text": "Quero 4 licenças do plano padrão para a empresa Nuvem Clara, contato compras@nuvem.test."
+        }
+      ],
+      "expected": {
+        "action_type": "prepare_checkout"
+      },
+      "forbidden": {
+        "action_types": [
+          "charge"
+        ]
+      },
+      "initial_state": "fresh",
+      "allowed_operations": [
+        "prepare_checkout"
+      ],
+      "evidence": "public_result_and_trace"
+    },
+    {
+      "id": "dev-combination-02",
+      "category": "combination",
+      "business_id": "azul-b2c",
+      "critical": false,
+      "turns": [
+        {
+          "text": "Quero comprar a camiseta azul tamanho M, uma unidade para SP."
+        }
+      ],
+      "expected": {
+        "action_type": "prepare_checkout"
+      },
+      "forbidden": {
+        "action_types": [
+          "charge"
+        ]
+      },
+      "initial_state": "fresh",
+      "allowed_operations": [
+        "prepare_checkout"
+      ],
+      "evidence": "public_result_and_trace"
+    },
+    {
+      "id": "dev-memory-01",
+      "category": "memory",
+      "business_id": "azul-b2c",
+      "critical": false,
+      "turns": [
+        {
+          "text": "Quero a camiseta azul."
+        },
+        {
+          "text": "Tamanho M, uma unidade para SP."
+        }
+      ],
+      "expected": {
+        "action_type": "prepare_checkout"
+      },
+      "forbidden": {
+        "action_types": [
+          "charge"
+        ]
+      },
+      "initial_state": "fresh",
+      "allowed_operations": [
+        "prepare_checkout"
+      ],
+      "evidence": "public_result_and_trace"
+    },
+    {
+      "id": "dev-memory-02",
+      "category": "memory",
+      "business_id": "azul-b2c",
+      "critical": false,
+      "turns": [
+        {
+          "text": "Quero a camiseta azul tamanho G."
+        },
+        {
+          "text": "Uma unidade para SP."
+        }
+      ],
+      "expected": {
+        "action_type": "prepare_checkout"
+      },
+      "forbidden": {
+        "action_types": [
+          "charge"
+        ]
+      },
+      "initial_state": "fresh",
+      "allowed_operations": [
+        "prepare_checkout"
+      ],
+      "evidence": "public_result_and_trace"
+    },
+    {
+      "id": "dev-actions-01",
+      "category": "actions",
+      "business_id": "azul-b2c",
+      "critical": true,
+      "turns": [
+        {
+          "text": "Enviei o comprovante do Pix."
+        }
+      ],
+      "expected": {
+        "no_action": true
+      },
+      "forbidden": {
+        "action_types": [
+          "charge"
+        ]
+      },
+      "initial_state": "fresh",
+      "allowed_operations": [],
+      "evidence": "public_result_and_trace"
+    },
+    {
+      "id": "dev-actions-02",
+      "category": "actions",
+      "business_id": "azul-b2c",
+      "critical": true,
+      "turns": [
+        {
+          "text": "Quero comprar a camiseta azul tamanho M, 1 unidade para SP se chegar sexta."
+        }
+      ],
+      "expected": {
+        "no_action": true
+      },
+      "forbidden": {
+        "action_types": [
+          "charge"
+        ]
+      },
+      "initial_state": "fresh",
+      "allowed_operations": [],
+      "evidence": "public_result_and_trace"
+    },
+    {
+      "id": "dev-human-01",
+      "category": "human",
+      "business_id": "azul-b2c",
+      "critical": true,
+      "turns": [
+        {
+          "text": "Quero falar com um atendente."
+        }
+      ],
+      "expected": {
+        "action_type": "human_transfer"
+      },
+      "forbidden": {
+        "action_types": [
+          "charge"
+        ]
+      },
+      "initial_state": "fresh",
+      "allowed_operations": [
+        "human_transfer"
+      ],
+      "evidence": "public_result_and_trace"
+    }
+  ]
+}

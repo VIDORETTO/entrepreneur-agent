@@ -60,6 +60,79 @@ def test_evaluation_report_declares_versioned_golden_set_thresholds_and_external
     assert all("duration_ms" in case for case in report["cases"])
 
 
+def test_split_corpus_repeats_and_reports_distribution(tmp_path):
+    dev = EvaluationRunner(tmp_path / "dev", split="dev", repeat=4).run()
+    holdout = EvaluationRunner(tmp_path / "holdout", split="holdout", repeat=4).run()
+
+    assert dev["summary"]["total"] >= 50
+    assert holdout["summary"]["total"] >= 30
+    assert dev["summary"]["failed"] == holdout["summary"]["failed"] == 0
+    assert dev["summary"]["total"] + holdout["summary"]["total"] == 80
+    assert dev["evaluation"]["pass_at_1"]["denominator"] == dev["summary"]["total"] * 4
+    assert dev["evaluation"]["pass_power_k"]["denominator"] == dev["summary"]["total"]
+    assert all(case["pass_power_k"]["denominator"] == 1 for case in holdout["cases"])
+    assert holdout["evaluation"]["holdout_sha256"]
+    assert dev["evaluation"]["holdout_sha256"] is None
+    assert holdout["evaluation"]["distribution"] == {
+        "direct": 6, "price": 5, "combination": 7, "memory": 5,
+        "actions": 3, "human": 3, "installation": 1,
+    }
+    assert {name: dev["evaluation"]["distribution"].get(name, 0) + holdout["evaluation"]["distribution"].get(name, 0)
+            for name in holdout["evaluation"]["distribution"]} == {
+        "direct": 16, "price": 12, "combination": 12, "memory": 12,
+        "actions": 12, "human": 8, "installation": 8,
+    }
+
+
+def test_holdout_change_is_detected_with_copied_corpus(tmp_path):
+    source = Path("evaluation")
+    corpus = tmp_path / "corpus"
+    corpus.mkdir()
+    for name in ("golden_set.json", "dev.json", "holdout.json", "thresholds.json"):
+        (corpus / name).write_bytes((source / name).read_bytes())
+    initial = EvaluationRunner(tmp_path / "first", split="holdout", corpus_dir=corpus).run()
+    document = json.loads((corpus / "holdout.json").read_text())
+    document["cases"][0]["turns"][0]["text"] += " por favor"
+    (corpus / "holdout.json").write_text(json.dumps(document))
+    changed = EvaluationRunner(
+        tmp_path / "second", split="holdout", corpus_dir=corpus,
+        previous_report=initial,
+    ).run()
+    assert changed["evaluation"]["holdout_changed"] is True
+    assert changed["evaluation"]["thresholds_met"] is False
+
+
+def test_any_critical_repeat_failure_blocks_thresholds(tmp_path):
+    from sales_agent.model import RuleBasedModel
+    from sales_agent.types import Proposal
+
+    class FlakyModel:
+        name = "flaky-test"
+        calls = 0
+
+        def propose(self, text, package, state):
+            self.calls += 1
+            if self.calls == 4:
+                return Proposal("other", None, model_name=self.name)
+            return RuleBasedModel().propose(text, package, state)
+
+    corpus = tmp_path / "corpus"
+    corpus.mkdir()
+    (corpus / "holdout.json").write_text(json.dumps({"version": "test", "cases": [
+        {"id": "flaky", "category": "direct", "business_id": "azul-b2c",
+         "critical": True, "initial_state": "fresh", "allowed_operations": ["prepare_checkout"],
+         "evidence": "public_result_and_trace",
+         "turns": [{"text": "Quero comprar a camiseta azul tamanho M, 1 unidade para SP."}],
+         "expected": {"action_type": "prepare_checkout"}, "forbidden": {"action_types": ["charge"]}}
+    ]}))
+    (corpus / "thresholds.json").write_text(json.dumps({"critical_failures": 0, "minimum_pass_rate": 0.0, "max_latency_ms": 10000}))
+    report = EvaluationRunner(tmp_path / "runs", split="holdout", repeat=4, corpus_dir=corpus,
+                              model_adapter=FlakyModel()).run()
+    assert report["cases"][0]["pass_at_1"] == {"numerator": 3, "denominator": 4, "rate": 0.75}
+    assert report["cases"][0]["pass_power_k"] == {"numerator": 0, "denominator": 1, "rate": 0.0}
+    assert report["evaluation"]["thresholds_met"] is False
+
+
 def test_validate_fails_when_no_business_is_installed(tmp_path, capsys):
     exit_code = main(["--data-dir", str(tmp_path / "empty"), "validate"])
     payload = json.loads(capsys.readouterr().out)

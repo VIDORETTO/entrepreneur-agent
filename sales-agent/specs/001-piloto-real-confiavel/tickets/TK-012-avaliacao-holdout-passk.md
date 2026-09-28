@@ -1,19 +1,27 @@
 ---
 schema: hybrid/ticket
-schema_version: "1.0"
+schema_version: 1.0
 id: TK-012
 effort: 001-piloto-real-confiavel
 type: delivery
-status: ready
-ticket_revision: 1
-requires: [TK-008]
-requirement_refs: [FR-012]
-acceptance_refs: [AC-035, AC-036, AC-037]
+status: done
+ticket_revision: 8
+requires: ["TK-008"]
+requirement_refs: ["FR-012"]
+acceptance_refs: ["AC-035", "AC-036", "AC-037"]
 spec_revision: 2
 plan_revision: 2
-owned_areas: [src/sales_agent/evaluation.py, evaluation/, src/sales_agent/cli.py, tests/test_cli_and_evaluation.py, docs/EVALUATION.md]
-verification_status: not_run
+owned_areas: ["src/sales_agent/evaluation.py", "evaluation/", "src/sales_agent/cli.py", "tests/test_cli_and_evaluation.py", "docs/EVALUATION.md"]
+verification_status: passed
+last_update: Evidence invalidated after an input changed.
 ---
+
+
+
+
+
+
+
 
 # TK-012 — Avaliação com 80 casos, holdout protegido e pass^k
 

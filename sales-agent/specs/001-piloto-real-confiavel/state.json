@@ -29,24 +29,22 @@
   "last_evidence": "EV-063",
   "last_invalidation": {
     "evidence": [
-      "EV-043",
-      "EV-044",
-      "EV-045",
-      "EV-051",
-      "EV-052",
-      "EV-053",
-      "EV-054",
-      "EV-055"
+      "EV-067",
+      "EV-068",
+      "EV-069",
+      "EV-076",
+      "EV-077",
+      "EV-079"
     ],
     "inputs": {},
-    "timestamp": "2026-09-28T15:50:13+00:00"
+    "timestamp": "2026-09-28T16:37:15+00:00"
   },
   "mode": "standard",
   "next_action": "Executar TK-012 (holdout e repetição); TK-002 AC-003 ainda depende de CI não executado",
   "pending_questions": [],
   "phase": "implementation",
-  "revision": 23,
+  "revision": 26,
   "schema_version": "1.0",
   "status": "active",
-  "updated_at": "2026-09-28T15:51:50+00:00"
+  "updated_at": "2026-09-28T16:37:15+00:00"
 }

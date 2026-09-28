@@ -584,13 +584,18 @@ def _run_demo(store: StateStore) -> int:
 
 def command_evaluate(args: argparse.Namespace) -> int:
     candidate_package = load_package(args.package) if args.package else None
+    selected_model = HTTPModelAdapter(**load_model_config(args.model_config)) if args.model_config else None
     runner = EvaluationRunner(
         Path(args.data_dir),
         model_name=args.model,
+        model_adapter=selected_model,
         backend_name=args.backend,
         channel=args.channel,
         candidate_package=candidate_package,
         candidate_business_id=args.business_id,
+        split=args.split,
+        repeat=args.repeat,
+        previous_report=json.loads(Path(args.previous_report).read_text(encoding="utf-8")) if args.previous_report else None,
     )
     report = runner.run()
     if args.output:
@@ -859,6 +864,10 @@ def build_parser() -> argparse.ArgumentParser:
     demo.set_defaults(func=command_demo)
     evaluate = sub.add_parser("evaluate", help="executar cenários AC e gerar relatório")
     evaluate.add_argument("--output")
+    evaluate.add_argument("--split", choices=["contract", "dev", "holdout"], default="contract")
+    evaluate.add_argument("--repeat", type=int, default=1)
+    evaluate.add_argument("--model-config", help="JSON com perfil, chave env:NOME e preços")
+    evaluate.add_argument("--previous-report", help="relatório aprovado para comparação do hash reservado")
     evaluate.add_argument("--model", choices=sorted(EvaluationRunner.MODEL_NAMES), default="rules-v1")
     evaluate.add_argument("--backend", choices=["sqlite-farol-v1"], default="sqlite-farol-v1")
     evaluate.add_argument("--channel", default="evaluation")

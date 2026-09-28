@@ -1,0 +1,32 @@
+{
+  "acceptance_refs": [
+    "AC-002"
+  ],
+  "environment": "OS=Linux-5.14.0-687.36.1.el9_8.x86_64-x86_64-with-glibc2.34; Python=3.12.14",
+  "evidence_refs": [],
+  "execution_status": "executed",
+  "id": "EV-083",
+  "input_fingerprints": {
+    "pyproject.toml": "e8d91c1f1ada6a4a1ed28703a0e713db90d5ef4e7f6f3d4b9eb9f75971dc6024",
+    "specs/001-piloto-real-confiavel/plan.md": "a069d7b1d149ba604d47c2cb8035b6bfe0e9dc7471acd4eb697cbcab209ab66e",
+    "specs/001-piloto-real-confiavel/spec.md": "057aed7c1e1360d8f71167caca6af45c61c0ddf7114ce1d2eb8ce7d6dd5858ba",
+    "src/sales_agent/storage.py": "5aa586dcc30177ea5de026807f158ce0fbb73eccfa674157611650a9edb3803b",
+    "tests/conftest.py": "0f8fcccb0a906eb3e8af46bf9b67f2e203e7fb40fb19e491974460fdccf9a6ca",
+    "tests/test_service.py": "b666d97f0a001bc28f50eaceefe5beabe1b33b81aea53a8bec14dc234e5a91ea"
+  },
+  "input_paths": [
+    "tests/conftest.py",
+    "tests/test_service.py",
+    "pyproject.toml",
+    "src/sales_agent/storage.py",
+    "specs/001-piloto-real-confiavel/spec.md",
+    "specs/001-piloto-real-confiavel/plan.md"
+  ],
+  "limitations": "",
+  "observations": "208 tests passed with process clock shifted 400 days; test service signature uses unshifted child process time.",
+  "procedure": ".venv/bin/python -m pytest -q --clock-shift-days=400",
+  "result": "passed",
+  "tested_revision": "local:9debd4d00b4639dc1897304a409d88145a505740fa9637cc2a2bef1586e5feee",
+  "ticket": "TK-001",
+  "timestamp": "2026-09-28T16:37:41+00:00"
+}

@@ -763,6 +763,7 @@ class StateStore:
                 # inventory reserved but no checkout response in the outbox.
                 same_pending_action = (
                     isinstance(existing_action, Mapping)
+                    and isinstance(candidate_action, Mapping)
                     and str(existing_action.get("type", "")) == str(candidate_action.get("type", ""))
                 )
                 if effect_key and (

@@ -32,3 +32,7 @@ foram verificados por ausência de credencial na execução. O teste do perfil
 compatível usa servidor falso. A prova de latência registra a duração local da
 chamada; não estabelece meta de desempenho externa. EV-059–EV-063 são as
 evidências atuais. A regressão final passou com 205 testes e Ruff verde.
+
+Revalidação após TK-012: `cli.py` ganhou apenas opções de `evaluate`; o caminho
+`model-check` e o contrato HTTP não mudaram. EV-070–EV-074 reconfirmaram os
+cinco ACs com 23 testes do adaptador. Sem novo achado bloqueante.

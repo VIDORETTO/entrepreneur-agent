@@ -1,15 +1,15 @@
 {
   "acceptance_refs": [
-    "AC-021"
+    "AC-020"
   ],
-  "environment": "OS=Linux-5.14.0-687.36.1.el9_8.x86_64-x86_64-with-glibc2.34; Python=3.9.25",
+  "environment": "OS=Linux-5.14.0-687.36.1.el9_8.x86_64-x86_64-with-glibc2.34; Python=3.12.14",
   "evidence_refs": [],
   "execution_status": "executed",
-  "id": "EV-061",
+  "id": "EV-071",
   "input_fingerprints": {
     "specs/001-piloto-real-confiavel/plan.md": "a069d7b1d149ba604d47c2cb8035b6bfe0e9dc7471acd4eb697cbcab209ab66e",
     "specs/001-piloto-real-confiavel/spec.md": "057aed7c1e1360d8f71167caca6af45c61c0ddf7114ce1d2eb8ce7d6dd5858ba",
-    "src/sales_agent/cli.py": "52f324b716564757fa959bf60a2d9a601b3eacfbeff3740dcd92bbd4ff091ead",
+    "src/sales_agent/cli.py": "c26674f6a0c901905ea52cf234214f1ab8398a6bc0623c49cb176f8ed3a720d8",
     "src/sales_agent/conversation.py": "1c5c88588cdd1e07f89e7dfed202834d259f9beffadc5cb81d97ba1eb81151ae",
     "src/sales_agent/model.py": "9915f54824aa259ab36377ad71e8cc2dbc3f71d766c039df521edf0036d16b4f",
     "tests/test_model_adapter.py": "1a85545fa8a2f718410c0ebc641693cc3537c0fb411c74484fc164e9eaf5a09c"
@@ -22,11 +22,11 @@
     "specs/001-piloto-real-confiavel/spec.md",
     "specs/001-piloto-real-confiavel/plan.md"
   ],
-  "limitations": "Local fake HTTP only; real OpenAI call not run Evidence invalidated because an input changed.",
-  "observations": "Two invalid responses yielded model_contract_failed trace and no action.",
+  "limitations": "",
+  "observations": "One invalid then valid fake response uses exactly one repair; 23 adapter tests passed.",
   "procedure": ".venv/bin/python -m pytest -q tests/test_model_adapter.py",
-  "result": "stale",
-  "tested_revision": "local:abe6e9a2f2d85eb6329df42355ebfe81a3873b6c480c8624a3612c1fd99f0913",
+  "result": "passed",
+  "tested_revision": "local:a6491f0180742c07abf7912f03fe38aefba0ba0703936097a9b5a06e9ae610e6",
   "ticket": "TK-008",
-  "timestamp": "2026-09-28T15:50:48+00:00"
+  "timestamp": "2026-09-28T16:14:27+00:00"
 }

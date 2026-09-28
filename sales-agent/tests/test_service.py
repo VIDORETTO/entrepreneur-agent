@@ -187,7 +187,15 @@ def _signed_buyer_message():
         },
         separators=(",", ":"),
     ).encode()
-    timestamp = str(int(time.time()))
+    # The service is a separate process and uses the real clock. The escape
+    # hatch keeps this signed request aligned during shifted-clock tests.
+    try:
+        import time_machine
+    except ImportError:
+        real_now = time.time()
+    else:
+        real_now = time_machine.escape_hatch.time.time() if time_machine.escape_hatch.is_travelling() else time.time()
+    timestamp = str(int(real_now))
     signature = hmac.new(SECRET.encode(), timestamp.encode() + b"." + raw, hashlib.sha256).hexdigest()
     return raw, timestamp, "sha256=" + signature
 

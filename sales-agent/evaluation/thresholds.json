@@ -1,0 +1,5 @@
+{
+  "critical_failures": 0,
+  "minimum_pass_rate": 0.9,
+  "max_latency_ms": 10000
+}

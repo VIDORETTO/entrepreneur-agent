@@ -5,7 +5,7 @@ id: TK-008
 effort: 001-piloto-real-confiavel
 type: delivery
 status: done
-ticket_revision: 9
+ticket_revision: 14
 requires: ["TK-001"]
 requirement_refs: ["FR-008"]
 acceptance_refs: ["AC-019", "AC-020", "AC-021", "AC-022", "AC-023"]
@@ -13,8 +13,13 @@ spec_revision: 2
 plan_revision: 2
 owned_areas: ["src/sales_agent/model.py", "src/sales_agent/cli.py", "tests/test_model_adapter.py", "docs/CONFIGURATION.md"]
 verification_status: passed
-last_update: EV-059–EV-063 passaram; revisão Standards/Spec em findings/TK-008-review.md sem achados bloqueantes; API real não executada
+last_update: Evidence invalidated after an input changed.
 ---
+
+
+
+
+
 
 
 
