@@ -1,0 +1,26 @@
+{
+  "acceptance_refs": [
+    "AC-002"
+  ],
+  "environment": "OS=Linux-5.14.0-687.36.1.el9_8.x86_64-x86_64-with-glibc2.34; Python=3.12.14",
+  "evidence_refs": [],
+  "execution_status": "executed",
+  "id": "EV-123",
+  "input_fingerprints": {
+    "specs/001-piloto-real-confiavel/plan.md": "a069d7b1d149ba604d47c2cb8035b6bfe0e9dc7471acd4eb697cbcab209ab66e",
+    "specs/001-piloto-real-confiavel/spec.md": "057aed7c1e1360d8f71167caca6af45c61c0ddf7114ce1d2eb8ce7d6dd5858ba",
+    "tests/conftest.py": "0f8fcccb0a906eb3e8af46bf9b67f2e203e7fb40fb19e491974460fdccf9a6ca"
+  },
+  "input_paths": [
+    "tests/conftest.py",
+    "specs/001-piloto-real-confiavel/spec.md",
+    "specs/001-piloto-real-confiavel/plan.md"
+  ],
+  "limitations": "",
+  "observations": "shifted full regression 243 passed",
+  "procedure": ".venv/bin/python -m pytest -q --clock-shift-days=400 > /tmp/sales-agent-shifted-final.log 2>&1",
+  "result": "passed",
+  "tested_revision": "local:459451a8c4a14052e5d8257647eaaaa42e348df93825c14f0747d820225e90cd",
+  "ticket": "TK-001",
+  "timestamp": "2026-09-28T18:42:43+00:00"
+}

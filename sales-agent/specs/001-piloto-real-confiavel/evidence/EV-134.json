@@ -1,0 +1,33 @@
+{
+  "acceptance_refs": [
+    "AC-041",
+    "AC-042",
+    "AC-043",
+    "AC-044"
+  ],
+  "environment": "OS=Linux-5.14.0-687.36.1.el9_8.x86_64-x86_64-with-glibc2.34; Python=3.12.14",
+  "evidence_refs": [],
+  "execution_status": "executed",
+  "id": "EV-134",
+  "input_fingerprints": {
+    "specs/001-piloto-real-confiavel/plan.md": "a069d7b1d149ba604d47c2cb8035b6bfe0e9dc7471acd4eb697cbcab209ab66e",
+    "specs/001-piloto-real-confiavel/spec.md": "057aed7c1e1360d8f71167caca6af45c61c0ddf7114ce1d2eb8ce7d6dd5858ba",
+    "src/sales_agent/conversation.py": "4b450b1ff0f15934e58998e2bc3a883987ef2f0bbdd2d78c7c353ad8f28647ff",
+    "src/sales_agent/validation.py": "833545a97ac6691140a5bf33734c46f54ca3dcb85578e919052f3362ecc52849",
+    "tests/test_human_access.py": "fba5ac3162ad38b60fd32637e8fcd1e7ef7697e5d258b7837a11e1630854a4d6"
+  },
+  "input_paths": [
+    "tests/test_human_access.py",
+    "src/sales_agent/conversation.py",
+    "src/sales_agent/validation.py",
+    "specs/001-piloto-real-confiavel/spec.md",
+    "specs/001-piloto-real-confiavel/plan.md"
+  ],
+  "limitations": "",
+  "observations": "final full regression 243 passed, including 5 human access tests",
+  "procedure": "python3.12 -m pytest -q > /tmp/sales-agent-pytest-tk015.log 2>&1",
+  "result": "passed",
+  "tested_revision": "local:576a6ea317605e236de74d7266575e8bbccebba7ba20ec41f30288934d3b48cb",
+  "ticket": "TK-013",
+  "timestamp": "2026-09-28T18:43:35+00:00"
+}

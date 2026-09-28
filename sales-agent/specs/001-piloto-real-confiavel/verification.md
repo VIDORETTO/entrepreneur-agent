@@ -1574,3 +1574,185 @@
 - Observations: 39 focused tests passed and full regression 243 passed; Ruff passed
 - Evidence refs: none
 - Limitations: none recorded
+
+## EV-122 — passed
+
+- Ticket: `TK-001`
+- Acceptance: `AC-001`
+- Procedure: `python3.12 -m pytest -q > /tmp/sales-agent-pytest-tk015.log 2>&1`
+- Execution: `executed`
+- Environment: OS=Linux-5.14.0-687.36.1.el9_8.x86_64-x86_64-with-glibc2.34; Python=3.12.14
+- Tested revision: `local:d98697b6eaa58ab0ef581253f8294e59b5a1ff30d5dd74ec3b3de2bfb4924ff1`
+- Timestamp: `2026-09-28T18:42:43+00:00`
+- Observations: final full regression 243 passed
+- Evidence refs: none
+- Limitations: none recorded
+
+## EV-123 — passed
+
+- Ticket: `TK-001`
+- Acceptance: `AC-002`
+- Procedure: `.venv/bin/python -m pytest -q --clock-shift-days=400 > /tmp/sales-agent-shifted-final.log 2>&1`
+- Execution: `executed`
+- Environment: OS=Linux-5.14.0-687.36.1.el9_8.x86_64-x86_64-with-glibc2.34; Python=3.12.14
+- Tested revision: `local:459451a8c4a14052e5d8257647eaaaa42e348df93825c14f0747d820225e90cd`
+- Timestamp: `2026-09-28T18:42:43+00:00`
+- Observations: shifted full regression 243 passed
+- Evidence refs: none
+- Limitations: none recorded
+
+## EV-124 — passed
+
+- Ticket: `TK-003`
+- Acceptance: `AC-004`, `AC-005`, `AC-006`
+- Procedure: `python3.12 -m pytest -q > /tmp/sales-agent-pytest-tk015.log 2>&1`
+- Execution: `executed`
+- Environment: OS=Linux-5.14.0-687.36.1.el9_8.x86_64-x86_64-with-glibc2.34; Python=3.12.14
+- Tested revision: `local:4c1fd9b2fb853cdfb16c9fd1d3d3aa504b149dcbcb6bd078a52e6c751ecc9a85`
+- Timestamp: `2026-09-28T18:42:43+00:00`
+- Observations: final full regression 243 passed
+- Evidence refs: none
+- Limitations: none recorded
+
+## EV-125 — passed
+
+- Ticket: `TK-004`
+- Acceptance: `AC-007`, `AC-008`, `AC-009`
+- Procedure: `python3.12 -m pytest -q > /tmp/sales-agent-pytest-tk015.log 2>&1`
+- Execution: `executed`
+- Environment: OS=Linux-5.14.0-687.36.1.el9_8.x86_64-x86_64-with-glibc2.34; Python=3.12.14
+- Tested revision: `local:4c1fd9b2fb853cdfb16c9fd1d3d3aa504b149dcbcb6bd078a52e6c751ecc9a85`
+- Timestamp: `2026-09-28T18:42:43+00:00`
+- Observations: final full regression 243 passed
+- Evidence refs: none
+- Limitations: none recorded
+
+## EV-126 — passed
+
+- Ticket: `TK-005`
+- Acceptance: `AC-010`, `AC-011`, `AC-012`
+- Procedure: `python3.12 -m pytest -q > /tmp/sales-agent-pytest-tk015.log 2>&1`
+- Execution: `executed`
+- Environment: OS=Linux-5.14.0-687.36.1.el9_8.x86_64-x86_64-with-glibc2.34; Python=3.12.14
+- Tested revision: `local:245a570d05a40e1c8f18684cafe54e97c959e25574dd9420dac7952a547a6c6e`
+- Timestamp: `2026-09-28T18:42:44+00:00`
+- Observations: final full regression 243 passed
+- Evidence refs: none
+- Limitations: none recorded
+
+## EV-127 — passed
+
+- Ticket: `TK-006`
+- Acceptance: `AC-013`, `AC-014`, `AC-015`
+- Procedure: `python3.12 -m pytest -q > /tmp/sales-agent-pytest-tk015.log 2>&1`
+- Execution: `executed`
+- Environment: OS=Linux-5.14.0-687.36.1.el9_8.x86_64-x86_64-with-glibc2.34; Python=3.12.14
+- Tested revision: `local:6c589839559af390c48270b4f45d49fc13743b26425414d677873dd3574f0564`
+- Timestamp: `2026-09-28T18:42:44+00:00`
+- Observations: final full regression 243 passed
+- Evidence refs: none
+- Limitations: none recorded
+
+## EV-128 — passed
+
+- Ticket: `TK-007`
+- Acceptance: `AC-016`, `AC-017`, `AC-018`
+- Procedure: `python3.12 -m pytest -q > /tmp/sales-agent-pytest-tk015.log 2>&1`
+- Execution: `executed`
+- Environment: OS=Linux-5.14.0-687.36.1.el9_8.x86_64-x86_64-with-glibc2.34; Python=3.12.14
+- Tested revision: `local:2fd022a8319f39dff549ee855ad3bcc6d2043c33def117a0b4d4c4161cd9d16c`
+- Timestamp: `2026-09-28T18:42:44+00:00`
+- Observations: final full regression 243 passed
+- Evidence refs: none
+- Limitations: none recorded
+
+## EV-129 — passed
+
+- Ticket: `TK-008`
+- Acceptance: `AC-019`, `AC-020`, `AC-021`, `AC-022`, `AC-023`
+- Procedure: `python3.12 -m pytest -q > /tmp/sales-agent-pytest-tk015.log 2>&1`
+- Execution: `executed`
+- Environment: OS=Linux-5.14.0-687.36.1.el9_8.x86_64-x86_64-with-glibc2.34; Python=3.12.14
+- Tested revision: `local:c8eb42b4de80354f0a09bc673338afd0ac161f2864645fd8ca10dd70efcf9b2c`
+- Timestamp: `2026-09-28T18:42:44+00:00`
+- Observations: final full regression 243 passed using fake model server
+- Evidence refs: none
+- Limitations: none recorded
+
+## EV-130 — passed
+
+- Ticket: `TK-009`
+- Acceptance: `AC-024`, `AC-025`, `AC-026`, `AC-027`
+- Procedure: `python3.12 -m pytest -q > /tmp/sales-agent-pytest-tk015.log 2>&1`
+- Execution: `executed`
+- Environment: OS=Linux-5.14.0-687.36.1.el9_8.x86_64-x86_64-with-glibc2.34; Python=3.12.14
+- Tested revision: `local:cc2512ad8ab8966b18d07df3ab4140d2436bc079099ce69975188d4238456958`
+- Timestamp: `2026-09-28T18:42:45+00:00`
+- Observations: final full regression 243 passed
+- Evidence refs: none
+- Limitations: none recorded
+
+## EV-131 — passed
+
+- Ticket: `TK-010`
+- Acceptance: `AC-028`, `AC-029`, `AC-030`
+- Procedure: `python3.12 -m pytest -q > /tmp/sales-agent-pytest-tk015.log 2>&1`
+- Execution: `executed`
+- Environment: OS=Linux-5.14.0-687.36.1.el9_8.x86_64-x86_64-with-glibc2.34; Python=3.12.14
+- Tested revision: `local:867a2ebc18b58a33469b27ff50363c28e5798e7e337a7cd33ee0e81fe58b89d7`
+- Timestamp: `2026-09-28T18:42:45+00:00`
+- Observations: final full regression 243 passed
+- Evidence refs: none
+- Limitations: none recorded
+
+## EV-132 — passed
+
+- Ticket: `TK-011`
+- Acceptance: `AC-031`, `AC-032`, `AC-033`, `AC-034`
+- Procedure: `python3.12 -m pytest -q > /tmp/sales-agent-pytest-tk015.log 2>&1`
+- Execution: `executed`
+- Environment: OS=Linux-5.14.0-687.36.1.el9_8.x86_64-x86_64-with-glibc2.34; Python=3.12.14
+- Tested revision: `local:f6cc3f93862d6fa2fb0d4c5883c979e331688c6b1af0d0ac928b6ee10335e1c1`
+- Timestamp: `2026-09-28T18:42:45+00:00`
+- Observations: final full regression 243 passed; retrieval 32/32 recall, 8/8 abstention
+- Evidence refs: none
+- Limitations: none recorded
+
+## EV-133 — passed
+
+- Ticket: `TK-012`
+- Acceptance: `AC-035`, `AC-036`, `AC-037`
+- Procedure: `python3.12 -m sales_agent.cli --data-dir /tmp/sales-agent-final-holdout evaluate --split holdout --repeat 4 --output reports/holdout-latest.json > /tmp/sales-agent-final-holdout-output.json`
+- Execution: `executed`
+- Environment: OS=Linux-5.14.0-687.36.1.el9_8.x86_64-x86_64-with-glibc2.34; Python=3.12.14
+- Tested revision: `local:5267911ad8ba25cc6b5fb4430f3d9e5aec988a0e70c652e9bf483b4162f353b6`
+- Timestamp: `2026-09-28T18:42:45+00:00`
+- Observations: local holdout 30/30 cases and 120/120 runs passed; no real model
+- Evidence refs: none
+- Limitations: none recorded
+
+## EV-134 — passed
+
+- Ticket: `TK-013`
+- Acceptance: `AC-041`, `AC-042`, `AC-043`, `AC-044`
+- Procedure: `python3.12 -m pytest -q > /tmp/sales-agent-pytest-tk015.log 2>&1`
+- Execution: `executed`
+- Environment: OS=Linux-5.14.0-687.36.1.el9_8.x86_64-x86_64-with-glibc2.34; Python=3.12.14
+- Tested revision: `local:576a6ea317605e236de74d7266575e8bbccebba7ba20ec41f30288934d3b48cb`
+- Timestamp: `2026-09-28T18:43:35+00:00`
+- Observations: final full regression 243 passed, including 5 human access tests
+- Evidence refs: none
+- Limitations: none recorded
+
+## EV-135 — partial
+
+- Ticket: `TK-002`
+- Acceptance: `AC-003`
+- Procedure: `/tmp/vendedor-py310/bin/python -m pip install --dry-run --no-deps .; /tmp/vendedor-py311/bin/python -m pytest -q; /tmp/vendedor-py314/bin/python -m pytest -q; .venv/bin/python -m build; .venv/bin/twine check dist/*`
+- Execution: `executed`
+- Environment: OS=Linux-5.14.0-687.36.1.el9_8.x86_64-x86_64-with-glibc2.34; Python=3.12.14
+- Tested revision: `local:94222188656a0df65d1a051720d1dbfccefe926d31de2f208555c8336c2691d3`
+- Timestamp: `2026-09-28T18:46:45+00:00`
+- Observations: Python 3.10 rejected >=3.11; Python 3.11 and 3.14 each passed 243 tests; build and Twine passed. Real CI has not run.
+- Evidence refs: none
+- Limitations: GOAL-PROMPT prohibits git push; GitHub Actions CI cannot run without a push.

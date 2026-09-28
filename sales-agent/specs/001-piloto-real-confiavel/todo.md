@@ -145,8 +145,8 @@ Status: `done` | Bloqueado por: TK-009
 - [ ] TK-010.5 Executar regressão completa (`python -m pytest -q`, `ruff check src tests`) e atualizar documentação da interface.
 - [ ] TK-010.6 Registrar evidência (`hybrid.py evidence add --executed`) e checkpoint; não marcar checklist de reviewer.
 
-## [ ] TK-015 — TK-015 — Portão de prontidão do piloto baseado em evidências
-Status: `ready` | Bloqueado por: TK-003, TK-004, TK-005, TK-012, TK-013, TK-014
+## [x] TK-015 — TK-015 — Portão de prontidão do piloto baseado em evidências
+Status: `done` | Bloqueado por: TK-003, TK-004, TK-005, TK-012, TK-013, TK-014
 
 - [ ] TK-015.1 Escrever o primeiro caso (AC-038) na seam indicada em `plan.md`; observar red pelo motivo previsto em `tdd.md`.
 - [ ] TK-015.2 Implementar o mínimo para green de AC-038; próximo caso só após green.

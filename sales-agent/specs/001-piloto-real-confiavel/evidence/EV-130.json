@@ -1,0 +1,29 @@
+{
+  "acceptance_refs": [
+    "AC-024",
+    "AC-025",
+    "AC-026",
+    "AC-027"
+  ],
+  "environment": "OS=Linux-5.14.0-687.36.1.el9_8.x86_64-x86_64-with-glibc2.34; Python=3.12.14",
+  "evidence_refs": [],
+  "execution_status": "executed",
+  "id": "EV-130",
+  "input_fingerprints": {
+    "specs/001-piloto-real-confiavel/plan.md": "a069d7b1d149ba604d47c2cb8035b6bfe0e9dc7471acd4eb697cbcab209ab66e",
+    "specs/001-piloto-real-confiavel/spec.md": "057aed7c1e1360d8f71167caca6af45c61c0ddf7114ce1d2eb8ce7d6dd5858ba",
+    "tests/test_grounded_drafting.py": "1680cd6604043caab6b352134e3a99299b860c36c5fae6b54bea0139f41a53cc"
+  },
+  "input_paths": [
+    "tests/test_grounded_drafting.py",
+    "specs/001-piloto-real-confiavel/spec.md",
+    "specs/001-piloto-real-confiavel/plan.md"
+  ],
+  "limitations": "",
+  "observations": "final full regression 243 passed",
+  "procedure": "python3.12 -m pytest -q > /tmp/sales-agent-pytest-tk015.log 2>&1",
+  "result": "passed",
+  "tested_revision": "local:cc2512ad8ab8966b18d07df3ab4140d2436bc079099ce69975188d4238456958",
+  "ticket": "TK-009",
+  "timestamp": "2026-09-28T18:42:45+00:00"
+}

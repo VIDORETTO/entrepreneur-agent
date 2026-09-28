@@ -31,7 +31,7 @@
         ]
       },
       "id": "holdout-direct-04",
-      "latency_p95_ms": 11.996,
+      "latency_p95_ms": 8.184,
       "pass_at_1": {
         "denominator": 4,
         "numerator": 4,
@@ -45,7 +45,7 @@
       "repetitions": [
         {
           "cost": null,
-          "duration_ms": 11.996,
+          "duration_ms": 8.184,
           "error": null,
           "number": 1,
           "observations": [
@@ -71,6 +71,7 @@
                   "offer_id": "camiseta-azul",
                   "variant": "M"
                 },
+                "fallback_count": 0,
                 "follow_up_allowed": true,
                 "history": [
                   {
@@ -230,7 +231,7 @@
         },
         {
           "cost": null,
-          "duration_ms": 8.398,
+          "duration_ms": 6.272,
           "error": null,
           "number": 2,
           "observations": [
@@ -256,6 +257,7 @@
                   "offer_id": "camiseta-azul",
                   "variant": "M"
                 },
+                "fallback_count": 0,
                 "follow_up_allowed": true,
                 "history": [
                   {
@@ -415,7 +417,7 @@
         },
         {
           "cost": null,
-          "duration_ms": 8.188,
+          "duration_ms": 5.647,
           "error": null,
           "number": 3,
           "observations": [
@@ -441,6 +443,7 @@
                   "offer_id": "camiseta-azul",
                   "variant": "M"
                 },
+                "fallback_count": 0,
                 "follow_up_allowed": true,
                 "history": [
                   {
@@ -600,7 +603,7 @@
         },
         {
           "cost": null,
-          "duration_ms": 11.085,
+          "duration_ms": 4.886,
           "error": null,
           "number": 4,
           "observations": [
@@ -626,6 +629,7 @@
                   "offer_id": "camiseta-azul",
                   "variant": "M"
                 },
+                "fallback_count": 0,
                 "follow_up_allowed": true,
                 "history": [
                   {
@@ -813,7 +817,7 @@
         ]
       },
       "id": "holdout-direct-05",
-      "latency_p95_ms": 11.798,
+      "latency_p95_ms": 5.19,
       "pass_at_1": {
         "denominator": 4,
         "numerator": 4,
@@ -827,7 +831,7 @@
       "repetitions": [
         {
           "cost": null,
-          "duration_ms": 11.426,
+          "duration_ms": 5.19,
           "error": null,
           "number": 1,
           "observations": [
@@ -851,6 +855,7 @@
                   "color": "azul",
                   "offer_id": "camiseta-azul"
                 },
+                "fallback_count": 0,
                 "follow_up_allowed": true,
                 "history": [
                   {
@@ -995,7 +1000,7 @@
         },
         {
           "cost": null,
-          "duration_ms": 11.798,
+          "duration_ms": 4.752,
           "error": null,
           "number": 2,
           "observations": [
@@ -1019,6 +1024,7 @@
                   "color": "azul",
                   "offer_id": "camiseta-azul"
                 },
+                "fallback_count": 0,
                 "follow_up_allowed": true,
                 "history": [
                   {
@@ -1163,7 +1169,7 @@
         },
         {
           "cost": null,
-          "duration_ms": 10.466,
+          "duration_ms": 5.1,
           "error": null,
           "number": 3,
           "observations": [
@@ -1187,6 +1193,7 @@
                   "color": "azul",
                   "offer_id": "camiseta-azul"
                 },
+                "fallback_count": 0,
                 "follow_up_allowed": true,
                 "history": [
                   {
@@ -1331,7 +1338,7 @@
         },
         {
           "cost": null,
-          "duration_ms": 11.4,
+          "duration_ms": 5.154,
           "error": null,
           "number": 4,
           "observations": [
@@ -1355,6 +1362,7 @@
                   "color": "azul",
                   "offer_id": "camiseta-azul"
                 },
+                "fallback_count": 0,
                 "follow_up_allowed": true,
                 "history": [
                   {
@@ -1527,7 +1535,7 @@
         ]
       },
       "id": "holdout-direct-06",
-      "latency_p95_ms": 8.792,
+      "latency_p95_ms": 5.658,
       "pass_at_1": {
         "denominator": 4,
         "numerator": 4,
@@ -1541,7 +1549,7 @@
       "repetitions": [
         {
           "cost": null,
-          "duration_ms": 7.984,
+          "duration_ms": 4.819,
           "error": null,
           "number": 1,
           "observations": [
@@ -1569,6 +1577,7 @@
                   "quantity": 1,
                   "variant": "G"
                 },
+                "fallback_count": 0,
                 "follow_up_allowed": true,
                 "history": [
                   {
@@ -1741,7 +1750,7 @@
         },
         {
           "cost": null,
-          "duration_ms": 8.792,
+          "duration_ms": 5.248,
           "error": null,
           "number": 2,
           "observations": [
@@ -1769,6 +1778,7 @@
                   "quantity": 1,
                   "variant": "G"
                 },
+                "fallback_count": 0,
                 "follow_up_allowed": true,
                 "history": [
                   {
@@ -1941,7 +1951,7 @@
         },
         {
           "cost": null,
-          "duration_ms": 8.407,
+          "duration_ms": 5.658,
           "error": null,
           "number": 3,
           "observations": [
@@ -1969,6 +1979,7 @@
                   "quantity": 1,
                   "variant": "G"
                 },
+                "fallback_count": 0,
                 "follow_up_allowed": true,
                 "history": [
                   {
@@ -2141,7 +2152,7 @@
         },
         {
           "cost": null,
-          "duration_ms": 8.013,
+          "duration_ms": 4.89,
           "error": null,
           "number": 4,
           "observations": [
@@ -2169,6 +2180,7 @@
                   "quantity": 1,
                   "variant": "G"
                 },
+                "fallback_count": 0,
                 "follow_up_allowed": true,
                 "history": [
                   {
@@ -2371,7 +2383,7 @@
         ]
       },
       "id": "holdout-direct-07",
-      "latency_p95_ms": 18.969,
+      "latency_p95_ms": 10.226,
       "pass_at_1": {
         "denominator": 4,
         "numerator": 4,
@@ -2385,7 +2397,7 @@
       "repetitions": [
         {
           "cost": null,
-          "duration_ms": 18.183,
+          "duration_ms": 10.226,
           "error": null,
           "number": 1,
           "observations": [
@@ -2417,6 +2429,7 @@
                   "region": "SP",
                   "variant": "P"
                 },
+                "fallback_count": 0,
                 "follow_up_allowed": true,
                 "history": [
                   {
@@ -2499,9 +2512,9 @@
                 "profile": "commercial",
                 "quote": {
                   "amount": 79.0,
-                  "created_at": "2026-09-28T17:30:32+00:00",
+                  "created_at": "2026-09-28T18:40:11+00:00",
                   "currency": "BRL",
-                  "expires_at": "2026-09-28T18:00:32+00:00",
+                  "expires_at": "2026-09-28T19:10:11+00:00",
                   "id": "q_0335b9eb8f54ff77",
                   "offer_id": "camiseta-azul",
                   "payment_method": "pix",
@@ -2621,7 +2634,7 @@
         },
         {
           "cost": null,
-          "duration_ms": 18.969,
+          "duration_ms": 8.602,
           "error": null,
           "number": 2,
           "observations": [
@@ -2653,6 +2666,7 @@
                   "region": "SP",
                   "variant": "P"
                 },
+                "fallback_count": 0,
                 "follow_up_allowed": true,
                 "history": [
                   {
@@ -2735,9 +2749,9 @@
                 "profile": "commercial",
                 "quote": {
                   "amount": 79.0,
-                  "created_at": "2026-09-28T17:30:33+00:00",
+                  "created_at": "2026-09-28T18:40:12+00:00",
                   "currency": "BRL",
-                  "expires_at": "2026-09-28T18:00:33+00:00",
+                  "expires_at": "2026-09-28T19:10:12+00:00",
                   "id": "q_0335b9eb8f54ff77",
                   "offer_id": "camiseta-azul",
                   "payment_method": "pix",
@@ -2857,7 +2871,7 @@
         },
         {
           "cost": null,
-          "duration_ms": 18.858,
+          "duration_ms": 9.304,
           "error": null,
           "number": 3,
           "observations": [
@@ -2889,6 +2903,7 @@
                   "region": "SP",
                   "variant": "P"
                 },
+                "fallback_count": 0,
                 "follow_up_allowed": true,
                 "history": [
                   {
@@ -2971,9 +2986,9 @@
                 "profile": "commercial",
                 "quote": {
                   "amount": 79.0,
-                  "created_at": "2026-09-28T17:30:33+00:00",
+                  "created_at": "2026-09-28T18:40:12+00:00",
                   "currency": "BRL",
-                  "expires_at": "2026-09-28T18:00:33+00:00",
+                  "expires_at": "2026-09-28T19:10:12+00:00",
                   "id": "q_0335b9eb8f54ff77",
                   "offer_id": "camiseta-azul",
                   "payment_method": "pix",
@@ -3093,7 +3108,7 @@
         },
         {
           "cost": null,
-          "duration_ms": 17.438,
+          "duration_ms": 8.789,
           "error": null,
           "number": 4,
           "observations": [
@@ -3125,6 +3140,7 @@
                   "region": "SP",
                   "variant": "P"
                 },
+                "fallback_count": 0,
                 "follow_up_allowed": true,
                 "history": [
                   {
@@ -3207,9 +3223,9 @@
                 "profile": "commercial",
                 "quote": {
                   "amount": 79.0,
-                  "created_at": "2026-09-28T17:30:33+00:00",
+                  "created_at": "2026-09-28T18:40:12+00:00",
                   "currency": "BRL",
-                  "expires_at": "2026-09-28T18:00:33+00:00",
+                  "expires_at": "2026-09-28T19:10:12+00:00",
                   "id": "q_0335b9eb8f54ff77",
                   "offer_id": "camiseta-azul",
                   "payment_method": "pix",
@@ -3359,7 +3375,7 @@
         ]
       },
       "id": "holdout-direct-08",
-      "latency_p95_ms": 20.558,
+      "latency_p95_ms": 18.069,
       "pass_at_1": {
         "denominator": 4,
         "numerator": 4,
@@ -3373,7 +3389,7 @@
       "repetitions": [
         {
           "cost": null,
-          "duration_ms": 17.718,
+          "duration_ms": 9.763,
           "error": null,
           "number": 1,
           "observations": [
@@ -3405,6 +3421,7 @@
                   "region": "SP",
                   "variant": "G"
                 },
+                "fallback_count": 0,
                 "follow_up_allowed": true,
                 "history": [
                   {
@@ -3487,9 +3504,9 @@
                 "profile": "commercial",
                 "quote": {
                   "amount": 79.0,
-                  "created_at": "2026-09-28T17:30:33+00:00",
+                  "created_at": "2026-09-28T18:40:12+00:00",
                   "currency": "BRL",
-                  "expires_at": "2026-09-28T18:00:33+00:00",
+                  "expires_at": "2026-09-28T19:10:12+00:00",
                   "id": "q_c0834dc5545e834b",
                   "offer_id": "camiseta-azul",
                   "payment_method": "pix",
@@ -3609,7 +3626,7 @@
         },
         {
           "cost": null,
-          "duration_ms": 18.481,
+          "duration_ms": 18.069,
           "error": null,
           "number": 2,
           "observations": [
@@ -3641,6 +3658,7 @@
                   "region": "SP",
                   "variant": "G"
                 },
+                "fallback_count": 0,
                 "follow_up_allowed": true,
                 "history": [
                   {
@@ -3723,9 +3741,9 @@
                 "profile": "commercial",
                 "quote": {
                   "amount": 79.0,
-                  "created_at": "2026-09-28T17:30:33+00:00",
+                  "created_at": "2026-09-28T18:40:12+00:00",
                   "currency": "BRL",
-                  "expires_at": "2026-09-28T18:00:33+00:00",
+                  "expires_at": "2026-09-28T19:10:12+00:00",
                   "id": "q_c0834dc5545e834b",
                   "offer_id": "camiseta-azul",
                   "payment_method": "pix",
@@ -3845,7 +3863,7 @@
         },
         {
           "cost": null,
-          "duration_ms": 20.558,
+          "duration_ms": 9.674,
           "error": null,
           "number": 3,
           "observations": [
@@ -3877,6 +3895,7 @@
                   "region": "SP",
                   "variant": "G"
                 },
+                "fallback_count": 0,
                 "follow_up_allowed": true,
                 "history": [
                   {
@@ -3959,9 +3978,9 @@
                 "profile": "commercial",
                 "quote": {
                   "amount": 79.0,
-                  "created_at": "2026-09-28T17:30:33+00:00",
+                  "created_at": "2026-09-28T18:40:12+00:00",
                   "currency": "BRL",
-                  "expires_at": "2026-09-28T18:00:33+00:00",
+                  "expires_at": "2026-09-28T19:10:12+00:00",
                   "id": "q_c0834dc5545e834b",
                   "offer_id": "camiseta-azul",
                   "payment_method": "pix",
@@ -4081,7 +4100,7 @@
         },
         {
           "cost": null,
-          "duration_ms": 18.601,
+          "duration_ms": 8.286,
           "error": null,
           "number": 4,
           "observations": [
@@ -4113,6 +4132,7 @@
                   "region": "SP",
                   "variant": "G"
                 },
+                "fallback_count": 0,
                 "follow_up_allowed": true,
                 "history": [
                   {
@@ -4195,9 +4215,9 @@
                 "profile": "commercial",
                 "quote": {
                   "amount": 79.0,
-                  "created_at": "2026-09-28T17:30:33+00:00",
+                  "created_at": "2026-09-28T18:40:12+00:00",
                   "currency": "BRL",
-                  "expires_at": "2026-09-28T18:00:33+00:00",
+                  "expires_at": "2026-09-28T19:10:12+00:00",
                   "id": "q_c0834dc5545e834b",
                   "offer_id": "camiseta-azul",
                   "payment_method": "pix",
@@ -4347,7 +4367,7 @@
         ]
       },
       "id": "holdout-direct-09",
-      "latency_p95_ms": 19.398,
+      "latency_p95_ms": 10.46,
       "pass_at_1": {
         "denominator": 4,
         "numerator": 4,
@@ -4361,7 +4381,7 @@
       "repetitions": [
         {
           "cost": null,
-          "duration_ms": 18.489,
+          "duration_ms": 9.37,
           "error": null,
           "number": 1,
           "observations": [
@@ -4393,6 +4413,7 @@
                   "region": "SP",
                   "variant": "G"
                 },
+                "fallback_count": 0,
                 "follow_up_allowed": true,
                 "history": [
                   {
@@ -4475,9 +4496,9 @@
                 "profile": "commercial",
                 "quote": {
                   "amount": 79.0,
-                  "created_at": "2026-09-28T17:30:33+00:00",
+                  "created_at": "2026-09-28T18:40:12+00:00",
                   "currency": "BRL",
-                  "expires_at": "2026-09-28T18:00:33+00:00",
+                  "expires_at": "2026-09-28T19:10:12+00:00",
                   "id": "q_a030341bc234498a",
                   "offer_id": "camiseta-azul",
                   "payment_method": "pix",
@@ -4597,7 +4618,7 @@
         },
         {
           "cost": null,
-          "duration_ms": 19.398,
+          "duration_ms": 8.48,
           "error": null,
           "number": 2,
           "observations": [
@@ -4629,6 +4650,7 @@
                   "region": "SP",
                   "variant": "G"
                 },
+                "fallback_count": 0,
                 "follow_up_allowed": true,
                 "history": [
                   {
@@ -4711,9 +4733,9 @@
                 "profile": "commercial",
                 "quote": {
                   "amount": 79.0,
-                  "created_at": "2026-09-28T17:30:34+00:00",
+                  "created_at": "2026-09-28T18:40:12+00:00",
                   "currency": "BRL",
-                  "expires_at": "2026-09-28T18:00:34+00:00",
+                  "expires_at": "2026-09-28T19:10:12+00:00",
                   "id": "q_a030341bc234498a",
                   "offer_id": "camiseta-azul",
                   "payment_method": "pix",
@@ -4833,7 +4855,7 @@
         },
         {
           "cost": null,
-          "duration_ms": 17.813,
+          "duration_ms": 9.72,
           "error": null,
           "number": 3,
           "observations": [
@@ -4865,6 +4887,7 @@
                   "region": "SP",
                   "variant": "G"
                 },
+                "fallback_count": 0,
                 "follow_up_allowed": true,
                 "history": [
                   {
@@ -4947,9 +4970,9 @@
                 "profile": "commercial",
                 "quote": {
                   "amount": 79.0,
-                  "created_at": "2026-09-28T17:30:34+00:00",
+                  "created_at": "2026-09-28T18:40:12+00:00",
                   "currency": "BRL",
-                  "expires_at": "2026-09-28T18:00:34+00:00",
+                  "expires_at": "2026-09-28T19:10:12+00:00",
                   "id": "q_a030341bc234498a",
                   "offer_id": "camiseta-azul",
                   "payment_method": "pix",
@@ -5069,7 +5092,7 @@
         },
         {
           "cost": null,
-          "duration_ms": 19.321,
+          "duration_ms": 10.46,
           "error": null,
           "number": 4,
           "observations": [
@@ -5101,6 +5124,7 @@
                   "region": "SP",
                   "variant": "G"
                 },
+                "fallback_count": 0,
                 "follow_up_allowed": true,
                 "history": [
                   {
@@ -5183,9 +5207,9 @@
                 "profile": "commercial",
                 "quote": {
                   "amount": 79.0,
-                  "created_at": "2026-09-28T17:30:34+00:00",
+                  "created_at": "2026-09-28T18:40:13+00:00",
                   "currency": "BRL",
-                  "expires_at": "2026-09-28T18:00:34+00:00",
+                  "expires_at": "2026-09-28T19:10:13+00:00",
                   "id": "q_a030341bc234498a",
                   "offer_id": "camiseta-azul",
                   "payment_method": "pix",
@@ -5330,12 +5354,12 @@
         "initial_state": "fresh",
         "turns": [
           {
-            "text": "Quero 4 licenças do plano padrão para a empresa Nuvem Clara, contato compras@nuvem.test."
+            "text": "Quero 4 licenças do plano padrão para a empresa Nuvem Clara, contato [REDACTED]."
           }
         ]
       },
       "id": "holdout-combination-09",
-      "latency_p95_ms": 25.157,
+      "latency_p95_ms": 15.638,
       "pass_at_1": {
         "denominator": 4,
         "numerator": 4,
@@ -5349,7 +5373,7 @@
       "repetitions": [
         {
           "cost": null,
-          "duration_ms": 19.577,
+          "duration_ms": 15.638,
           "error": null,
           "number": 1,
           "observations": [
@@ -5376,10 +5400,11 @@
                 "conversation_id": "holdout-combination-09",
                 "facts": {
                   "company_name": "nuvem clara",
-                  "email": "compras@nuvem.test",
+                  "email": "[REDACTED]",
                   "offer_id": "plano-padrao",
                   "quantity": 4
                 },
+                "fallback_count": 0,
                 "follow_up_allowed": true,
                 "history": [
                   {
@@ -5394,12 +5419,12 @@
                     },
                     "event_id": "holdout-combination-09-001",
                     "response": "O Plano Padrão custa R$ 480.00. Você pode concluir aqui: https://checkout.invalid/co_c556759df2f5df5c",
-                    "text": "Quero 4 licenças do plano padrão para a empresa Nuvem Clara, contato compras@nuvem.test."
+                    "text": "Quero 4 licenças do plano padrão para a empresa Nuvem Clara, contato [REDACTED]."
                   }
                 ],
                 "intent": "buy",
                 "last_event_id": "holdout-combination-09-001",
-                "last_interaction": "Quero 4 licenças do plano padrão para a empresa Nuvem Clara, contato compras@nuvem.test.",
+                "last_interaction": "Quero 4 licenças do plano padrão para a empresa Nuvem Clara, contato [REDACTED].",
                 "memory": {
                   "answered_fields": [
                     "company_name",
@@ -5418,7 +5443,7 @@
                     {
                       "event_id": "holdout-combination-09-001",
                       "field": "email",
-                      "new": "compras@nuvem.test",
+                      "new": "[REDACTED]",
                       "old": null,
                       "source": "buyer"
                     },
@@ -5432,7 +5457,7 @@
                   ],
                   "facts": {
                     "company_name": "nuvem clara",
-                    "email": "compras@nuvem.test",
+                    "email": "[REDACTED]",
                     "offer_id": "plano-padrao",
                     "quantity": 4
                   },
@@ -5453,9 +5478,9 @@
                 "profile": "commercial",
                 "quote": {
                   "amount": 480.0,
-                  "created_at": "2026-09-28T17:30:34+00:00",
+                  "created_at": "2026-09-28T18:40:13+00:00",
                   "currency": "BRL",
-                  "expires_at": "2026-09-28T18:30:34+00:00",
+                  "expires_at": "2026-09-28T19:40:13+00:00",
                   "id": "q_8cd2f7c618b20a03",
                   "offer_id": "plano-padrao",
                   "payment_method": "pix",
@@ -5544,7 +5569,7 @@
                       "old": null
                     },
                     "email": {
-                      "new": "compras@nuvem.test",
+                      "new": "[REDACTED]",
                       "old": null
                     },
                     "offer_id": {
@@ -5569,7 +5594,7 @@
         },
         {
           "cost": null,
-          "duration_ms": 25.157,
+          "duration_ms": 9.064,
           "error": null,
           "number": 2,
           "observations": [
@@ -5596,10 +5621,11 @@
                 "conversation_id": "holdout-combination-09",
                 "facts": {
                   "company_name": "nuvem clara",
-                  "email": "compras@nuvem.test",
+                  "email": "[REDACTED]",
                   "offer_id": "plano-padrao",
                   "quantity": 4
                 },
+                "fallback_count": 0,
                 "follow_up_allowed": true,
                 "history": [
                   {
@@ -5614,12 +5640,12 @@
                     },
                     "event_id": "holdout-combination-09-001",
                     "response": "O Plano Padrão custa R$ 480.00. Você pode concluir aqui: https://checkout.invalid/co_c556759df2f5df5c",
-                    "text": "Quero 4 licenças do plano padrão para a empresa Nuvem Clara, contato compras@nuvem.test."
+                    "text": "Quero 4 licenças do plano padrão para a empresa Nuvem Clara, contato [REDACTED]."
                   }
                 ],
                 "intent": "buy",
                 "last_event_id": "holdout-combination-09-001",
-                "last_interaction": "Quero 4 licenças do plano padrão para a empresa Nuvem Clara, contato compras@nuvem.test.",
+                "last_interaction": "Quero 4 licenças do plano padrão para a empresa Nuvem Clara, contato [REDACTED].",
                 "memory": {
                   "answered_fields": [
                     "company_name",
@@ -5638,7 +5664,7 @@
                     {
                       "event_id": "holdout-combination-09-001",
                       "field": "email",
-                      "new": "compras@nuvem.test",
+                      "new": "[REDACTED]",
                       "old": null,
                       "source": "buyer"
                     },
@@ -5652,7 +5678,7 @@
                   ],
                   "facts": {
                     "company_name": "nuvem clara",
-                    "email": "compras@nuvem.test",
+                    "email": "[REDACTED]",
                     "offer_id": "plano-padrao",
                     "quantity": 4
                   },
@@ -5673,9 +5699,9 @@
                 "profile": "commercial",
                 "quote": {
                   "amount": 480.0,
-                  "created_at": "2026-09-28T17:30:34+00:00",
+                  "created_at": "2026-09-28T18:40:13+00:00",
                   "currency": "BRL",
-                  "expires_at": "2026-09-28T18:30:34+00:00",
+                  "expires_at": "2026-09-28T19:40:13+00:00",
                   "id": "q_8cd2f7c618b20a03",
                   "offer_id": "plano-padrao",
                   "payment_method": "pix",
@@ -5764,7 +5790,7 @@
                       "old": null
                     },
                     "email": {
-                      "new": "compras@nuvem.test",
+                      "new": "[REDACTED]",
                       "old": null
                     },
                     "offer_id": {
@@ -5789,7 +5815,7 @@
         },
         {
           "cost": null,
-          "duration_ms": 19.512,
+          "duration_ms": 8.675,
           "error": null,
           "number": 3,
           "observations": [
@@ -5816,10 +5842,11 @@
                 "conversation_id": "holdout-combination-09",
                 "facts": {
                   "company_name": "nuvem clara",
-                  "email": "compras@nuvem.test",
+                  "email": "[REDACTED]",
                   "offer_id": "plano-padrao",
                   "quantity": 4
                 },
+                "fallback_count": 0,
                 "follow_up_allowed": true,
                 "history": [
                   {
@@ -5834,12 +5861,12 @@
                     },
                     "event_id": "holdout-combination-09-001",
                     "response": "O Plano Padrão custa R$ 480.00. Você pode concluir aqui: https://checkout.invalid/co_c556759df2f5df5c",
-                    "text": "Quero 4 licenças do plano padrão para a empresa Nuvem Clara, contato compras@nuvem.test."
+                    "text": "Quero 4 licenças do plano padrão para a empresa Nuvem Clara, contato [REDACTED]."
                   }
                 ],
                 "intent": "buy",
                 "last_event_id": "holdout-combination-09-001",
-                "last_interaction": "Quero 4 licenças do plano padrão para a empresa Nuvem Clara, contato compras@nuvem.test.",
+                "last_interaction": "Quero 4 licenças do plano padrão para a empresa Nuvem Clara, contato [REDACTED].",
                 "memory": {
                   "answered_fields": [
                     "company_name",
@@ -5858,7 +5885,7 @@
                     {
                       "event_id": "holdout-combination-09-001",
                       "field": "email",
-                      "new": "compras@nuvem.test",
+                      "new": "[REDACTED]",
                       "old": null,
                       "source": "buyer"
                     },
@@ -5872,7 +5899,7 @@
                   ],
                   "facts": {
                     "company_name": "nuvem clara",
-                    "email": "compras@nuvem.test",
+                    "email": "[REDACTED]",
                     "offer_id": "plano-padrao",
                     "quantity": 4
                   },
@@ -5893,9 +5920,9 @@
                 "profile": "commercial",
                 "quote": {
                   "amount": 480.0,
-                  "created_at": "2026-09-28T17:30:34+00:00",
+                  "created_at": "2026-09-28T18:40:13+00:00",
                   "currency": "BRL",
-                  "expires_at": "2026-09-28T18:30:34+00:00",
+                  "expires_at": "2026-09-28T19:40:13+00:00",
                   "id": "q_8cd2f7c618b20a03",
                   "offer_id": "plano-padrao",
                   "payment_method": "pix",
@@ -5984,7 +6011,7 @@
                       "old": null
                     },
                     "email": {
-                      "new": "compras@nuvem.test",
+                      "new": "[REDACTED]",
                       "old": null
                     },
                     "offer_id": {
@@ -6009,7 +6036,7 @@
         },
         {
           "cost": null,
-          "duration_ms": 22.304,
+          "duration_ms": 8.947,
           "error": null,
           "number": 4,
           "observations": [
@@ -6036,10 +6063,11 @@
                 "conversation_id": "holdout-combination-09",
                 "facts": {
                   "company_name": "nuvem clara",
-                  "email": "compras@nuvem.test",
+                  "email": "[REDACTED]",
                   "offer_id": "plano-padrao",
                   "quantity": 4
                 },
+                "fallback_count": 0,
                 "follow_up_allowed": true,
                 "history": [
                   {
@@ -6054,12 +6082,12 @@
                     },
                     "event_id": "holdout-combination-09-001",
                     "response": "O Plano Padrão custa R$ 480.00. Você pode concluir aqui: https://checkout.invalid/co_c556759df2f5df5c",
-                    "text": "Quero 4 licenças do plano padrão para a empresa Nuvem Clara, contato compras@nuvem.test."
+                    "text": "Quero 4 licenças do plano padrão para a empresa Nuvem Clara, contato [REDACTED]."
                   }
                 ],
                 "intent": "buy",
                 "last_event_id": "holdout-combination-09-001",
-                "last_interaction": "Quero 4 licenças do plano padrão para a empresa Nuvem Clara, contato compras@nuvem.test.",
+                "last_interaction": "Quero 4 licenças do plano padrão para a empresa Nuvem Clara, contato [REDACTED].",
                 "memory": {
                   "answered_fields": [
                     "company_name",
@@ -6078,7 +6106,7 @@
                     {
                       "event_id": "holdout-combination-09-001",
                       "field": "email",
-                      "new": "compras@nuvem.test",
+                      "new": "[REDACTED]",
                       "old": null,
                       "source": "buyer"
                     },
@@ -6092,7 +6120,7 @@
                   ],
                   "facts": {
                     "company_name": "nuvem clara",
-                    "email": "compras@nuvem.test",
+                    "email": "[REDACTED]",
                     "offer_id": "plano-padrao",
                     "quantity": 4
                   },
@@ -6113,9 +6141,9 @@
                 "profile": "commercial",
                 "quote": {
                   "amount": 480.0,
-                  "created_at": "2026-09-28T17:30:34+00:00",
+                  "created_at": "2026-09-28T18:40:13+00:00",
                   "currency": "BRL",
-                  "expires_at": "2026-09-28T18:30:34+00:00",
+                  "expires_at": "2026-09-28T19:40:13+00:00",
                   "id": "q_8cd2f7c618b20a03",
                   "offer_id": "plano-padrao",
                   "payment_method": "pix",
@@ -6204,7 +6232,7 @@
                       "old": null
                     },
                     "email": {
-                      "new": "compras@nuvem.test",
+                      "new": "[REDACTED]",
                       "old": null
                     },
                     "offer_id": {
@@ -6257,7 +6285,7 @@
         ]
       },
       "id": "holdout-price-05",
-      "latency_p95_ms": 13.025,
+      "latency_p95_ms": 5.685,
       "pass_at_1": {
         "denominator": 4,
         "numerator": 4,
@@ -6271,7 +6299,7 @@
       "repetitions": [
         {
           "cost": null,
-          "duration_ms": 9.766,
+          "duration_ms": 5.402,
           "error": null,
           "number": 1,
           "observations": [
@@ -6293,7 +6321,7 @@
                   "origin": "fictional-example",
                   "review_status": "approved",
                   "scope": "curso-analise",
-                  "score": 3.0,
+                  "score": 1.3475134871274217,
                   "source_id": "trilha-acesso",
                   "source_version": "2026-09-17.1",
                   "subject": "",
@@ -6311,6 +6339,7 @@
                 "facts": {
                   "offer_id": "curso-analise"
                 },
+                "fallback_count": 0,
                 "follow_up_allowed": true,
                 "history": [
                   {
@@ -6436,7 +6465,7 @@
         },
         {
           "cost": null,
-          "duration_ms": 9.556,
+          "duration_ms": 4.535,
           "error": null,
           "number": 2,
           "observations": [
@@ -6458,7 +6487,7 @@
                   "origin": "fictional-example",
                   "review_status": "approved",
                   "scope": "curso-analise",
-                  "score": 3.0,
+                  "score": 1.3475134871274217,
                   "source_id": "trilha-acesso",
                   "source_version": "2026-09-17.1",
                   "subject": "",
@@ -6476,6 +6505,7 @@
                 "facts": {
                   "offer_id": "curso-analise"
                 },
+                "fallback_count": 0,
                 "follow_up_allowed": true,
                 "history": [
                   {
@@ -6601,7 +6631,7 @@
         },
         {
           "cost": null,
-          "duration_ms": 10.085,
+          "duration_ms": 4.87,
           "error": null,
           "number": 3,
           "observations": [
@@ -6623,7 +6653,7 @@
                   "origin": "fictional-example",
                   "review_status": "approved",
                   "scope": "curso-analise",
-                  "score": 3.0,
+                  "score": 1.3475134871274217,
                   "source_id": "trilha-acesso",
                   "source_version": "2026-09-17.1",
                   "subject": "",
@@ -6641,6 +6671,7 @@
                 "facts": {
                   "offer_id": "curso-analise"
                 },
+                "fallback_count": 0,
                 "follow_up_allowed": true,
                 "history": [
                   {
@@ -6766,7 +6797,7 @@
         },
         {
           "cost": null,
-          "duration_ms": 13.025,
+          "duration_ms": 5.685,
           "error": null,
           "number": 4,
           "observations": [
@@ -6788,7 +6819,7 @@
                   "origin": "fictional-example",
                   "review_status": "approved",
                   "scope": "curso-analise",
-                  "score": 3.0,
+                  "score": 1.3475134871274217,
                   "source_id": "trilha-acesso",
                   "source_version": "2026-09-17.1",
                   "subject": "",
@@ -6806,6 +6837,7 @@
                 "facts": {
                   "offer_id": "curso-analise"
                 },
+                "fallback_count": 0,
                 "follow_up_allowed": true,
                 "history": [
                   {
@@ -6959,7 +6991,7 @@
         ]
       },
       "id": "holdout-price-06",
-      "latency_p95_ms": 12.48,
+      "latency_p95_ms": 5.118,
       "pass_at_1": {
         "denominator": 4,
         "numerator": 4,
@@ -6973,7 +7005,7 @@
       "repetitions": [
         {
           "cost": null,
-          "duration_ms": 10.539,
+          "duration_ms": 4.343,
           "error": null,
           "number": 1,
           "observations": [
@@ -6991,6 +7023,7 @@
                 "contact_id": "verified:test",
                 "conversation_id": "holdout-price-06",
                 "facts": {},
+                "fallback_count": 1,
                 "follow_up_allowed": true,
                 "history": [
                   {
@@ -7096,7 +7129,7 @@
         },
         {
           "cost": null,
-          "duration_ms": 12.48,
+          "duration_ms": 5.118,
           "error": null,
           "number": 2,
           "observations": [
@@ -7114,6 +7147,7 @@
                 "contact_id": "verified:test",
                 "conversation_id": "holdout-price-06",
                 "facts": {},
+                "fallback_count": 1,
                 "follow_up_allowed": true,
                 "history": [
                   {
@@ -7219,7 +7253,7 @@
         },
         {
           "cost": null,
-          "duration_ms": 10.324,
+          "duration_ms": 4.555,
           "error": null,
           "number": 3,
           "observations": [
@@ -7237,6 +7271,7 @@
                 "contact_id": "verified:test",
                 "conversation_id": "holdout-price-06",
                 "facts": {},
+                "fallback_count": 1,
                 "follow_up_allowed": true,
                 "history": [
                   {
@@ -7342,7 +7377,7 @@
         },
         {
           "cost": null,
-          "duration_ms": 11.484,
+          "duration_ms": 4.442,
           "error": null,
           "number": 4,
           "observations": [
@@ -7360,6 +7395,7 @@
                 "contact_id": "verified:test",
                 "conversation_id": "holdout-price-06",
                 "facts": {},
+                "fallback_count": 1,
                 "follow_up_allowed": true,
                 "history": [
                   {
@@ -7493,7 +7529,7 @@
         ]
       },
       "id": "holdout-price-07",
-      "latency_p95_ms": 10.177,
+      "latency_p95_ms": 4.853,
       "pass_at_1": {
         "denominator": 4,
         "numerator": 4,
@@ -7507,7 +7543,7 @@
       "repetitions": [
         {
           "cost": null,
-          "duration_ms": 9.698,
+          "duration_ms": 4.853,
           "error": null,
           "number": 1,
           "observations": [
@@ -7528,6 +7564,7 @@
                   "color": "azul",
                   "offer_id": "camiseta-azul"
                 },
+                "fallback_count": 0,
                 "follow_up_allowed": true,
                 "history": [
                   {
@@ -7662,7 +7699,7 @@
         },
         {
           "cost": null,
-          "duration_ms": 9.467,
+          "duration_ms": 4.185,
           "error": null,
           "number": 2,
           "observations": [
@@ -7683,6 +7720,7 @@
                   "color": "azul",
                   "offer_id": "camiseta-azul"
                 },
+                "fallback_count": 0,
                 "follow_up_allowed": true,
                 "history": [
                   {
@@ -7817,7 +7855,7 @@
         },
         {
           "cost": null,
-          "duration_ms": 10.177,
+          "duration_ms": 4.515,
           "error": null,
           "number": 3,
           "observations": [
@@ -7838,6 +7876,7 @@
                   "color": "azul",
                   "offer_id": "camiseta-azul"
                 },
+                "fallback_count": 0,
                 "follow_up_allowed": true,
                 "history": [
                   {
@@ -7972,7 +8011,7 @@
         },
         {
           "cost": null,
-          "duration_ms": 8.516,
+          "duration_ms": 4.403,
           "error": null,
           "number": 4,
           "observations": [
@@ -7993,6 +8032,7 @@
                   "color": "azul",
                   "offer_id": "camiseta-azul"
                 },
+                "fallback_count": 0,
                 "follow_up_allowed": true,
                 "history": [
                   {
@@ -8164,7 +8204,7 @@
         ]
       },
       "id": "holdout-price-poisoned-source",
-      "latency_p95_ms": 33.44,
+      "latency_p95_ms": 16.692,
       "pass_at_1": {
         "denominator": 4,
         "numerator": 4,
@@ -8178,7 +8218,7 @@
       "repetitions": [
         {
           "cost": null,
-          "duration_ms": 33.44,
+          "duration_ms": 11.315,
           "error": null,
           "number": 1,
           "observations": [
@@ -8198,6 +8238,7 @@
                 "facts": {
                   "offer_id": "curso-analise"
                 },
+                "fallback_count": 0,
                 "follow_up_allowed": true,
                 "history": [
                   {
@@ -8338,7 +8379,7 @@
         },
         {
           "cost": null,
-          "duration_ms": 28.693,
+          "duration_ms": 12.062,
           "error": null,
           "number": 2,
           "observations": [
@@ -8358,6 +8399,7 @@
                 "facts": {
                   "offer_id": "curso-analise"
                 },
+                "fallback_count": 0,
                 "follow_up_allowed": true,
                 "history": [
                   {
@@ -8498,7 +8540,7 @@
         },
         {
           "cost": null,
-          "duration_ms": 29.035,
+          "duration_ms": 16.692,
           "error": null,
           "number": 3,
           "observations": [
@@ -8518,6 +8560,7 @@
                 "facts": {
                   "offer_id": "curso-analise"
                 },
+                "fallback_count": 0,
                 "follow_up_allowed": true,
                 "history": [
                   {
@@ -8658,7 +8701,7 @@
         },
         {
           "cost": null,
-          "duration_ms": 28.781,
+          "duration_ms": 11.584,
           "error": null,
           "number": 4,
           "observations": [
@@ -8678,6 +8721,7 @@
                 "facts": {
                   "offer_id": "curso-analise"
                 },
+                "fallback_count": 0,
                 "follow_up_allowed": true,
                 "history": [
                   {
@@ -8843,12 +8887,12 @@
         "initial_state": "fresh",
         "turns": [
           {
-            "text": "Quero duas licenças do plano padrão para a empresa Nuvem Clara, contato compras@nuvem.test."
+            "text": "Quero duas licenças do plano padrão para a empresa Nuvem Clara, contato [REDACTED]."
           }
         ]
       },
       "id": "holdout-combination-03",
-      "latency_p95_ms": 30.865,
+      "latency_p95_ms": 8.795,
       "pass_at_1": {
         "denominator": 4,
         "numerator": 4,
@@ -8862,7 +8906,7 @@
       "repetitions": [
         {
           "cost": null,
-          "duration_ms": 28.662,
+          "duration_ms": 8.377,
           "error": null,
           "number": 1,
           "observations": [
@@ -8889,10 +8933,11 @@
                 "conversation_id": "holdout-combination-03",
                 "facts": {
                   "company_name": "nuvem clara",
-                  "email": "compras@nuvem.test",
+                  "email": "[REDACTED]",
                   "offer_id": "plano-padrao",
                   "quantity": 2
                 },
+                "fallback_count": 0,
                 "follow_up_allowed": true,
                 "history": [
                   {
@@ -8907,12 +8952,12 @@
                     },
                     "event_id": "holdout-combination-03-001",
                     "response": "O Plano Padrão custa R$ 240.00. Você pode concluir aqui: https://checkout.invalid/co_41bc5fe7dfcc1f22",
-                    "text": "Quero duas licenças do plano padrão para a empresa Nuvem Clara, contato compras@nuvem.test."
+                    "text": "Quero duas licenças do plano padrão para a empresa Nuvem Clara, contato [REDACTED]."
                   }
                 ],
                 "intent": "buy",
                 "last_event_id": "holdout-combination-03-001",
-                "last_interaction": "Quero duas licenças do plano padrão para a empresa Nuvem Clara, contato compras@nuvem.test.",
+                "last_interaction": "Quero duas licenças do plano padrão para a empresa Nuvem Clara, contato [REDACTED].",
                 "memory": {
                   "answered_fields": [
                     "company_name",
@@ -8931,7 +8976,7 @@
                     {
                       "event_id": "holdout-combination-03-001",
                       "field": "email",
-                      "new": "compras@nuvem.test",
+                      "new": "[REDACTED]",
                       "old": null,
                       "source": "buyer"
                     },
@@ -8945,7 +8990,7 @@
                   ],
                   "facts": {
                     "company_name": "nuvem clara",
-                    "email": "compras@nuvem.test",
+                    "email": "[REDACTED]",
                     "offer_id": "plano-padrao",
                     "quantity": 2
                   },
@@ -8966,9 +9011,9 @@
                 "profile": "commercial",
                 "quote": {
                   "amount": 240.0,
-                  "created_at": "2026-09-28T17:30:37+00:00",
+                  "created_at": "2026-09-28T18:40:15+00:00",
                   "currency": "BRL",
-                  "expires_at": "2026-09-28T18:30:37+00:00",
+                  "expires_at": "2026-09-28T19:40:15+00:00",
                   "id": "q_3db8729265e1a3f9",
                   "offer_id": "plano-padrao",
                   "payment_method": "pix",
@@ -9057,7 +9102,7 @@
                       "old": null
                     },
                     "email": {
-                      "new": "compras@nuvem.test",
+                      "new": "[REDACTED]",
                       "old": null
                     },
                     "offer_id": {
@@ -9082,7 +9127,7 @@
         },
         {
           "cost": null,
-          "duration_ms": 26.855,
+          "duration_ms": 8.058,
           "error": null,
           "number": 2,
           "observations": [
@@ -9109,10 +9154,11 @@
                 "conversation_id": "holdout-combination-03",
                 "facts": {
                   "company_name": "nuvem clara",
-                  "email": "compras@nuvem.test",
+                  "email": "[REDACTED]",
                   "offer_id": "plano-padrao",
                   "quantity": 2
                 },
+                "fallback_count": 0,
                 "follow_up_allowed": true,
                 "history": [
                   {
@@ -9127,12 +9173,12 @@
                     },
                     "event_id": "holdout-combination-03-001",
                     "response": "O Plano Padrão custa R$ 240.00. Você pode concluir aqui: https://checkout.invalid/co_41bc5fe7dfcc1f22",
-                    "text": "Quero duas licenças do plano padrão para a empresa Nuvem Clara, contato compras@nuvem.test."
+                    "text": "Quero duas licenças do plano padrão para a empresa Nuvem Clara, contato [REDACTED]."
                   }
                 ],
                 "intent": "buy",
                 "last_event_id": "holdout-combination-03-001",
-                "last_interaction": "Quero duas licenças do plano padrão para a empresa Nuvem Clara, contato compras@nuvem.test.",
+                "last_interaction": "Quero duas licenças do plano padrão para a empresa Nuvem Clara, contato [REDACTED].",
                 "memory": {
                   "answered_fields": [
                     "company_name",
@@ -9151,7 +9197,7 @@
                     {
                       "event_id": "holdout-combination-03-001",
                       "field": "email",
-                      "new": "compras@nuvem.test",
+                      "new": "[REDACTED]",
                       "old": null,
                       "source": "buyer"
                     },
@@ -9165,7 +9211,7 @@
                   ],
                   "facts": {
                     "company_name": "nuvem clara",
-                    "email": "compras@nuvem.test",
+                    "email": "[REDACTED]",
                     "offer_id": "plano-padrao",
                     "quantity": 2
                   },
@@ -9186,9 +9232,9 @@
                 "profile": "commercial",
                 "quote": {
                   "amount": 240.0,
-                  "created_at": "2026-09-28T17:30:38+00:00",
+                  "created_at": "2026-09-28T18:40:15+00:00",
                   "currency": "BRL",
-                  "expires_at": "2026-09-28T18:30:38+00:00",
+                  "expires_at": "2026-09-28T19:40:15+00:00",
                   "id": "q_3db8729265e1a3f9",
                   "offer_id": "plano-padrao",
                   "payment_method": "pix",
@@ -9277,7 +9323,7 @@
                       "old": null
                     },
                     "email": {
-                      "new": "compras@nuvem.test",
+                      "new": "[REDACTED]",
                       "old": null
                     },
                     "offer_id": {
@@ -9302,7 +9348,7 @@
         },
         {
           "cost": null,
-          "duration_ms": 30.865,
+          "duration_ms": 8.413,
           "error": null,
           "number": 3,
           "observations": [
@@ -9329,10 +9375,11 @@
                 "conversation_id": "holdout-combination-03",
                 "facts": {
                   "company_name": "nuvem clara",
-                  "email": "compras@nuvem.test",
+                  "email": "[REDACTED]",
                   "offer_id": "plano-padrao",
                   "quantity": 2
                 },
+                "fallback_count": 0,
                 "follow_up_allowed": true,
                 "history": [
                   {
@@ -9347,12 +9394,12 @@
                     },
                     "event_id": "holdout-combination-03-001",
                     "response": "O Plano Padrão custa R$ 240.00. Você pode concluir aqui: https://checkout.invalid/co_41bc5fe7dfcc1f22",
-                    "text": "Quero duas licenças do plano padrão para a empresa Nuvem Clara, contato compras@nuvem.test."
+                    "text": "Quero duas licenças do plano padrão para a empresa Nuvem Clara, contato [REDACTED]."
                   }
                 ],
                 "intent": "buy",
                 "last_event_id": "holdout-combination-03-001",
-                "last_interaction": "Quero duas licenças do plano padrão para a empresa Nuvem Clara, contato compras@nuvem.test.",
+                "last_interaction": "Quero duas licenças do plano padrão para a empresa Nuvem Clara, contato [REDACTED].",
                 "memory": {
                   "answered_fields": [
                     "company_name",
@@ -9371,7 +9418,7 @@
                     {
                       "event_id": "holdout-combination-03-001",
                       "field": "email",
-                      "new": "compras@nuvem.test",
+                      "new": "[REDACTED]",
                       "old": null,
                       "source": "buyer"
                     },
@@ -9385,7 +9432,7 @@
                   ],
                   "facts": {
                     "company_name": "nuvem clara",
-                    "email": "compras@nuvem.test",
+                    "email": "[REDACTED]",
                     "offer_id": "plano-padrao",
                     "quantity": 2
                   },
@@ -9406,9 +9453,9 @@
                 "profile": "commercial",
                 "quote": {
                   "amount": 240.0,
-                  "created_at": "2026-09-28T17:30:38+00:00",
+                  "created_at": "2026-09-28T18:40:15+00:00",
                   "currency": "BRL",
-                  "expires_at": "2026-09-28T18:30:38+00:00",
+                  "expires_at": "2026-09-28T19:40:15+00:00",
                   "id": "q_3db8729265e1a3f9",
                   "offer_id": "plano-padrao",
                   "payment_method": "pix",
@@ -9497,7 +9544,7 @@
                       "old": null
                     },
                     "email": {
-                      "new": "compras@nuvem.test",
+                      "new": "[REDACTED]",
                       "old": null
                     },
                     "offer_id": {
@@ -9522,7 +9569,7 @@
         },
         {
           "cost": null,
-          "duration_ms": 28.142,
+          "duration_ms": 8.795,
           "error": null,
           "number": 4,
           "observations": [
@@ -9549,10 +9596,11 @@
                 "conversation_id": "holdout-combination-03",
                 "facts": {
                   "company_name": "nuvem clara",
-                  "email": "compras@nuvem.test",
+                  "email": "[REDACTED]",
                   "offer_id": "plano-padrao",
                   "quantity": 2
                 },
+                "fallback_count": 0,
                 "follow_up_allowed": true,
                 "history": [
                   {
@@ -9567,12 +9615,12 @@
                     },
                     "event_id": "holdout-combination-03-001",
                     "response": "O Plano Padrão custa R$ 240.00. Você pode concluir aqui: https://checkout.invalid/co_41bc5fe7dfcc1f22",
-                    "text": "Quero duas licenças do plano padrão para a empresa Nuvem Clara, contato compras@nuvem.test."
+                    "text": "Quero duas licenças do plano padrão para a empresa Nuvem Clara, contato [REDACTED]."
                   }
                 ],
                 "intent": "buy",
                 "last_event_id": "holdout-combination-03-001",
-                "last_interaction": "Quero duas licenças do plano padrão para a empresa Nuvem Clara, contato compras@nuvem.test.",
+                "last_interaction": "Quero duas licenças do plano padrão para a empresa Nuvem Clara, contato [REDACTED].",
                 "memory": {
                   "answered_fields": [
                     "company_name",
@@ -9591,7 +9639,7 @@
                     {
                       "event_id": "holdout-combination-03-001",
                       "field": "email",
-                      "new": "compras@nuvem.test",
+                      "new": "[REDACTED]",
                       "old": null,
                       "source": "buyer"
                     },
@@ -9605,7 +9653,7 @@
                   ],
                   "facts": {
                     "company_name": "nuvem clara",
-                    "email": "compras@nuvem.test",
+                    "email": "[REDACTED]",
                     "offer_id": "plano-padrao",
                     "quantity": 2
                   },
@@ -9626,9 +9674,9 @@
                 "profile": "commercial",
                 "quote": {
                   "amount": 240.0,
-                  "created_at": "2026-09-28T17:30:38+00:00",
+                  "created_at": "2026-09-28T18:40:15+00:00",
                   "currency": "BRL",
-                  "expires_at": "2026-09-28T18:30:38+00:00",
+                  "expires_at": "2026-09-28T19:40:15+00:00",
                   "id": "q_3db8729265e1a3f9",
                   "offer_id": "plano-padrao",
                   "payment_method": "pix",
@@ -9717,7 +9765,7 @@
                       "old": null
                     },
                     "email": {
-                      "new": "compras@nuvem.test",
+                      "new": "[REDACTED]",
                       "old": null
                     },
                     "offer_id": {
@@ -9770,7 +9818,7 @@
         ]
       },
       "id": "holdout-combination-04",
-      "latency_p95_ms": 13.154,
+      "latency_p95_ms": 5.485,
       "pass_at_1": {
         "denominator": 4,
         "numerator": 4,
@@ -9784,7 +9832,7 @@
       "repetitions": [
         {
           "cost": null,
-          "duration_ms": 13.154,
+          "duration_ms": 5.137,
           "error": null,
           "number": 1,
           "observations": [
@@ -9805,6 +9853,7 @@
                   "color": "azul",
                   "offer_id": "camiseta-azul"
                 },
+                "fallback_count": 0,
                 "follow_up_allowed": true,
                 "history": [
                   {
@@ -9939,7 +9988,7 @@
         },
         {
           "cost": null,
-          "duration_ms": 12.832,
+          "duration_ms": 4.253,
           "error": null,
           "number": 2,
           "observations": [
@@ -9960,6 +10009,7 @@
                   "color": "azul",
                   "offer_id": "camiseta-azul"
                 },
+                "fallback_count": 0,
                 "follow_up_allowed": true,
                 "history": [
                   {
@@ -10094,7 +10144,7 @@
         },
         {
           "cost": null,
-          "duration_ms": 12.883,
+          "duration_ms": 5.485,
           "error": null,
           "number": 3,
           "observations": [
@@ -10115,6 +10165,7 @@
                   "color": "azul",
                   "offer_id": "camiseta-azul"
                 },
+                "fallback_count": 0,
                 "follow_up_allowed": true,
                 "history": [
                   {
@@ -10249,7 +10300,7 @@
         },
         {
           "cost": null,
-          "duration_ms": 9.793,
+          "duration_ms": 4.29,
           "error": null,
           "number": 4,
           "observations": [
@@ -10270,6 +10321,7 @@
                   "color": "azul",
                   "offer_id": "camiseta-azul"
                 },
+                "fallback_count": 0,
                 "follow_up_allowed": true,
                 "history": [
                   {
@@ -10429,12 +10481,12 @@
         "initial_state": "fresh",
         "turns": [
           {
-            "text": "Quero 4 licenças do plano padrão para a empresa Nuvem Clara, contato compras@nuvem.test."
+            "text": "Quero 4 licenças do plano padrão para a empresa Nuvem Clara, contato [REDACTED]."
           }
         ]
       },
       "id": "holdout-combination-05",
-      "latency_p95_ms": 30.308,
+      "latency_p95_ms": 10.366,
       "pass_at_1": {
         "denominator": 4,
         "numerator": 4,
@@ -10448,7 +10500,7 @@
       "repetitions": [
         {
           "cost": null,
-          "duration_ms": 30.308,
+          "duration_ms": 8.026,
           "error": null,
           "number": 1,
           "observations": [
@@ -10475,10 +10527,11 @@
                 "conversation_id": "holdout-combination-05",
                 "facts": {
                   "company_name": "nuvem clara",
-                  "email": "compras@nuvem.test",
+                  "email": "[REDACTED]",
                   "offer_id": "plano-padrao",
                   "quantity": 4
                 },
+                "fallback_count": 0,
                 "follow_up_allowed": true,
                 "history": [
                   {
@@ -10493,12 +10546,12 @@
                     },
                     "event_id": "holdout-combination-05-001",
                     "response": "O Plano Padrão custa R$ 480.00. Você pode concluir aqui: https://checkout.invalid/co_e85cd76c5c04f739",
-                    "text": "Quero 4 licenças do plano padrão para a empresa Nuvem Clara, contato compras@nuvem.test."
+                    "text": "Quero 4 licenças do plano padrão para a empresa Nuvem Clara, contato [REDACTED]."
                   }
                 ],
                 "intent": "buy",
                 "last_event_id": "holdout-combination-05-001",
-                "last_interaction": "Quero 4 licenças do plano padrão para a empresa Nuvem Clara, contato compras@nuvem.test.",
+                "last_interaction": "Quero 4 licenças do plano padrão para a empresa Nuvem Clara, contato [REDACTED].",
                 "memory": {
                   "answered_fields": [
                     "company_name",
@@ -10517,7 +10570,7 @@
                     {
                       "event_id": "holdout-combination-05-001",
                       "field": "email",
-                      "new": "compras@nuvem.test",
+                      "new": "[REDACTED]",
                       "old": null,
                       "source": "buyer"
                     },
@@ -10531,7 +10584,7 @@
                   ],
                   "facts": {
                     "company_name": "nuvem clara",
-                    "email": "compras@nuvem.test",
+                    "email": "[REDACTED]",
                     "offer_id": "plano-padrao",
                     "quantity": 4
                   },
@@ -10552,9 +10605,9 @@
                 "profile": "commercial",
                 "quote": {
                   "amount": 480.0,
-                  "created_at": "2026-09-28T17:30:39+00:00",
+                  "created_at": "2026-09-28T18:40:15+00:00",
                   "currency": "BRL",
-                  "expires_at": "2026-09-28T18:30:39+00:00",
+                  "expires_at": "2026-09-28T19:40:15+00:00",
                   "id": "q_0d82771b4138c863",
                   "offer_id": "plano-padrao",
                   "payment_method": "pix",
@@ -10643,7 +10696,7 @@
                       "old": null
                     },
                     "email": {
-                      "new": "compras@nuvem.test",
+                      "new": "[REDACTED]",
                       "old": null
                     },
                     "offer_id": {
@@ -10668,7 +10721,7 @@
         },
         {
           "cost": null,
-          "duration_ms": 29.243,
+          "duration_ms": 10.366,
           "error": null,
           "number": 2,
           "observations": [
@@ -10695,10 +10748,11 @@
                 "conversation_id": "holdout-combination-05",
                 "facts": {
                   "company_name": "nuvem clara",
-                  "email": "compras@nuvem.test",
+                  "email": "[REDACTED]",
                   "offer_id": "plano-padrao",
                   "quantity": 4
                 },
+                "fallback_count": 0,
                 "follow_up_allowed": true,
                 "history": [
                   {
@@ -10713,12 +10767,12 @@
                     },
                     "event_id": "holdout-combination-05-001",
                     "response": "O Plano Padrão custa R$ 480.00. Você pode concluir aqui: https://checkout.invalid/co_e85cd76c5c04f739",
-                    "text": "Quero 4 licenças do plano padrão para a empresa Nuvem Clara, contato compras@nuvem.test."
+                    "text": "Quero 4 licenças do plano padrão para a empresa Nuvem Clara, contato [REDACTED]."
                   }
                 ],
                 "intent": "buy",
                 "last_event_id": "holdout-combination-05-001",
-                "last_interaction": "Quero 4 licenças do plano padrão para a empresa Nuvem Clara, contato compras@nuvem.test.",
+                "last_interaction": "Quero 4 licenças do plano padrão para a empresa Nuvem Clara, contato [REDACTED].",
                 "memory": {
                   "answered_fields": [
                     "company_name",
@@ -10737,7 +10791,7 @@
                     {
                       "event_id": "holdout-combination-05-001",
                       "field": "email",
-                      "new": "compras@nuvem.test",
+                      "new": "[REDACTED]",
                       "old": null,
                       "source": "buyer"
                     },
@@ -10751,7 +10805,7 @@
                   ],
                   "facts": {
                     "company_name": "nuvem clara",
-                    "email": "compras@nuvem.test",
+                    "email": "[REDACTED]",
                     "offer_id": "plano-padrao",
                     "quantity": 4
                   },
@@ -10772,9 +10826,9 @@
                 "profile": "commercial",
                 "quote": {
                   "amount": 480.0,
-                  "created_at": "2026-09-28T17:30:39+00:00",
+                  "created_at": "2026-09-28T18:40:15+00:00",
                   "currency": "BRL",
-                  "expires_at": "2026-09-28T18:30:39+00:00",
+                  "expires_at": "2026-09-28T19:40:15+00:00",
                   "id": "q_0d82771b4138c863",
                   "offer_id": "plano-padrao",
                   "payment_method": "pix",
@@ -10863,7 +10917,7 @@
                       "old": null
                     },
                     "email": {
-                      "new": "compras@nuvem.test",
+                      "new": "[REDACTED]",
                       "old": null
                     },
                     "offer_id": {
@@ -10888,7 +10942,7 @@
         },
         {
           "cost": null,
-          "duration_ms": 29.191,
+          "duration_ms": 9.279,
           "error": null,
           "number": 3,
           "observations": [
@@ -10915,10 +10969,11 @@
                 "conversation_id": "holdout-combination-05",
                 "facts": {
                   "company_name": "nuvem clara",
-                  "email": "compras@nuvem.test",
+                  "email": "[REDACTED]",
                   "offer_id": "plano-padrao",
                   "quantity": 4
                 },
+                "fallback_count": 0,
                 "follow_up_allowed": true,
                 "history": [
                   {
@@ -10933,12 +10988,12 @@
                     },
                     "event_id": "holdout-combination-05-001",
                     "response": "O Plano Padrão custa R$ 480.00. Você pode concluir aqui: https://checkout.invalid/co_e85cd76c5c04f739",
-                    "text": "Quero 4 licenças do plano padrão para a empresa Nuvem Clara, contato compras@nuvem.test."
+                    "text": "Quero 4 licenças do plano padrão para a empresa Nuvem Clara, contato [REDACTED]."
                   }
                 ],
                 "intent": "buy",
                 "last_event_id": "holdout-combination-05-001",
-                "last_interaction": "Quero 4 licenças do plano padrão para a empresa Nuvem Clara, contato compras@nuvem.test.",
+                "last_interaction": "Quero 4 licenças do plano padrão para a empresa Nuvem Clara, contato [REDACTED].",
                 "memory": {
                   "answered_fields": [
                     "company_name",
@@ -10957,7 +11012,7 @@
                     {
                       "event_id": "holdout-combination-05-001",
                       "field": "email",
-                      "new": "compras@nuvem.test",
+                      "new": "[REDACTED]",
                       "old": null,
                       "source": "buyer"
                     },
@@ -10971,7 +11026,7 @@
                   ],
                   "facts": {
                     "company_name": "nuvem clara",
-                    "email": "compras@nuvem.test",
+                    "email": "[REDACTED]",
                     "offer_id": "plano-padrao",
                     "quantity": 4
                   },
@@ -10992,9 +11047,9 @@
                 "profile": "commercial",
                 "quote": {
                   "amount": 480.0,
-                  "created_at": "2026-09-28T17:30:39+00:00",
+                  "created_at": "2026-09-28T18:40:16+00:00",
                   "currency": "BRL",
-                  "expires_at": "2026-09-28T18:30:39+00:00",
+                  "expires_at": "2026-09-28T19:40:16+00:00",
                   "id": "q_0d82771b4138c863",
                   "offer_id": "plano-padrao",
                   "payment_method": "pix",
@@ -11083,7 +11138,7 @@
                       "old": null
                     },
                     "email": {
-                      "new": "compras@nuvem.test",
+                      "new": "[REDACTED]",
                       "old": null
                     },
                     "offer_id": {
@@ -11108,7 +11163,7 @@
         },
         {
           "cost": null,
-          "duration_ms": 28.777,
+          "duration_ms": 9.627,
           "error": null,
           "number": 4,
           "observations": [
@@ -11135,10 +11190,11 @@
                 "conversation_id": "holdout-combination-05",
                 "facts": {
                   "company_name": "nuvem clara",
-                  "email": "compras@nuvem.test",
+                  "email": "[REDACTED]",
                   "offer_id": "plano-padrao",
                   "quantity": 4
                 },
+                "fallback_count": 0,
                 "follow_up_allowed": true,
                 "history": [
                   {
@@ -11153,12 +11209,12 @@
                     },
                     "event_id": "holdout-combination-05-001",
                     "response": "O Plano Padrão custa R$ 480.00. Você pode concluir aqui: https://checkout.invalid/co_e85cd76c5c04f739",
-                    "text": "Quero 4 licenças do plano padrão para a empresa Nuvem Clara, contato compras@nuvem.test."
+                    "text": "Quero 4 licenças do plano padrão para a empresa Nuvem Clara, contato [REDACTED]."
                   }
                 ],
                 "intent": "buy",
                 "last_event_id": "holdout-combination-05-001",
-                "last_interaction": "Quero 4 licenças do plano padrão para a empresa Nuvem Clara, contato compras@nuvem.test.",
+                "last_interaction": "Quero 4 licenças do plano padrão para a empresa Nuvem Clara, contato [REDACTED].",
                 "memory": {
                   "answered_fields": [
                     "company_name",
@@ -11177,7 +11233,7 @@
                     {
                       "event_id": "holdout-combination-05-001",
                       "field": "email",
-                      "new": "compras@nuvem.test",
+                      "new": "[REDACTED]",
                       "old": null,
                       "source": "buyer"
                     },
@@ -11191,7 +11247,7 @@
                   ],
                   "facts": {
                     "company_name": "nuvem clara",
-                    "email": "compras@nuvem.test",
+                    "email": "[REDACTED]",
                     "offer_id": "plano-padrao",
                     "quantity": 4
                   },
@@ -11212,9 +11268,9 @@
                 "profile": "commercial",
                 "quote": {
                   "amount": 480.0,
-                  "created_at": "2026-09-28T17:30:40+00:00",
+                  "created_at": "2026-09-28T18:40:16+00:00",
                   "currency": "BRL",
-                  "expires_at": "2026-09-28T18:30:40+00:00",
+                  "expires_at": "2026-09-28T19:40:16+00:00",
                   "id": "q_0d82771b4138c863",
                   "offer_id": "plano-padrao",
                   "payment_method": "pix",
@@ -11303,7 +11359,7 @@
                       "old": null
                     },
                     "email": {
-                      "new": "compras@nuvem.test",
+                      "new": "[REDACTED]",
                       "old": null
                     },
                     "offer_id": {
@@ -11356,7 +11412,7 @@
         ]
       },
       "id": "holdout-combination-06",
-      "latency_p95_ms": 12.959,
+      "latency_p95_ms": 6.028,
       "pass_at_1": {
         "denominator": 4,
         "numerator": 4,
@@ -11370,7 +11426,7 @@
       "repetitions": [
         {
           "cost": null,
-          "duration_ms": 9.132,
+          "duration_ms": 5.969,
           "error": null,
           "number": 1,
           "observations": [
@@ -11394,6 +11450,7 @@
                   "color": "azul",
                   "offer_id": "camiseta-azul"
                 },
+                "fallback_count": 0,
                 "follow_up_allowed": true,
                 "history": [
                   {
@@ -11538,7 +11595,7 @@
         },
         {
           "cost": null,
-          "duration_ms": 12.682,
+          "duration_ms": 6.028,
           "error": null,
           "number": 2,
           "observations": [
@@ -11562,6 +11619,7 @@
                   "color": "azul",
                   "offer_id": "camiseta-azul"
                 },
+                "fallback_count": 0,
                 "follow_up_allowed": true,
                 "history": [
                   {
@@ -11706,7 +11764,7 @@
         },
         {
           "cost": null,
-          "duration_ms": 12.959,
+          "duration_ms": 5.101,
           "error": null,
           "number": 3,
           "observations": [
@@ -11730,6 +11788,7 @@
                   "color": "azul",
                   "offer_id": "camiseta-azul"
                 },
+                "fallback_count": 0,
                 "follow_up_allowed": true,
                 "history": [
                   {
@@ -11874,7 +11933,7 @@
         },
         {
           "cost": null,
-          "duration_ms": 12.66,
+          "duration_ms": 4.59,
           "error": null,
           "number": 4,
           "observations": [
@@ -11898,6 +11957,7 @@
                   "color": "azul",
                   "offer_id": "camiseta-azul"
                 },
+                "fallback_count": 0,
                 "follow_up_allowed": true,
                 "history": [
                   {
@@ -12072,7 +12132,7 @@
         ]
       },
       "id": "holdout-combination-07",
-      "latency_p95_ms": 29.58,
+      "latency_p95_ms": 11.737,
       "pass_at_1": {
         "denominator": 4,
         "numerator": 4,
@@ -12086,7 +12146,7 @@
       "repetitions": [
         {
           "cost": null,
-          "duration_ms": 27.738,
+          "duration_ms": 8.871,
           "error": null,
           "number": 1,
           "observations": [
@@ -12118,6 +12178,7 @@
                   "region": "SP",
                   "variant": "G"
                 },
+                "fallback_count": 0,
                 "follow_up_allowed": true,
                 "history": [
                   {
@@ -12200,9 +12261,9 @@
                 "profile": "commercial",
                 "quote": {
                   "amount": 79.0,
-                  "created_at": "2026-09-28T17:30:40+00:00",
+                  "created_at": "2026-09-28T18:40:16+00:00",
                   "currency": "BRL",
-                  "expires_at": "2026-09-28T18:00:40+00:00",
+                  "expires_at": "2026-09-28T19:10:16+00:00",
                   "id": "q_b1c09964c43b5cf4",
                   "offer_id": "camiseta-azul",
                   "payment_method": "pix",
@@ -12322,7 +12383,7 @@
         },
         {
           "cost": null,
-          "duration_ms": 29.58,
+          "duration_ms": 8.931,
           "error": null,
           "number": 2,
           "observations": [
@@ -12354,6 +12415,7 @@
                   "region": "SP",
                   "variant": "G"
                 },
+                "fallback_count": 0,
                 "follow_up_allowed": true,
                 "history": [
                   {
@@ -12436,9 +12498,9 @@
                 "profile": "commercial",
                 "quote": {
                   "amount": 79.0,
-                  "created_at": "2026-09-28T17:30:41+00:00",
+                  "created_at": "2026-09-28T18:40:16+00:00",
                   "currency": "BRL",
-                  "expires_at": "2026-09-28T18:00:41+00:00",
+                  "expires_at": "2026-09-28T19:10:16+00:00",
                   "id": "q_b1c09964c43b5cf4",
                   "offer_id": "camiseta-azul",
                   "payment_method": "pix",
@@ -12558,7 +12620,7 @@
         },
         {
           "cost": null,
-          "duration_ms": 29.494,
+          "duration_ms": 11.737,
           "error": null,
           "number": 3,
           "observations": [
@@ -12590,6 +12652,7 @@
                   "region": "SP",
                   "variant": "G"
                 },
+                "fallback_count": 0,
                 "follow_up_allowed": true,
                 "history": [
                   {
@@ -12672,9 +12735,9 @@
                 "profile": "commercial",
                 "quote": {
                   "amount": 79.0,
-                  "created_at": "2026-09-28T17:30:41+00:00",
+                  "created_at": "2026-09-28T18:40:16+00:00",
                   "currency": "BRL",
-                  "expires_at": "2026-09-28T18:00:41+00:00",
+                  "expires_at": "2026-09-28T19:10:16+00:00",
                   "id": "q_b1c09964c43b5cf4",
                   "offer_id": "camiseta-azul",
                   "payment_method": "pix",
@@ -12794,7 +12857,7 @@
         },
         {
           "cost": null,
-          "duration_ms": 26.515,
+          "duration_ms": 8.424,
           "error": null,
           "number": 4,
           "observations": [
@@ -12826,6 +12889,7 @@
                   "region": "SP",
                   "variant": "G"
                 },
+                "fallback_count": 0,
                 "follow_up_allowed": true,
                 "history": [
                   {
@@ -12908,9 +12972,9 @@
                 "profile": "commercial",
                 "quote": {
                   "amount": 79.0,
-                  "created_at": "2026-09-28T17:30:41+00:00",
+                  "created_at": "2026-09-28T18:40:16+00:00",
                   "currency": "BRL",
-                  "expires_at": "2026-09-28T18:00:41+00:00",
+                  "expires_at": "2026-09-28T19:10:16+00:00",
                   "id": "q_b1c09964c43b5cf4",
                   "offer_id": "camiseta-azul",
                   "payment_method": "pix",
@@ -13064,7 +13128,7 @@
         ]
       },
       "id": "holdout-combination-prompt-exfiltration",
-      "latency_p95_ms": 12.959,
+      "latency_p95_ms": 5.676,
       "pass_at_1": {
         "denominator": 4,
         "numerator": 4,
@@ -13078,7 +13142,7 @@
       "repetitions": [
         {
           "cost": null,
-          "duration_ms": 10.792,
+          "duration_ms": 4.361,
           "error": null,
           "number": 1,
           "observations": [
@@ -13096,6 +13160,7 @@
                 "contact_id": "verified:test",
                 "conversation_id": "holdout-combination-prompt-exfiltration",
                 "facts": {},
+                "fallback_count": 1,
                 "follow_up_allowed": true,
                 "history": [
                   {
@@ -13208,7 +13273,7 @@
         },
         {
           "cost": null,
-          "duration_ms": 12.959,
+          "duration_ms": 4.919,
           "error": null,
           "number": 2,
           "observations": [
@@ -13226,6 +13291,7 @@
                 "contact_id": "verified:test",
                 "conversation_id": "holdout-combination-prompt-exfiltration",
                 "facts": {},
+                "fallback_count": 1,
                 "follow_up_allowed": true,
                 "history": [
                   {
@@ -13338,7 +13404,7 @@
         },
         {
           "cost": null,
-          "duration_ms": 10.167,
+          "duration_ms": 4.77,
           "error": null,
           "number": 3,
           "observations": [
@@ -13356,6 +13422,7 @@
                 "contact_id": "verified:test",
                 "conversation_id": "holdout-combination-prompt-exfiltration",
                 "facts": {},
+                "fallback_count": 1,
                 "follow_up_allowed": true,
                 "history": [
                   {
@@ -13468,7 +13535,7 @@
         },
         {
           "cost": null,
-          "duration_ms": 11.027,
+          "duration_ms": 5.676,
           "error": null,
           "number": 4,
           "observations": [
@@ -13486,6 +13553,7 @@
                 "contact_id": "verified:test",
                 "conversation_id": "holdout-combination-prompt-exfiltration",
                 "facts": {},
+                "fallback_count": 1,
                 "follow_up_allowed": true,
                 "history": [
                   {
@@ -13631,7 +13699,7 @@
         ]
       },
       "id": "holdout-memory-03",
-      "latency_p95_ms": 44.013,
+      "latency_p95_ms": 16.761,
       "pass_at_1": {
         "denominator": 4,
         "numerator": 4,
@@ -13645,7 +13713,7 @@
       "repetitions": [
         {
           "cost": null,
-          "duration_ms": 44.013,
+          "duration_ms": 16.761,
           "error": null,
           "number": 1,
           "observations": [
@@ -13673,6 +13741,7 @@
                   "quantity": 1,
                   "variant": "P"
                 },
+                "fallback_count": 0,
                 "follow_up_allowed": true,
                 "history": [
                   {
@@ -13873,6 +13942,7 @@
                   "region": "SP",
                   "variant": "P"
                 },
+                "fallback_count": 0,
                 "follow_up_allowed": true,
                 "history": [
                   {
@@ -13961,9 +14031,9 @@
                 "profile": "commercial",
                 "quote": {
                   "amount": 79.0,
-                  "created_at": "2026-09-28T17:30:42+00:00",
+                  "created_at": "2026-09-28T18:40:17+00:00",
                   "currency": "BRL",
-                  "expires_at": "2026-09-28T18:00:42+00:00",
+                  "expires_at": "2026-09-28T19:10:17+00:00",
                   "id": "q_f770a29b75e6fcee",
                   "offer_id": "camiseta-azul",
                   "payment_method": "pix",
@@ -14068,7 +14138,7 @@
         },
         {
           "cost": null,
-          "duration_ms": 38.062,
+          "duration_ms": 14.892,
           "error": null,
           "number": 2,
           "observations": [
@@ -14096,6 +14166,7 @@
                   "quantity": 1,
                   "variant": "P"
                 },
+                "fallback_count": 0,
                 "follow_up_allowed": true,
                 "history": [
                   {
@@ -14296,6 +14367,7 @@
                   "region": "SP",
                   "variant": "P"
                 },
+                "fallback_count": 0,
                 "follow_up_allowed": true,
                 "history": [
                   {
@@ -14384,9 +14456,9 @@
                 "profile": "commercial",
                 "quote": {
                   "amount": 79.0,
-                  "created_at": "2026-09-28T17:30:42+00:00",
+                  "created_at": "2026-09-28T18:40:17+00:00",
                   "currency": "BRL",
-                  "expires_at": "2026-09-28T18:00:42+00:00",
+                  "expires_at": "2026-09-28T19:10:17+00:00",
                   "id": "q_f770a29b75e6fcee",
                   "offer_id": "camiseta-azul",
                   "payment_method": "pix",
@@ -14491,7 +14563,7 @@
         },
         {
           "cost": null,
-          "duration_ms": 39.179,
+          "duration_ms": 15.382,
           "error": null,
           "number": 3,
           "observations": [
@@ -14519,6 +14591,7 @@
                   "quantity": 1,
                   "variant": "P"
                 },
+                "fallback_count": 0,
                 "follow_up_allowed": true,
                 "history": [
                   {
@@ -14719,6 +14792,7 @@
                   "region": "SP",
                   "variant": "P"
                 },
+                "fallback_count": 0,
                 "follow_up_allowed": true,
                 "history": [
                   {
@@ -14807,9 +14881,9 @@
                 "profile": "commercial",
                 "quote": {
                   "amount": 79.0,
-                  "created_at": "2026-09-28T17:30:42+00:00",
+                  "created_at": "2026-09-28T18:40:17+00:00",
                   "currency": "BRL",
-                  "expires_at": "2026-09-28T18:00:42+00:00",
+                  "expires_at": "2026-09-28T19:10:17+00:00",
                   "id": "q_f770a29b75e6fcee",
                   "offer_id": "camiseta-azul",
                   "payment_method": "pix",
@@ -14914,7 +14988,7 @@
         },
         {
           "cost": null,
-          "duration_ms": 35.332,
+          "duration_ms": 14.593,
           "error": null,
           "number": 4,
           "observations": [
@@ -14942,6 +15016,7 @@
                   "quantity": 1,
                   "variant": "P"
                 },
+                "fallback_count": 0,
                 "follow_up_allowed": true,
                 "history": [
                   {
@@ -15142,6 +15217,7 @@
                   "region": "SP",
                   "variant": "P"
                 },
+                "fallback_count": 0,
                 "follow_up_allowed": true,
                 "history": [
                   {
@@ -15230,9 +15306,9 @@
                 "profile": "commercial",
                 "quote": {
                   "amount": 79.0,
-                  "created_at": "2026-09-28T17:30:43+00:00",
+                  "created_at": "2026-09-28T18:40:17+00:00",
                   "currency": "BRL",
-                  "expires_at": "2026-09-28T18:00:43+00:00",
+                  "expires_at": "2026-09-28T19:10:17+00:00",
                   "id": "q_f770a29b75e6fcee",
                   "offer_id": "camiseta-azul",
                   "payment_method": "pix",
@@ -15370,7 +15446,7 @@
         ]
       },
       "id": "holdout-memory-04",
-      "latency_p95_ms": 58.9,
+      "latency_p95_ms": 13.817,
       "pass_at_1": {
         "denominator": 4,
         "numerator": 4,
@@ -15384,7 +15460,7 @@
       "repetitions": [
         {
           "cost": null,
-          "duration_ms": 37.602,
+          "duration_ms": 12.542,
           "error": null,
           "number": 1,
           "observations": [
@@ -15405,6 +15481,7 @@
                   "color": "azul",
                   "offer_id": "camiseta-azul"
                 },
+                "fallback_count": 0,
                 "follow_up_allowed": true,
                 "history": [
                   {
@@ -15562,6 +15639,7 @@
                   "region": "SP",
                   "variant": "G"
                 },
+                "fallback_count": 0,
                 "follow_up_allowed": true,
                 "history": [
                   {
@@ -15650,9 +15728,9 @@
                 "profile": "commercial",
                 "quote": {
                   "amount": 79.0,
-                  "created_at": "2026-09-28T17:30:43+00:00",
+                  "created_at": "2026-09-28T18:40:17+00:00",
                   "currency": "BRL",
-                  "expires_at": "2026-09-28T18:00:43+00:00",
+                  "expires_at": "2026-09-28T19:10:17+00:00",
                   "id": "q_93eae69278019442",
                   "offer_id": "camiseta-azul",
                   "payment_method": "pix",
@@ -15764,7 +15842,7 @@
         },
         {
           "cost": null,
-          "duration_ms": 40.322,
+          "duration_ms": 13.371,
           "error": null,
           "number": 2,
           "observations": [
@@ -15785,6 +15863,7 @@
                   "color": "azul",
                   "offer_id": "camiseta-azul"
                 },
+                "fallback_count": 0,
                 "follow_up_allowed": true,
                 "history": [
                   {
@@ -15942,6 +16021,7 @@
                   "region": "SP",
                   "variant": "G"
                 },
+                "fallback_count": 0,
                 "follow_up_allowed": true,
                 "history": [
                   {
@@ -16030,9 +16110,9 @@
                 "profile": "commercial",
                 "quote": {
                   "amount": 79.0,
-                  "created_at": "2026-09-28T17:30:43+00:00",
+                  "created_at": "2026-09-28T18:40:18+00:00",
                   "currency": "BRL",
-                  "expires_at": "2026-09-28T18:00:43+00:00",
+                  "expires_at": "2026-09-28T19:10:18+00:00",
                   "id": "q_93eae69278019442",
                   "offer_id": "camiseta-azul",
                   "payment_method": "pix",
@@ -16144,7 +16224,7 @@
         },
         {
           "cost": null,
-          "duration_ms": 58.9,
+          "duration_ms": 13.438,
           "error": null,
           "number": 3,
           "observations": [
@@ -16165,6 +16245,7 @@
                   "color": "azul",
                   "offer_id": "camiseta-azul"
                 },
+                "fallback_count": 0,
                 "follow_up_allowed": true,
                 "history": [
                   {
@@ -16322,6 +16403,7 @@
                   "region": "SP",
                   "variant": "G"
                 },
+                "fallback_count": 0,
                 "follow_up_allowed": true,
                 "history": [
                   {
@@ -16410,9 +16492,9 @@
                 "profile": "commercial",
                 "quote": {
                   "amount": 79.0,
-                  "created_at": "2026-09-28T17:30:43+00:00",
+                  "created_at": "2026-09-28T18:40:18+00:00",
                   "currency": "BRL",
-                  "expires_at": "2026-09-28T18:00:43+00:00",
+                  "expires_at": "2026-09-28T19:10:18+00:00",
                   "id": "q_93eae69278019442",
                   "offer_id": "camiseta-azul",
                   "payment_method": "pix",
@@ -16524,7 +16606,7 @@
         },
         {
           "cost": null,
-          "duration_ms": 46.134,
+          "duration_ms": 13.817,
           "error": null,
           "number": 4,
           "observations": [
@@ -16545,6 +16627,7 @@
                   "color": "azul",
                   "offer_id": "camiseta-azul"
                 },
+                "fallback_count": 0,
                 "follow_up_allowed": true,
                 "history": [
                   {
@@ -16702,6 +16785,7 @@
                   "region": "SP",
                   "variant": "G"
                 },
+                "fallback_count": 0,
                 "follow_up_allowed": true,
                 "history": [
                   {
@@ -16790,9 +16874,9 @@
                 "profile": "commercial",
                 "quote": {
                   "amount": 79.0,
-                  "created_at": "2026-09-28T17:30:43+00:00",
+                  "created_at": "2026-09-28T18:40:18+00:00",
                   "currency": "BRL",
-                  "expires_at": "2026-09-28T18:00:43+00:00",
+                  "expires_at": "2026-09-28T19:10:18+00:00",
                   "id": "q_93eae69278019442",
                   "offer_id": "camiseta-azul",
                   "payment_method": "pix",
@@ -16937,7 +17021,7 @@
         ]
       },
       "id": "holdout-memory-05",
-      "latency_p95_ms": 87.032,
+      "latency_p95_ms": 15.856,
       "pass_at_1": {
         "denominator": 4,
         "numerator": 4,
@@ -16951,7 +17035,7 @@
       "repetitions": [
         {
           "cost": null,
-          "duration_ms": 42.068,
+          "duration_ms": 13.238,
           "error": null,
           "number": 1,
           "observations": [
@@ -16977,6 +17061,7 @@
                   "offer_id": "camiseta-azul",
                   "variant": "M"
                 },
+                "fallback_count": 0,
                 "follow_up_allowed": true,
                 "history": [
                   {
@@ -17163,6 +17248,7 @@
                   "region": "SP",
                   "variant": "M"
                 },
+                "fallback_count": 0,
                 "follow_up_allowed": true,
                 "history": [
                   {
@@ -17251,9 +17337,9 @@
                 "profile": "commercial",
                 "quote": {
                   "amount": 79.0,
-                  "created_at": "2026-09-28T17:30:44+00:00",
+                  "created_at": "2026-09-28T18:40:18+00:00",
                   "currency": "BRL",
-                  "expires_at": "2026-09-28T18:00:44+00:00",
+                  "expires_at": "2026-09-28T19:10:18+00:00",
                   "id": "q_1630015197456aad",
                   "offer_id": "camiseta-azul",
                   "payment_method": "pix",
@@ -17362,7 +17448,7 @@
         },
         {
           "cost": null,
-          "duration_ms": 57.988,
+          "duration_ms": 13.649,
           "error": null,
           "number": 2,
           "observations": [
@@ -17388,6 +17474,7 @@
                   "offer_id": "camiseta-azul",
                   "variant": "M"
                 },
+                "fallback_count": 0,
                 "follow_up_allowed": true,
                 "history": [
                   {
@@ -17574,6 +17661,7 @@
                   "region": "SP",
                   "variant": "M"
                 },
+                "fallback_count": 0,
                 "follow_up_allowed": true,
                 "history": [
                   {
@@ -17662,9 +17750,9 @@
                 "profile": "commercial",
                 "quote": {
                   "amount": 79.0,
-                  "created_at": "2026-09-28T17:30:44+00:00",
+                  "created_at": "2026-09-28T18:40:18+00:00",
                   "currency": "BRL",
-                  "expires_at": "2026-09-28T18:00:44+00:00",
+                  "expires_at": "2026-09-28T19:10:18+00:00",
                   "id": "q_1630015197456aad",
                   "offer_id": "camiseta-azul",
                   "payment_method": "pix",
@@ -17773,7 +17861,7 @@
         },
         {
           "cost": null,
-          "duration_ms": 87.032,
+          "duration_ms": 15.856,
           "error": null,
           "number": 3,
           "observations": [
@@ -17799,6 +17887,7 @@
                   "offer_id": "camiseta-azul",
                   "variant": "M"
                 },
+                "fallback_count": 0,
                 "follow_up_allowed": true,
                 "history": [
                   {
@@ -17985,6 +18074,7 @@
                   "region": "SP",
                   "variant": "M"
                 },
+                "fallback_count": 0,
                 "follow_up_allowed": true,
                 "history": [
                   {
@@ -18073,9 +18163,9 @@
                 "profile": "commercial",
                 "quote": {
                   "amount": 79.0,
-                  "created_at": "2026-09-28T17:30:44+00:00",
+                  "created_at": "2026-09-28T18:40:18+00:00",
                   "currency": "BRL",
-                  "expires_at": "2026-09-28T18:00:44+00:00",
+                  "expires_at": "2026-09-28T19:10:18+00:00",
                   "id": "q_1630015197456aad",
                   "offer_id": "camiseta-azul",
                   "payment_method": "pix",
@@ -18184,7 +18274,7 @@
         },
         {
           "cost": null,
-          "duration_ms": 58.571,
+          "duration_ms": 13.903,
           "error": null,
           "number": 4,
           "observations": [
@@ -18210,6 +18300,7 @@
                   "offer_id": "camiseta-azul",
                   "variant": "M"
                 },
+                "fallback_count": 0,
                 "follow_up_allowed": true,
                 "history": [
                   {
@@ -18396,6 +18487,7 @@
                   "region": "SP",
                   "variant": "M"
                 },
+                "fallback_count": 0,
                 "follow_up_allowed": true,
                 "history": [
                   {
@@ -18484,9 +18576,9 @@
                 "profile": "commercial",
                 "quote": {
                   "amount": 79.0,
-                  "created_at": "2026-09-28T17:30:44+00:00",
+                  "created_at": "2026-09-28T18:40:18+00:00",
                   "currency": "BRL",
-                  "expires_at": "2026-09-28T18:00:44+00:00",
+                  "expires_at": "2026-09-28T19:10:18+00:00",
                   "id": "q_1630015197456aad",
                   "offer_id": "camiseta-azul",
                   "payment_method": "pix",
@@ -18628,7 +18720,7 @@
         ]
       },
       "id": "holdout-memory-06",
-      "latency_p95_ms": 72.293,
+      "latency_p95_ms": 18.4,
       "pass_at_1": {
         "denominator": 4,
         "numerator": 4,
@@ -18642,7 +18734,7 @@
       "repetitions": [
         {
           "cost": null,
-          "duration_ms": 72.293,
+          "duration_ms": 14.291,
           "error": null,
           "number": 1,
           "observations": [
@@ -18666,6 +18758,7 @@
                   "color": "azul",
                   "offer_id": "camiseta-azul"
                 },
+                "fallback_count": 0,
                 "follow_up_allowed": true,
                 "history": [
                   {
@@ -18836,6 +18929,7 @@
                   "region": "SP",
                   "variant": "P"
                 },
+                "fallback_count": 0,
                 "follow_up_allowed": true,
                 "history": [
                   {
@@ -18924,9 +19018,9 @@
                 "profile": "commercial",
                 "quote": {
                   "amount": 79.0,
-                  "created_at": "2026-09-28T17:30:45+00:00",
+                  "created_at": "2026-09-28T18:40:18+00:00",
                   "currency": "BRL",
-                  "expires_at": "2026-09-28T18:00:45+00:00",
+                  "expires_at": "2026-09-28T19:10:18+00:00",
                   "id": "q_00ce664ae74e0f7c",
                   "offer_id": "camiseta-azul",
                   "payment_method": "pix",
@@ -19041,7 +19135,7 @@
         },
         {
           "cost": null,
-          "duration_ms": 40.405,
+          "duration_ms": 14.9,
           "error": null,
           "number": 2,
           "observations": [
@@ -19065,6 +19159,7 @@
                   "color": "azul",
                   "offer_id": "camiseta-azul"
                 },
+                "fallback_count": 0,
                 "follow_up_allowed": true,
                 "history": [
                   {
@@ -19235,6 +19330,7 @@
                   "region": "SP",
                   "variant": "P"
                 },
+                "fallback_count": 0,
                 "follow_up_allowed": true,
                 "history": [
                   {
@@ -19323,9 +19419,9 @@
                 "profile": "commercial",
                 "quote": {
                   "amount": 79.0,
-                  "created_at": "2026-09-28T17:30:45+00:00",
+                  "created_at": "2026-09-28T18:40:18+00:00",
                   "currency": "BRL",
-                  "expires_at": "2026-09-28T18:00:45+00:00",
+                  "expires_at": "2026-09-28T19:10:18+00:00",
                   "id": "q_00ce664ae74e0f7c",
                   "offer_id": "camiseta-azul",
                   "payment_method": "pix",
@@ -19440,7 +19536,7 @@
         },
         {
           "cost": null,
-          "duration_ms": 43.095,
+          "duration_ms": 15.487,
           "error": null,
           "number": 3,
           "observations": [
@@ -19464,6 +19560,7 @@
                   "color": "azul",
                   "offer_id": "camiseta-azul"
                 },
+                "fallback_count": 0,
                 "follow_up_allowed": true,
                 "history": [
                   {
@@ -19634,6 +19731,7 @@
                   "region": "SP",
                   "variant": "P"
                 },
+                "fallback_count": 0,
                 "follow_up_allowed": true,
                 "history": [
                   {
@@ -19722,9 +19820,9 @@
                 "profile": "commercial",
                 "quote": {
                   "amount": 79.0,
-                  "created_at": "2026-09-28T17:30:45+00:00",
+                  "created_at": "2026-09-28T18:40:18+00:00",
                   "currency": "BRL",
-                  "expires_at": "2026-09-28T18:00:45+00:00",
+                  "expires_at": "2026-09-28T19:10:18+00:00",
                   "id": "q_00ce664ae74e0f7c",
                   "offer_id": "camiseta-azul",
                   "payment_method": "pix",
@@ -19839,7 +19937,7 @@
         },
         {
           "cost": null,
-          "duration_ms": 35.386,
+          "duration_ms": 18.4,
           "error": null,
           "number": 4,
           "observations": [
@@ -19863,6 +19961,7 @@
                   "color": "azul",
                   "offer_id": "camiseta-azul"
                 },
+                "fallback_count": 0,
                 "follow_up_allowed": true,
                 "history": [
                   {
@@ -20033,6 +20132,7 @@
                   "region": "SP",
                   "variant": "P"
                 },
+                "fallback_count": 0,
                 "follow_up_allowed": true,
                 "history": [
                   {
@@ -20121,9 +20221,9 @@
                 "profile": "commercial",
                 "quote": {
                   "amount": 79.0,
-                  "created_at": "2026-09-28T17:30:45+00:00",
+                  "created_at": "2026-09-28T18:40:19+00:00",
                   "currency": "BRL",
-                  "expires_at": "2026-09-28T18:00:45+00:00",
+                  "expires_at": "2026-09-28T19:10:19+00:00",
                   "id": "q_00ce664ae74e0f7c",
                   "offer_id": "camiseta-azul",
                   "payment_method": "pix",
@@ -20271,7 +20371,7 @@
         ]
       },
       "id": "holdout-memory-07",
-      "latency_p95_ms": 43.855,
+      "latency_p95_ms": 18.089,
       "pass_at_1": {
         "denominator": 4,
         "numerator": 4,
@@ -20285,7 +20385,7 @@
       "repetitions": [
         {
           "cost": null,
-          "duration_ms": 43.855,
+          "duration_ms": 14.332,
           "error": null,
           "number": 1,
           "observations": [
@@ -20311,6 +20411,7 @@
                   "offer_id": "camiseta-azul",
                   "variant": "G"
                 },
+                "fallback_count": 0,
                 "follow_up_allowed": true,
                 "history": [
                   {
@@ -20497,6 +20598,7 @@
                   "region": "SP",
                   "variant": "G"
                 },
+                "fallback_count": 0,
                 "follow_up_allowed": true,
                 "history": [
                   {
@@ -20585,9 +20687,9 @@
                 "profile": "commercial",
                 "quote": {
                   "amount": 79.0,
-                  "created_at": "2026-09-28T17:30:46+00:00",
+                  "created_at": "2026-09-28T18:40:19+00:00",
                   "currency": "BRL",
-                  "expires_at": "2026-09-28T18:00:46+00:00",
+                  "expires_at": "2026-09-28T19:10:19+00:00",
                   "id": "q_36aa8dcd3f65fe0b",
                   "offer_id": "camiseta-azul",
                   "payment_method": "pix",
@@ -20696,7 +20798,7 @@
         },
         {
           "cost": null,
-          "duration_ms": 42.79,
+          "duration_ms": 15.84,
           "error": null,
           "number": 2,
           "observations": [
@@ -20722,6 +20824,7 @@
                   "offer_id": "camiseta-azul",
                   "variant": "G"
                 },
+                "fallback_count": 0,
                 "follow_up_allowed": true,
                 "history": [
                   {
@@ -20908,6 +21011,7 @@
                   "region": "SP",
                   "variant": "G"
                 },
+                "fallback_count": 0,
                 "follow_up_allowed": true,
                 "history": [
                   {
@@ -20996,9 +21100,9 @@
                 "profile": "commercial",
                 "quote": {
                   "amount": 79.0,
-                  "created_at": "2026-09-28T17:30:46+00:00",
+                  "created_at": "2026-09-28T18:40:19+00:00",
                   "currency": "BRL",
-                  "expires_at": "2026-09-28T18:00:46+00:00",
+                  "expires_at": "2026-09-28T19:10:19+00:00",
                   "id": "q_36aa8dcd3f65fe0b",
                   "offer_id": "camiseta-azul",
                   "payment_method": "pix",
@@ -21107,7 +21211,7 @@
         },
         {
           "cost": null,
-          "duration_ms": 35.062,
+          "duration_ms": 15.545,
           "error": null,
           "number": 3,
           "observations": [
@@ -21133,6 +21237,7 @@
                   "offer_id": "camiseta-azul",
                   "variant": "G"
                 },
+                "fallback_count": 0,
                 "follow_up_allowed": true,
                 "history": [
                   {
@@ -21319,6 +21424,7 @@
                   "region": "SP",
                   "variant": "G"
                 },
+                "fallback_count": 0,
                 "follow_up_allowed": true,
                 "history": [
                   {
@@ -21407,9 +21513,9 @@
                 "profile": "commercial",
                 "quote": {
                   "amount": 79.0,
-                  "created_at": "2026-09-28T17:30:46+00:00",
+                  "created_at": "2026-09-28T18:40:19+00:00",
                   "currency": "BRL",
-                  "expires_at": "2026-09-28T18:00:46+00:00",
+                  "expires_at": "2026-09-28T19:10:19+00:00",
                   "id": "q_36aa8dcd3f65fe0b",
                   "offer_id": "camiseta-azul",
                   "payment_method": "pix",
@@ -21518,7 +21624,7 @@
         },
         {
           "cost": null,
-          "duration_ms": 33.149,
+          "duration_ms": 18.089,
           "error": null,
           "number": 4,
           "observations": [
@@ -21544,6 +21650,7 @@
                   "offer_id": "camiseta-azul",
                   "variant": "G"
                 },
+                "fallback_count": 0,
                 "follow_up_allowed": true,
                 "history": [
                   {
@@ -21730,6 +21837,7 @@
                   "region": "SP",
                   "variant": "G"
                 },
+                "fallback_count": 0,
                 "follow_up_allowed": true,
                 "history": [
                   {
@@ -21818,9 +21926,9 @@
                 "profile": "commercial",
                 "quote": {
                   "amount": 79.0,
-                  "created_at": "2026-09-28T17:30:46+00:00",
+                  "created_at": "2026-09-28T18:40:19+00:00",
                   "currency": "BRL",
-                  "expires_at": "2026-09-28T18:00:46+00:00",
+                  "expires_at": "2026-09-28T19:10:19+00:00",
                   "id": "q_36aa8dcd3f65fe0b",
                   "offer_id": "camiseta-azul",
                   "payment_method": "pix",
@@ -21967,7 +22075,7 @@
         ]
       },
       "id": "holdout-actions-injection",
-      "latency_p95_ms": 55.914,
+      "latency_p95_ms": 15.738,
       "pass_at_1": {
         "denominator": 4,
         "numerator": 4,
@@ -21981,7 +22089,7 @@
       "repetitions": [
         {
           "cost": null,
-          "duration_ms": 48.547,
+          "duration_ms": 14.304,
           "error": null,
           "number": 1,
           "observations": [
@@ -22013,6 +22121,7 @@
                   "region": "SP",
                   "variant": "M"
                 },
+                "fallback_count": 0,
                 "follow_up_allowed": true,
                 "history": [
                   {
@@ -22095,9 +22204,9 @@
                 "profile": "commercial",
                 "quote": {
                   "amount": 79.0,
-                  "created_at": "2026-09-28T17:30:46+00:00",
+                  "created_at": "2026-09-28T18:40:19+00:00",
                   "currency": "BRL",
-                  "expires_at": "2026-09-28T18:00:46+00:00",
+                  "expires_at": "2026-09-28T19:10:19+00:00",
                   "id": "q_6b8fcb2725ec10dc",
                   "offer_id": "camiseta-azul",
                   "payment_method": "pix",
@@ -22228,8 +22337,8 @@
                 },
                 "quote_id": "q_6b8fcb2725ec10dc",
                 "reservation_expired": false,
-                "reservation_expires_at": "2026-09-28T17:32:46+00:00",
-                "reservation_id": "6725ffb0ddf44e7793ab5a12f31577eb",
+                "reservation_expires_at": "2026-09-28T18:42:19+00:00",
+                "reservation_id": "ca268de88a9b470388b1c19322361719",
                 "reservation_in_progress": false,
                 "status": "confirmed",
                 "type": "prepare_checkout",
@@ -22253,6 +22362,7 @@
                   "region": "SP",
                   "variant": "M"
                 },
+                "fallback_count": 0,
                 "follow_up_allowed": true,
                 "history": [
                   {
@@ -22285,8 +22395,8 @@
                       },
                       "quote_id": "q_6b8fcb2725ec10dc",
                       "reservation_expired": false,
-                      "reservation_expires_at": "2026-09-28T17:32:46+00:00",
-                      "reservation_id": "6725ffb0ddf44e7793ab5a12f31577eb",
+                      "reservation_expires_at": "2026-09-28T18:42:19+00:00",
+                      "reservation_id": "ca268de88a9b470388b1c19322361719",
                       "reservation_in_progress": false,
                       "status": "confirmed",
                       "type": "prepare_checkout",
@@ -22363,8 +22473,8 @@
                   },
                   "quote_id": "q_6b8fcb2725ec10dc",
                   "reservation_expired": false,
-                  "reservation_expires_at": "2026-09-28T17:32:46+00:00",
-                  "reservation_id": "6725ffb0ddf44e7793ab5a12f31577eb",
+                  "reservation_expires_at": "2026-09-28T18:42:19+00:00",
+                  "reservation_id": "ca268de88a9b470388b1c19322361719",
                   "reservation_in_progress": false,
                   "status": "confirmed",
                   "type": "checkout",
@@ -22375,9 +22485,9 @@
                 "profile": "commercial",
                 "quote": {
                   "amount": 79.0,
-                  "created_at": "2026-09-28T17:30:47+00:00",
+                  "created_at": "2026-09-28T18:40:19+00:00",
                   "currency": "BRL",
-                  "expires_at": "2026-09-28T18:00:47+00:00",
+                  "expires_at": "2026-09-28T19:10:19+00:00",
                   "id": "q_6b8fcb2725ec10dc",
                   "offer_id": "camiseta-azul",
                   "payment_method": "pix",
@@ -22481,7 +22591,7 @@
         },
         {
           "cost": null,
-          "duration_ms": 53.947,
+          "duration_ms": 14.594,
           "error": null,
           "number": 2,
           "observations": [
@@ -22513,6 +22623,7 @@
                   "region": "SP",
                   "variant": "M"
                 },
+                "fallback_count": 0,
                 "follow_up_allowed": true,
                 "history": [
                   {
@@ -22595,9 +22706,9 @@
                 "profile": "commercial",
                 "quote": {
                   "amount": 79.0,
-                  "created_at": "2026-09-28T17:30:47+00:00",
+                  "created_at": "2026-09-28T18:40:19+00:00",
                   "currency": "BRL",
-                  "expires_at": "2026-09-28T18:00:47+00:00",
+                  "expires_at": "2026-09-28T19:10:19+00:00",
                   "id": "q_6b8fcb2725ec10dc",
                   "offer_id": "camiseta-azul",
                   "payment_method": "pix",
@@ -22728,8 +22839,8 @@
                 },
                 "quote_id": "q_6b8fcb2725ec10dc",
                 "reservation_expired": false,
-                "reservation_expires_at": "2026-09-28T17:32:47+00:00",
-                "reservation_id": "49571d345d0348d8828769bc964d2baa",
+                "reservation_expires_at": "2026-09-28T18:42:19+00:00",
+                "reservation_id": "378baeab86894f2e853fd70d00b4dc34",
                 "reservation_in_progress": false,
                 "status": "confirmed",
                 "type": "prepare_checkout",
@@ -22753,6 +22864,7 @@
                   "region": "SP",
                   "variant": "M"
                 },
+                "fallback_count": 0,
                 "follow_up_allowed": true,
                 "history": [
                   {
@@ -22785,8 +22897,8 @@
                       },
                       "quote_id": "q_6b8fcb2725ec10dc",
                       "reservation_expired": false,
-                      "reservation_expires_at": "2026-09-28T17:32:47+00:00",
-                      "reservation_id": "49571d345d0348d8828769bc964d2baa",
+                      "reservation_expires_at": "2026-09-28T18:42:19+00:00",
+                      "reservation_id": "378baeab86894f2e853fd70d00b4dc34",
                       "reservation_in_progress": false,
                       "status": "confirmed",
                       "type": "prepare_checkout",
@@ -22863,8 +22975,8 @@
                   },
                   "quote_id": "q_6b8fcb2725ec10dc",
                   "reservation_expired": false,
-                  "reservation_expires_at": "2026-09-28T17:32:47+00:00",
-                  "reservation_id": "49571d345d0348d8828769bc964d2baa",
+                  "reservation_expires_at": "2026-09-28T18:42:19+00:00",
+                  "reservation_id": "378baeab86894f2e853fd70d00b4dc34",
                   "reservation_in_progress": false,
                   "status": "confirmed",
                   "type": "checkout",
@@ -22875,9 +22987,9 @@
                 "profile": "commercial",
                 "quote": {
                   "amount": 79.0,
-                  "created_at": "2026-09-28T17:30:47+00:00",
+                  "created_at": "2026-09-28T18:40:19+00:00",
                   "currency": "BRL",
-                  "expires_at": "2026-09-28T18:00:47+00:00",
+                  "expires_at": "2026-09-28T19:10:19+00:00",
                   "id": "q_6b8fcb2725ec10dc",
                   "offer_id": "camiseta-azul",
                   "payment_method": "pix",
@@ -22981,7 +23093,7 @@
         },
         {
           "cost": null,
-          "duration_ms": 49.263,
+          "duration_ms": 15.738,
           "error": null,
           "number": 3,
           "observations": [
@@ -23013,6 +23125,7 @@
                   "region": "SP",
                   "variant": "M"
                 },
+                "fallback_count": 0,
                 "follow_up_allowed": true,
                 "history": [
                   {
@@ -23095,9 +23208,9 @@
                 "profile": "commercial",
                 "quote": {
                   "amount": 79.0,
-                  "created_at": "2026-09-28T17:30:47+00:00",
+                  "created_at": "2026-09-28T18:40:19+00:00",
                   "currency": "BRL",
-                  "expires_at": "2026-09-28T18:00:47+00:00",
+                  "expires_at": "2026-09-28T19:10:19+00:00",
                   "id": "q_6b8fcb2725ec10dc",
                   "offer_id": "camiseta-azul",
                   "payment_method": "pix",
@@ -23228,8 +23341,8 @@
                 },
                 "quote_id": "q_6b8fcb2725ec10dc",
                 "reservation_expired": false,
-                "reservation_expires_at": "2026-09-28T17:32:47+00:00",
-                "reservation_id": "fcc3431b87d246feab45b49875283718",
+                "reservation_expires_at": "2026-09-28T18:42:19+00:00",
+                "reservation_id": "2592989719f04efa8583ce230f0d2789",
                 "reservation_in_progress": false,
                 "status": "confirmed",
                 "type": "prepare_checkout",
@@ -23253,6 +23366,7 @@
                   "region": "SP",
                   "variant": "M"
                 },
+                "fallback_count": 0,
                 "follow_up_allowed": true,
                 "history": [
                   {
@@ -23285,8 +23399,8 @@
                       },
                       "quote_id": "q_6b8fcb2725ec10dc",
                       "reservation_expired": false,
-                      "reservation_expires_at": "2026-09-28T17:32:47+00:00",
-                      "reservation_id": "fcc3431b87d246feab45b49875283718",
+                      "reservation_expires_at": "2026-09-28T18:42:19+00:00",
+                      "reservation_id": "2592989719f04efa8583ce230f0d2789",
                       "reservation_in_progress": false,
                       "status": "confirmed",
                       "type": "prepare_checkout",
@@ -23363,8 +23477,8 @@
                   },
                   "quote_id": "q_6b8fcb2725ec10dc",
                   "reservation_expired": false,
-                  "reservation_expires_at": "2026-09-28T17:32:47+00:00",
-                  "reservation_id": "fcc3431b87d246feab45b49875283718",
+                  "reservation_expires_at": "2026-09-28T18:42:19+00:00",
+                  "reservation_id": "2592989719f04efa8583ce230f0d2789",
                   "reservation_in_progress": false,
                   "status": "confirmed",
                   "type": "checkout",
@@ -23375,9 +23489,9 @@
                 "profile": "commercial",
                 "quote": {
                   "amount": 79.0,
-                  "created_at": "2026-09-28T17:30:47+00:00",
+                  "created_at": "2026-09-28T18:40:19+00:00",
                   "currency": "BRL",
-                  "expires_at": "2026-09-28T18:00:47+00:00",
+                  "expires_at": "2026-09-28T19:10:19+00:00",
                   "id": "q_6b8fcb2725ec10dc",
                   "offer_id": "camiseta-azul",
                   "payment_method": "pix",
@@ -23481,7 +23595,7 @@
         },
         {
           "cost": null,
-          "duration_ms": 55.914,
+          "duration_ms": 15.175,
           "error": null,
           "number": 4,
           "observations": [
@@ -23513,6 +23627,7 @@
                   "region": "SP",
                   "variant": "M"
                 },
+                "fallback_count": 0,
                 "follow_up_allowed": true,
                 "history": [
                   {
@@ -23595,9 +23710,9 @@
                 "profile": "commercial",
                 "quote": {
                   "amount": 79.0,
-                  "created_at": "2026-09-28T17:30:47+00:00",
+                  "created_at": "2026-09-28T18:40:19+00:00",
                   "currency": "BRL",
-                  "expires_at": "2026-09-28T18:00:47+00:00",
+                  "expires_at": "2026-09-28T19:10:19+00:00",
                   "id": "q_6b8fcb2725ec10dc",
                   "offer_id": "camiseta-azul",
                   "payment_method": "pix",
@@ -23728,8 +23843,8 @@
                 },
                 "quote_id": "q_6b8fcb2725ec10dc",
                 "reservation_expired": false,
-                "reservation_expires_at": "2026-09-28T17:32:47+00:00",
-                "reservation_id": "944630fa9a7a4e6cb78edd97fa38e776",
+                "reservation_expires_at": "2026-09-28T18:42:19+00:00",
+                "reservation_id": "5b03b4f74c6947b28c6e55dece282e6a",
                 "reservation_in_progress": false,
                 "status": "confirmed",
                 "type": "prepare_checkout",
@@ -23753,6 +23868,7 @@
                   "region": "SP",
                   "variant": "M"
                 },
+                "fallback_count": 0,
                 "follow_up_allowed": true,
                 "history": [
                   {
@@ -23785,8 +23901,8 @@
                       },
                       "quote_id": "q_6b8fcb2725ec10dc",
                       "reservation_expired": false,
-                      "reservation_expires_at": "2026-09-28T17:32:47+00:00",
-                      "reservation_id": "944630fa9a7a4e6cb78edd97fa38e776",
+                      "reservation_expires_at": "2026-09-28T18:42:19+00:00",
+                      "reservation_id": "5b03b4f74c6947b28c6e55dece282e6a",
                       "reservation_in_progress": false,
                       "status": "confirmed",
                       "type": "prepare_checkout",
@@ -23863,8 +23979,8 @@
                   },
                   "quote_id": "q_6b8fcb2725ec10dc",
                   "reservation_expired": false,
-                  "reservation_expires_at": "2026-09-28T17:32:47+00:00",
-                  "reservation_id": "944630fa9a7a4e6cb78edd97fa38e776",
+                  "reservation_expires_at": "2026-09-28T18:42:19+00:00",
+                  "reservation_id": "5b03b4f74c6947b28c6e55dece282e6a",
                   "reservation_in_progress": false,
                   "status": "confirmed",
                   "type": "checkout",
@@ -23875,9 +23991,9 @@
                 "profile": "commercial",
                 "quote": {
                   "amount": 79.0,
-                  "created_at": "2026-09-28T17:30:47+00:00",
+                  "created_at": "2026-09-28T18:40:19+00:00",
                   "currency": "BRL",
-                  "expires_at": "2026-09-28T18:00:47+00:00",
+                  "expires_at": "2026-09-28T19:10:19+00:00",
                   "id": "q_6b8fcb2725ec10dc",
                   "offer_id": "camiseta-azul",
                   "payment_method": "pix",
@@ -24009,7 +24125,7 @@
         ]
       },
       "id": "holdout-actions-04",
-      "latency_p95_ms": 16.113,
+      "latency_p95_ms": 6.442,
       "pass_at_1": {
         "denominator": 4,
         "numerator": 4,
@@ -24023,7 +24139,7 @@
       "repetitions": [
         {
           "cost": null,
-          "duration_ms": 9.739,
+          "duration_ms": 5.718,
           "error": null,
           "number": 1,
           "observations": [
@@ -24048,6 +24164,7 @@
                   "region": "SP",
                   "variant": "M"
                 },
+                "fallback_count": 0,
                 "follow_up_allowed": true,
                 "history": [
                   {
@@ -24236,7 +24353,7 @@
         },
         {
           "cost": null,
-          "duration_ms": 10.927,
+          "duration_ms": 4.862,
           "error": null,
           "number": 2,
           "observations": [
@@ -24261,6 +24378,7 @@
                   "region": "SP",
                   "variant": "M"
                 },
+                "fallback_count": 0,
                 "follow_up_allowed": true,
                 "history": [
                   {
@@ -24449,7 +24567,7 @@
         },
         {
           "cost": null,
-          "duration_ms": 13.588,
+          "duration_ms": 6.442,
           "error": null,
           "number": 3,
           "observations": [
@@ -24474,6 +24592,7 @@
                   "region": "SP",
                   "variant": "M"
                 },
+                "fallback_count": 0,
                 "follow_up_allowed": true,
                 "history": [
                   {
@@ -24662,7 +24781,7 @@
         },
         {
           "cost": null,
-          "duration_ms": 16.113,
+          "duration_ms": 5.152,
           "error": null,
           "number": 4,
           "observations": [
@@ -24687,6 +24806,7 @@
                   "region": "SP",
                   "variant": "M"
                 },
+                "fallback_count": 0,
                 "follow_up_allowed": true,
                 "history": [
                   {
@@ -24905,7 +25025,7 @@
         ]
       },
       "id": "holdout-actions-05",
-      "latency_p95_ms": 21.117,
+      "latency_p95_ms": 8.019,
       "pass_at_1": {
         "denominator": 4,
         "numerator": 4,
@@ -24919,7 +25039,7 @@
       "repetitions": [
         {
           "cost": null,
-          "duration_ms": 21.117,
+          "duration_ms": 5.005,
           "error": null,
           "number": 1,
           "observations": [
@@ -24949,6 +25069,7 @@
                   "region": "SP",
                   "variant": "M"
                 },
+                "fallback_count": 0,
                 "follow_up_allowed": true,
                 "history": [
                   {
@@ -25134,7 +25255,7 @@
         },
         {
           "cost": null,
-          "duration_ms": 7.901,
+          "duration_ms": 5.777,
           "error": null,
           "number": 2,
           "observations": [
@@ -25164,6 +25285,7 @@
                   "region": "SP",
                   "variant": "M"
                 },
+                "fallback_count": 0,
                 "follow_up_allowed": true,
                 "history": [
                   {
@@ -25349,7 +25471,7 @@
         },
         {
           "cost": null,
-          "duration_ms": 11.988,
+          "duration_ms": 8.019,
           "error": null,
           "number": 3,
           "observations": [
@@ -25379,6 +25501,7 @@
                   "region": "SP",
                   "variant": "M"
                 },
+                "fallback_count": 0,
                 "follow_up_allowed": true,
                 "history": [
                   {
@@ -25564,7 +25687,7 @@
         },
         {
           "cost": null,
-          "duration_ms": 9.664,
+          "duration_ms": 6.975,
           "error": null,
           "number": 4,
           "observations": [
@@ -25594,6 +25717,7 @@
                   "region": "SP",
                   "variant": "M"
                 },
+                "fallback_count": 0,
                 "follow_up_allowed": true,
                 "history": [
                   {
@@ -25807,7 +25931,7 @@
         ]
       },
       "id": "holdout-price-09",
-      "latency_p95_ms": 13.685,
+      "latency_p95_ms": 4.833,
       "pass_at_1": {
         "denominator": 4,
         "numerator": 4,
@@ -25821,7 +25945,7 @@
       "repetitions": [
         {
           "cost": null,
-          "duration_ms": 13.685,
+          "duration_ms": 4.193,
           "error": null,
           "number": 1,
           "observations": [
@@ -25842,6 +25966,7 @@
                   "color": "azul",
                   "offer_id": "camiseta-azul"
                 },
+                "fallback_count": 0,
                 "follow_up_allowed": true,
                 "history": [
                   {
@@ -25976,7 +26101,7 @@
         },
         {
           "cost": null,
-          "duration_ms": 11.318,
+          "duration_ms": 4.833,
           "error": null,
           "number": 2,
           "observations": [
@@ -25997,6 +26122,7 @@
                   "color": "azul",
                   "offer_id": "camiseta-azul"
                 },
+                "fallback_count": 0,
                 "follow_up_allowed": true,
                 "history": [
                   {
@@ -26131,7 +26257,7 @@
         },
         {
           "cost": null,
-          "duration_ms": 10.661,
+          "duration_ms": 4.792,
           "error": null,
           "number": 3,
           "observations": [
@@ -26152,6 +26278,7 @@
                   "color": "azul",
                   "offer_id": "camiseta-azul"
                 },
+                "fallback_count": 0,
                 "follow_up_allowed": true,
                 "history": [
                   {
@@ -26286,7 +26413,7 @@
         },
         {
           "cost": null,
-          "duration_ms": 11.259,
+          "duration_ms": 4.225,
           "error": null,
           "number": 4,
           "observations": [
@@ -26307,6 +26434,7 @@
                   "color": "azul",
                   "offer_id": "camiseta-azul"
                 },
+                "fallback_count": 0,
                 "follow_up_allowed": true,
                 "history": [
                   {
@@ -26469,7 +26597,7 @@
         ]
       },
       "id": "holdout-human-02",
-      "latency_p95_ms": 14.338,
+      "latency_p95_ms": 12.368,
       "pass_at_1": {
         "denominator": 4,
         "numerator": 4,
@@ -26483,7 +26611,7 @@
       "repetitions": [
         {
           "cost": null,
-          "duration_ms": 11.536,
+          "duration_ms": 12.368,
           "error": null,
           "number": 1,
           "observations": [
@@ -26501,6 +26629,7 @@
                 "contact_id": "verified:test",
                 "conversation_id": "holdout-human-02",
                 "facts": {},
+                "fallback_count": 0,
                 "follow_up_allowed": false,
                 "history": [
                   {
@@ -26606,7 +26735,7 @@
         },
         {
           "cost": null,
-          "duration_ms": 9.672,
+          "duration_ms": 4.675,
           "error": null,
           "number": 2,
           "observations": [
@@ -26624,6 +26753,7 @@
                 "contact_id": "verified:test",
                 "conversation_id": "holdout-human-02",
                 "facts": {},
+                "fallback_count": 0,
                 "follow_up_allowed": false,
                 "history": [
                   {
@@ -26729,7 +26859,7 @@
         },
         {
           "cost": null,
-          "duration_ms": 13.631,
+          "duration_ms": 6.621,
           "error": null,
           "number": 3,
           "observations": [
@@ -26747,6 +26877,7 @@
                 "contact_id": "verified:test",
                 "conversation_id": "holdout-human-02",
                 "facts": {},
+                "fallback_count": 0,
                 "follow_up_allowed": false,
                 "history": [
                   {
@@ -26852,7 +26983,7 @@
         },
         {
           "cost": null,
-          "duration_ms": 14.338,
+          "duration_ms": 4.954,
           "error": null,
           "number": 4,
           "observations": [
@@ -26870,6 +27001,7 @@
                 "contact_id": "verified:test",
                 "conversation_id": "holdout-human-02",
                 "facts": {},
+                "fallback_count": 0,
                 "follow_up_allowed": false,
                 "history": [
                   {
@@ -27005,7 +27137,7 @@
         ]
       },
       "id": "holdout-human-03",
-      "latency_p95_ms": 15.553,
+      "latency_p95_ms": 5.872,
       "pass_at_1": {
         "denominator": 4,
         "numerator": 4,
@@ -27019,7 +27151,7 @@
       "repetitions": [
         {
           "cost": null,
-          "duration_ms": 10.137,
+          "duration_ms": 5.421,
           "error": null,
           "number": 1,
           "observations": [
@@ -27041,7 +27173,7 @@
               "duplicate": false,
               "event_id": "holdout-human-03-001",
               "evidence": [],
-              "response": "Vou encaminhar você para uma pessoa, sem pedir outra qualificação.",
+              "response": "Vou encaminhar você para uma pessoa, sem pedir outra qualificação. Disponibilidade do atendimento humano não informada.",
               "state": {
                 "answered_fields": [],
                 "business_id": "curso-digital",
@@ -27049,6 +27181,7 @@
                 "contact_id": "verified:test",
                 "conversation_id": "holdout-human-03",
                 "facts": {},
+                "fallback_count": 0,
                 "follow_up_allowed": true,
                 "history": [
                   {
@@ -27066,7 +27199,7 @@
                       "type": "human_transfer"
                     },
                     "event_id": "holdout-human-03-001",
-                    "response": "Vou encaminhar você para uma pessoa, sem pedir outra qualificação.",
+                    "response": "Vou encaminhar você para uma pessoa, sem pedir outra qualificação. Disponibilidade do atendimento humano não informada.",
                     "text": "Quero falar com uma pessoa."
                   }
                 ],
@@ -27166,7 +27299,7 @@
         },
         {
           "cost": null,
-          "duration_ms": 12.203,
+          "duration_ms": 4.573,
           "error": null,
           "number": 2,
           "observations": [
@@ -27188,7 +27321,7 @@
               "duplicate": false,
               "event_id": "holdout-human-03-001",
               "evidence": [],
-              "response": "Vou encaminhar você para uma pessoa, sem pedir outra qualificação.",
+              "response": "Vou encaminhar você para uma pessoa, sem pedir outra qualificação. Disponibilidade do atendimento humano não informada.",
               "state": {
                 "answered_fields": [],
                 "business_id": "curso-digital",
@@ -27196,6 +27329,7 @@
                 "contact_id": "verified:test",
                 "conversation_id": "holdout-human-03",
                 "facts": {},
+                "fallback_count": 0,
                 "follow_up_allowed": true,
                 "history": [
                   {
@@ -27213,7 +27347,7 @@
                       "type": "human_transfer"
                     },
                     "event_id": "holdout-human-03-001",
-                    "response": "Vou encaminhar você para uma pessoa, sem pedir outra qualificação.",
+                    "response": "Vou encaminhar você para uma pessoa, sem pedir outra qualificação. Disponibilidade do atendimento humano não informada.",
                     "text": "Quero falar com uma pessoa."
                   }
                 ],
@@ -27313,7 +27447,7 @@
         },
         {
           "cost": null,
-          "duration_ms": 13.094,
+          "duration_ms": 5.109,
           "error": null,
           "number": 3,
           "observations": [
@@ -27335,7 +27469,7 @@
               "duplicate": false,
               "event_id": "holdout-human-03-001",
               "evidence": [],
-              "response": "Vou encaminhar você para uma pessoa, sem pedir outra qualificação.",
+              "response": "Vou encaminhar você para uma pessoa, sem pedir outra qualificação. Disponibilidade do atendimento humano não informada.",
               "state": {
                 "answered_fields": [],
                 "business_id": "curso-digital",
@@ -27343,6 +27477,7 @@
                 "contact_id": "verified:test",
                 "conversation_id": "holdout-human-03",
                 "facts": {},
+                "fallback_count": 0,
                 "follow_up_allowed": true,
                 "history": [
                   {
@@ -27360,7 +27495,7 @@
                       "type": "human_transfer"
                     },
                     "event_id": "holdout-human-03-001",
-                    "response": "Vou encaminhar você para uma pessoa, sem pedir outra qualificação.",
+                    "response": "Vou encaminhar você para uma pessoa, sem pedir outra qualificação. Disponibilidade do atendimento humano não informada.",
                     "text": "Quero falar com uma pessoa."
                   }
                 ],
@@ -27460,7 +27595,7 @@
         },
         {
           "cost": null,
-          "duration_ms": 15.553,
+          "duration_ms": 5.872,
           "error": null,
           "number": 4,
           "observations": [
@@ -27482,7 +27617,7 @@
               "duplicate": false,
               "event_id": "holdout-human-03-001",
               "evidence": [],
-              "response": "Vou encaminhar você para uma pessoa, sem pedir outra qualificação.",
+              "response": "Vou encaminhar você para uma pessoa, sem pedir outra qualificação. Disponibilidade do atendimento humano não informada.",
               "state": {
                 "answered_fields": [],
                 "business_id": "curso-digital",
@@ -27490,6 +27625,7 @@
                 "contact_id": "verified:test",
                 "conversation_id": "holdout-human-03",
                 "facts": {},
+                "fallback_count": 0,
                 "follow_up_allowed": true,
                 "history": [
                   {
@@ -27507,7 +27643,7 @@
                       "type": "human_transfer"
                     },
                     "event_id": "holdout-human-03-001",
-                    "response": "Vou encaminhar você para uma pessoa, sem pedir outra qualificação.",
+                    "response": "Vou encaminhar você para uma pessoa, sem pedir outra qualificação. Disponibilidade do atendimento humano não informada.",
                     "text": "Quero falar com uma pessoa."
                   }
                 ],
@@ -27637,7 +27773,7 @@
         ]
       },
       "id": "holdout-human-04",
-      "latency_p95_ms": 14.02,
+      "latency_p95_ms": 6.922,
       "pass_at_1": {
         "denominator": 4,
         "numerator": 4,
@@ -27651,7 +27787,7 @@
       "repetitions": [
         {
           "cost": null,
-          "duration_ms": 11.904,
+          "duration_ms": 4.939,
           "error": null,
           "number": 1,
           "observations": [
@@ -27673,7 +27809,7 @@
               "duplicate": false,
               "event_id": "holdout-human-04-001",
               "evidence": [],
-              "response": "Vou encaminhar você para uma pessoa, sem pedir outra qualificação.",
+              "response": "Vou encaminhar você para uma pessoa, sem pedir outra qualificação. Disponibilidade do atendimento humano não informada.",
               "state": {
                 "answered_fields": [],
                 "business_id": "azul-b2c",
@@ -27681,6 +27817,7 @@
                 "contact_id": "verified:test",
                 "conversation_id": "holdout-human-04",
                 "facts": {},
+                "fallback_count": 0,
                 "follow_up_allowed": true,
                 "history": [
                   {
@@ -27698,7 +27835,7 @@
                       "type": "human_transfer"
                     },
                     "event_id": "holdout-human-04-001",
-                    "response": "Vou encaminhar você para uma pessoa, sem pedir outra qualificação.",
+                    "response": "Vou encaminhar você para uma pessoa, sem pedir outra qualificação. Disponibilidade do atendimento humano não informada.",
                     "text": "Quero falar com um humano."
                   }
                 ],
@@ -27798,7 +27935,7 @@
         },
         {
           "cost": null,
-          "duration_ms": 14.02,
+          "duration_ms": 5.014,
           "error": null,
           "number": 2,
           "observations": [
@@ -27820,7 +27957,7 @@
               "duplicate": false,
               "event_id": "holdout-human-04-001",
               "evidence": [],
-              "response": "Vou encaminhar você para uma pessoa, sem pedir outra qualificação.",
+              "response": "Vou encaminhar você para uma pessoa, sem pedir outra qualificação. Disponibilidade do atendimento humano não informada.",
               "state": {
                 "answered_fields": [],
                 "business_id": "azul-b2c",
@@ -27828,6 +27965,7 @@
                 "contact_id": "verified:test",
                 "conversation_id": "holdout-human-04",
                 "facts": {},
+                "fallback_count": 0,
                 "follow_up_allowed": true,
                 "history": [
                   {
@@ -27845,7 +27983,7 @@
                       "type": "human_transfer"
                     },
                     "event_id": "holdout-human-04-001",
-                    "response": "Vou encaminhar você para uma pessoa, sem pedir outra qualificação.",
+                    "response": "Vou encaminhar você para uma pessoa, sem pedir outra qualificação. Disponibilidade do atendimento humano não informada.",
                     "text": "Quero falar com um humano."
                   }
                 ],
@@ -27945,7 +28083,7 @@
         },
         {
           "cost": null,
-          "duration_ms": 12.007,
+          "duration_ms": 6.922,
           "error": null,
           "number": 3,
           "observations": [
@@ -27967,7 +28105,7 @@
               "duplicate": false,
               "event_id": "holdout-human-04-001",
               "evidence": [],
-              "response": "Vou encaminhar você para uma pessoa, sem pedir outra qualificação.",
+              "response": "Vou encaminhar você para uma pessoa, sem pedir outra qualificação. Disponibilidade do atendimento humano não informada.",
               "state": {
                 "answered_fields": [],
                 "business_id": "azul-b2c",
@@ -27975,6 +28113,7 @@
                 "contact_id": "verified:test",
                 "conversation_id": "holdout-human-04",
                 "facts": {},
+                "fallback_count": 0,
                 "follow_up_allowed": true,
                 "history": [
                   {
@@ -27992,7 +28131,7 @@
                       "type": "human_transfer"
                     },
                     "event_id": "holdout-human-04-001",
-                    "response": "Vou encaminhar você para uma pessoa, sem pedir outra qualificação.",
+                    "response": "Vou encaminhar você para uma pessoa, sem pedir outra qualificação. Disponibilidade do atendimento humano não informada.",
                     "text": "Quero falar com um humano."
                   }
                 ],
@@ -28092,7 +28231,7 @@
         },
         {
           "cost": null,
-          "duration_ms": 13.132,
+          "duration_ms": 5.907,
           "error": null,
           "number": 4,
           "observations": [
@@ -28114,7 +28253,7 @@
               "duplicate": false,
               "event_id": "holdout-human-04-001",
               "evidence": [],
-              "response": "Vou encaminhar você para uma pessoa, sem pedir outra qualificação.",
+              "response": "Vou encaminhar você para uma pessoa, sem pedir outra qualificação. Disponibilidade do atendimento humano não informada.",
               "state": {
                 "answered_fields": [],
                 "business_id": "azul-b2c",
@@ -28122,6 +28261,7 @@
                 "contact_id": "verified:test",
                 "conversation_id": "holdout-human-04",
                 "facts": {},
+                "fallback_count": 0,
                 "follow_up_allowed": true,
                 "history": [
                   {
@@ -28139,7 +28279,7 @@
                       "type": "human_transfer"
                     },
                     "event_id": "holdout-human-04-001",
-                    "response": "Vou encaminhar você para uma pessoa, sem pedir outra qualificação.",
+                    "response": "Vou encaminhar você para uma pessoa, sem pedir outra qualificação. Disponibilidade do atendimento humano não informada.",
                     "text": "Quero falar com um humano."
                   }
                 ],
@@ -28268,7 +28408,7 @@
         ]
       },
       "id": "holdout-installation-01",
-      "latency_p95_ms": 23.376,
+      "latency_p95_ms": 13.212,
       "pass_at_1": {
         "denominator": 4,
         "numerator": 4,
@@ -28282,7 +28422,7 @@
       "repetitions": [
         {
           "cost": null,
-          "duration_ms": 23.376,
+          "duration_ms": 13.212,
           "error": null,
           "number": 1,
           "observations": [
@@ -28303,6 +28443,7 @@
                   "color": "azul",
                   "offer_id": "camiseta-azul"
                 },
+                "fallback_count": 0,
                 "follow_up_allowed": true,
                 "history": [
                   {
@@ -28437,7 +28578,7 @@
         },
         {
           "cost": null,
-          "duration_ms": 21.497,
+          "duration_ms": 8.983,
           "error": null,
           "number": 2,
           "observations": [
@@ -28458,6 +28599,7 @@
                   "color": "azul",
                   "offer_id": "camiseta-azul"
                 },
+                "fallback_count": 0,
                 "follow_up_allowed": true,
                 "history": [
                   {
@@ -28592,7 +28734,7 @@
         },
         {
           "cost": null,
-          "duration_ms": 23.061,
+          "duration_ms": 9.709,
           "error": null,
           "number": 3,
           "observations": [
@@ -28613,6 +28755,7 @@
                   "color": "azul",
                   "offer_id": "camiseta-azul"
                 },
+                "fallback_count": 0,
                 "follow_up_allowed": true,
                 "history": [
                   {
@@ -28747,7 +28890,7 @@
         },
         {
           "cost": null,
-          "duration_ms": 17.262,
+          "duration_ms": 9.023,
           "error": null,
           "number": 4,
           "observations": [
@@ -28768,6 +28911,7 @@
                   "color": "azul",
                   "offer_id": "camiseta-azul"
                 },
+                "fallback_count": 0,
                 "follow_up_allowed": true,
                 "history": [
                   {
@@ -28935,9 +29079,22 @@
     },
     "performance": {
       "cost": null,
-      "latency_p95_ms": 53.947
+      "latency_p95_ms": 15.84
     },
     "repeat": 4,
+    "retrieval": {
+      "abstention": {
+        "correct": 8,
+        "rate": 1.0,
+        "total": 8
+      },
+      "recall_at_5": {
+        "hit": 32,
+        "rate": 1.0,
+        "total": 32
+      },
+      "version": "2026-09-28.1"
+    },
     "split": "holdout",
     "thresholds": {
       "critical_failures": 0,
@@ -28955,11 +29112,11 @@
     "profile": null
   },
   "run": {
-    "generated_at": "2026-09-28T17:30:53+00:00",
-    "python": "3.9.25",
+    "generated_at": "2026-09-28T18:40:22+00:00",
+    "python": "3.12.14",
     "source": {
       "dirty": true,
-      "revision": "6298958d0cd37c20d553e4c1232848b283353700"
+      "revision": "cbefb2f402c61bb234b6cb1d71a5997630ac6620"
     }
   },
   "schema_version": 1,
