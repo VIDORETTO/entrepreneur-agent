@@ -1,0 +1,34 @@
+{
+  "acceptance_refs": [
+    "AC-038",
+    "AC-039",
+    "AC-040"
+  ],
+  "environment": "OS=Linux-5.14.0-687.36.1.el9_8.x86_64-x86_64-with-glibc2.34; Python=3.12.14",
+  "evidence_refs": [],
+  "execution_status": "executed",
+  "id": "EV-139",
+  "input_fingerprints": {
+    "evaluation/holdout.sha256": "cfa4f962776fda45a868d39efbacfc0049f673c91bb43112928e27483bd0d37b",
+    "specs/001-piloto-real-confiavel/plan.md": "a069d7b1d149ba604d47c2cb8035b6bfe0e9dc7471acd4eb697cbcab209ab66e",
+    "specs/001-piloto-real-confiavel/spec.md": "057aed7c1e1360d8f71167caca6af45c61c0ddf7114ce1d2eb8ce7d6dd5858ba",
+    "src/sales_agent/evaluation.py": "0b2a2e339cda25d85dd455a621319ca7d3e154436fc51beee9b048d2732f022a",
+    "src/sales_agent/governance.py": "eaf08cd7016b91e3d4590011c8156e86fca5af459254d8da542bb8616c8d3aba",
+    "tests/test_pilot_readiness.py": "af94a9fd6a0618b846a89a7d01fba7703187f18ecac0e15bfff2b4ef817c0594"
+  },
+  "input_paths": [
+    "src/sales_agent/governance.py",
+    "src/sales_agent/evaluation.py",
+    "tests/test_pilot_readiness.py",
+    "evaluation/holdout.sha256",
+    "specs/001-piloto-real-confiavel/spec.md",
+    "specs/001-piloto-real-confiavel/plan.md"
+  ],
+  "limitations": "",
+  "observations": "24 focused and 246 full tests passed. Readiness checks manifest hash and file metadata without reading reserved cases; evaluator validates checksum and rejects change during read.",
+  "procedure": "python3.12 -m pytest -q tests/test_pilot_readiness.py tests/test_cli_and_evaluation.py > /tmp/sales-agent-holdout-final-focused.log 2>&1; python3.12 -m pytest -q > /tmp/sales-agent-holdout-final-full.log 2>&1",
+  "result": "passed",
+  "tested_revision": "local:8a26ba2f2cb6d5294e68cd1b1d469081d6ed104cb3b30017865d37ccd3c0c0ee",
+  "ticket": "TK-015",
+  "timestamp": "2026-09-28T19:07:41+00:00"
+}

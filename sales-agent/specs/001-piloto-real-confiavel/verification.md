@@ -1756,3 +1756,68 @@
 - Observations: Python 3.10 rejected >=3.11; Python 3.11 and 3.14 each passed 243 tests; build and Twine passed. Real CI has not run.
 - Evidence refs: none
 - Limitations: GOAL-PROMPT prohibits git push; GitHub Actions CI cannot run without a push.
+
+## EV-136 — passed
+
+- Ticket: `TK-015`
+- Acceptance: `AC-038`, `AC-039`, `AC-040`
+- Procedure: `python3.12 -m pytest -q tests/test_pilot_readiness.py tests/test_cli_and_evaluation.py > /tmp/sales-agent-holdout-manifest-focused.log 2>&1; python3.12 -m pytest -q > /tmp/sales-agent-holdout-manifest-full.log 2>&1`
+- Execution: `executed`
+- Environment: OS=Linux-5.14.0-687.36.1.el9_8.x86_64-x86_64-with-glibc2.34; Python=3.12.14
+- Tested revision: `local:0b9e874bc59a81f1318506193859622b296ea571c950de6ead7b6cf3f704e09e`
+- Timestamp: `2026-09-28T18:56:01+00:00`
+- Observations: 23 focused and 245 full tests passed. Readiness reads only published digest; evaluator verifies digest against reserved corpus. Local holdout 30/30 cases passed.
+- Evidence refs: none
+- Limitations: none recorded
+
+## EV-137 — passed
+
+- Ticket: `TK-012`
+- Acceptance: `AC-035`, `AC-036`, `AC-037`
+- Procedure: `python3.12 -m sales_agent.cli --data-dir /tmp/sales-agent-manifest-eval evaluate --split holdout --repeat 4 --output reports/holdout-latest.json > /tmp/sales-agent-manifest-holdout.log`
+- Execution: `executed`
+- Environment: OS=Linux-5.14.0-687.36.1.el9_8.x86_64-x86_64-with-glibc2.34; Python=3.12.14
+- Tested revision: `local:7ad09ed2e02eb7dce4efa83db74713a278c66fc7144b53c5fb29fb9905b4b0e5`
+- Timestamp: `2026-09-28T18:56:10+00:00`
+- Observations: Local deterministic holdout 30/30 cases and 120/120 runs passed with manifest checksum verification; no remote model credential available.
+- Evidence refs: none
+- Limitations: none recorded
+
+## EV-138 — partial
+
+- Ticket: `TK-002`
+- Acceptance: `AC-003`
+- Procedure: `/tmp/vendedor-py310/bin/python -m pip install --dry-run --no-deps .; /tmp/vendedor-py311/bin/python -m pytest -q; /tmp/vendedor-py314/bin/python -m pytest -q; .venv/bin/python -m build; .venv/bin/twine check dist/*`
+- Execution: `executed`
+- Environment: OS=Linux-5.14.0-687.36.1.el9_8.x86_64-x86_64-with-glibc2.34; Python=3.12.14
+- Tested revision: `local:2b93578729c91134f30fd6bf687eb20e24133ae15eaaf1651cea6d6c19b7c2ab`
+- Timestamp: `2026-09-28T18:59:08+00:00`
+- Observations: Python 3.10.21 rejected >=3.11; Python 3.11.16 and 3.14.7 each passed 245 tests; wheel contains holdout checksum and Twine passed. GitHub Actions not run.
+- Evidence refs: none
+- Limitations: GOAL-PROMPT prohibits git push; current branch is local, so GitHub Actions cannot verify AC-003.
+
+## EV-139 — passed
+
+- Ticket: `TK-015`
+- Acceptance: `AC-038`, `AC-039`, `AC-040`
+- Procedure: `python3.12 -m pytest -q tests/test_pilot_readiness.py tests/test_cli_and_evaluation.py > /tmp/sales-agent-holdout-final-focused.log 2>&1; python3.12 -m pytest -q > /tmp/sales-agent-holdout-final-full.log 2>&1`
+- Execution: `executed`
+- Environment: OS=Linux-5.14.0-687.36.1.el9_8.x86_64-x86_64-with-glibc2.34; Python=3.12.14
+- Tested revision: `local:8a26ba2f2cb6d5294e68cd1b1d469081d6ed104cb3b30017865d37ccd3c0c0ee`
+- Timestamp: `2026-09-28T19:07:41+00:00`
+- Observations: 24 focused and 246 full tests passed. Readiness checks manifest hash and file metadata without reading reserved cases; evaluator validates checksum and rejects change during read.
+- Evidence refs: none
+- Limitations: none recorded
+
+## EV-140 — passed
+
+- Ticket: `TK-012`
+- Acceptance: `AC-035`, `AC-036`, `AC-037`
+- Procedure: `python3.12 -m sales_agent.cli --data-dir /tmp/sales-agent-holdout-final-eval evaluate --split holdout --repeat 4 --output reports/holdout-latest.json > /tmp/sales-agent-holdout-final-eval.log`
+- Execution: `executed`
+- Environment: OS=Linux-5.14.0-687.36.1.el9_8.x86_64-x86_64-with-glibc2.34; Python=3.12.14
+- Tested revision: `local:36d4d33ea03eaa9f6c60f8f9b74532bcb3adf3c24b59cda2a11a413ec672f581`
+- Timestamp: `2026-09-28T19:07:41+00:00`
+- Observations: Local holdout passed 30/30 cases and 120/120 runs with checksum and file metadata; real model unavailable.
+- Evidence refs: none
+- Limitations: none recorded

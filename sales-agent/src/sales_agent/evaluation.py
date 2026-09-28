@@ -987,7 +987,15 @@ class EvaluationRunner:
     def _run_split(self) -> Dict[str, Any]:
         """Run each public scenario in a fresh local store for each repetition."""
         corpus_path = self.corpus_dir / (self.split + ".json")
+        corpus_stat_before = corpus_path.stat()
         raw_corpus = corpus_path.read_bytes()
+        corpus_stat = corpus_path.stat()
+        if self.split == "holdout":
+            if (corpus_stat_before.st_size, corpus_stat_before.st_mtime_ns) != (corpus_stat.st_size, corpus_stat.st_mtime_ns):
+                raise ValueError("holdout alterado durante a leitura")
+            digest_path = self.corpus_dir / "holdout.sha256"
+            if digest_path.is_file() and hashlib.sha256(raw_corpus).hexdigest() != digest_path.read_text(encoding="ascii").strip():
+                raise ValueError("hash do holdout diverge do manifesto versionado")
         corpus = json.loads(raw_corpus)
         if not isinstance(corpus, dict) or not isinstance(corpus.get("cases"), list):
             raise ValueError("corpus de avaliação inválido")
@@ -1095,6 +1103,8 @@ class EvaluationRunner:
                                          else {"status": "not_available", "reason": "retrieval_set.json absent"}),
                            "distribution": dict(Counter(case["category"] for case in records)),
                            "holdout_sha256": holdout_sha256, "holdout_changed": holdout_changed,
+                           "holdout_file": ({"size": corpus_stat.st_size, "mtime_ns": corpus_stat.st_mtime_ns}
+                                            if self.split == "holdout" else None),
                            "holdout_reference_available": bool(previous_hash) if self.split == "holdout" else None,
                            "adapter_failures": adapter_failures,
                            "pass_at_1": pass_one, "pass_power_k": pass_power, "thresholds": thresholds,

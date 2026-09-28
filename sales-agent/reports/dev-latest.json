@@ -22,7 +22,7 @@
         "title": "compra pronta"
       },
       "id": "AC001",
-      "latency_p95_ms": 14.983,
+      "latency_p95_ms": 24.349,
       "pass_at_1": {
         "denominator": 1,
         "numerator": 1,
@@ -36,7 +36,7 @@
       "repetitions": [
         {
           "cost": null,
-          "duration_ms": 14.983,
+          "duration_ms": 24.349,
           "error": null,
           "number": 1,
           "observations": [
@@ -151,9 +151,9 @@
                 "profile": "commercial",
                 "quote": {
                   "amount": 79.0,
-                  "created_at": "2026-09-28T18:39:09+00:00",
+                  "created_at": "2026-09-28T19:03:21+00:00",
                   "currency": "BRL",
-                  "expires_at": "2026-09-28T19:09:09+00:00",
+                  "expires_at": "2026-09-28T19:33:21+00:00",
                   "id": "q_6aed0f3428fb7ce9",
                   "offer_id": "camiseta-azul",
                   "payment_method": "pix",
@@ -291,7 +291,7 @@
         "title": "variante única"
       },
       "id": "AC002",
-      "latency_p95_ms": 9.795,
+      "latency_p95_ms": 10.153,
       "pass_at_1": {
         "denominator": 1,
         "numerator": 1,
@@ -305,7 +305,7 @@
       "repetitions": [
         {
           "cost": null,
-          "duration_ms": 9.795,
+          "duration_ms": 10.153,
           "error": null,
           "number": 1,
           "observations": [
@@ -493,7 +493,7 @@
         "title": "reutilizar dados"
       },
       "id": "AC003",
-      "latency_p95_ms": 17.542,
+      "latency_p95_ms": 23.898,
       "pass_at_1": {
         "denominator": 1,
         "numerator": 1,
@@ -507,7 +507,7 @@
       "repetitions": [
         {
           "cost": null,
-          "duration_ms": 17.542,
+          "duration_ms": 23.898,
           "error": null,
           "number": 1,
           "observations": [
@@ -823,9 +823,9 @@
                 "profile": "commercial",
                 "quote": {
                   "amount": 79.0,
-                  "created_at": "2026-09-28T18:39:09+00:00",
+                  "created_at": "2026-09-28T19:03:22+00:00",
                   "currency": "BRL",
-                  "expires_at": "2026-09-28T19:09:09+00:00",
+                  "expires_at": "2026-09-28T19:33:22+00:00",
                   "id": "q_5ee012e78ef6668d",
                   "offer_id": "camiseta-azul",
                   "payment_method": "pix",
@@ -949,7 +949,7 @@
         "title": "preço direto"
       },
       "id": "AC004",
-      "latency_p95_ms": 8.665,
+      "latency_p95_ms": 7.881,
       "pass_at_1": {
         "denominator": 1,
         "numerator": 1,
@@ -963,7 +963,7 @@
       "repetitions": [
         {
           "cost": null,
-          "duration_ms": 8.665,
+          "duration_ms": 7.881,
           "error": null,
           "number": 1,
           "observations": [
@@ -1138,7 +1138,7 @@
         "title": "pergunta breve"
       },
       "id": "AC005",
-      "latency_p95_ms": 6.636,
+      "latency_p95_ms": 8.654,
       "pass_at_1": {
         "denominator": 1,
         "numerator": 1,
@@ -1152,7 +1152,7 @@
       "repetitions": [
         {
           "cost": null,
-          "duration_ms": 6.636,
+          "duration_ms": 8.654,
           "error": null,
           "number": 1,
           "observations": [
@@ -1326,7 +1326,7 @@
         "title": "fora do escopo"
       },
       "id": "AC006",
-      "latency_p95_ms": 16.266,
+      "latency_p95_ms": 16.166,
       "pass_at_1": {
         "denominator": 1,
         "numerator": 1,
@@ -1340,7 +1340,7 @@
       "repetitions": [
         {
           "cost": null,
-          "duration_ms": 16.266,
+          "duration_ms": 16.166,
           "error": null,
           "number": 1,
           "observations": [
@@ -1482,7 +1482,7 @@
         "title": "detalhe solicitado"
       },
       "id": "AC007",
-      "latency_p95_ms": 7.609,
+      "latency_p95_ms": 8.925,
       "pass_at_1": {
         "denominator": 1,
         "numerator": 1,
@@ -1496,7 +1496,7 @@
       "repetitions": [
         {
           "cost": null,
-          "duration_ms": 7.609,
+          "duration_ms": 8.925,
           "error": null,
           "number": 1,
           "observations": [
@@ -1667,7 +1667,7 @@
         "title": "compra condicional"
       },
       "id": "AC008",
-      "latency_p95_ms": 6.429,
+      "latency_p95_ms": 9.185,
       "pass_at_1": {
         "denominator": 1,
         "numerator": 1,
@@ -1681,7 +1681,7 @@
       "repetitions": [
         {
           "cost": null,
-          "duration_ms": 6.429,
+          "duration_ms": 9.185,
           "error": null,
           "number": 1,
           "observations": [
@@ -1920,7 +1920,7 @@
         "title": "cotação invalidada"
       },
       "id": "AC009",
-      "latency_p95_ms": 14.782,
+      "latency_p95_ms": 18.984,
       "pass_at_1": {
         "denominator": 1,
         "numerator": 1,
@@ -1934,7 +1934,7 @@
       "repetitions": [
         {
           "cost": null,
-          "duration_ms": 14.782,
+          "duration_ms": 18.984,
           "error": null,
           "number": 1,
           "observations": [
@@ -2039,9 +2039,9 @@
                 "profile": "commercial",
                 "quote": {
                   "amount": 480.0,
-                  "created_at": "2026-09-28T18:39:10+00:00",
+                  "created_at": "2026-09-28T19:03:23+00:00",
                   "currency": "BRL",
-                  "expires_at": "2026-09-28T19:39:10+00:00",
+                  "expires_at": "2026-09-28T20:03:23+00:00",
                   "id": "q_e26c7dba5e985d65",
                   "offer_id": "plano-padrao",
                   "payment_method": "pix",
@@ -2269,9 +2269,9 @@
                 "profile": "commercial",
                 "quote": {
                   "amount": 240.0,
-                  "created_at": "2026-09-28T18:39:10+00:00",
+                  "created_at": "2026-09-28T19:03:23+00:00",
                   "currency": "BRL",
-                  "expires_at": "2026-09-28T19:39:10+00:00",
+                  "expires_at": "2026-09-28T20:03:23+00:00",
                   "id": "q_f2f475159faa8760",
                   "offer_id": "plano-padrao",
                   "payment_method": "installments",
@@ -2401,7 +2401,7 @@
         "title": "encerramento e retorno"
       },
       "id": "AC010",
-      "latency_p95_ms": 20.897,
+      "latency_p95_ms": 25.589,
       "pass_at_1": {
         "denominator": 1,
         "numerator": 1,
@@ -2415,7 +2415,7 @@
       "repetitions": [
         {
           "cost": null,
-          "duration_ms": 20.897,
+          "duration_ms": 25.589,
           "error": null,
           "number": 1,
           "observations": [
@@ -2778,9 +2778,9 @@
                 "profile": "commercial",
                 "quote": {
                   "amount": 79.0,
-                  "created_at": "2026-09-28T18:39:10+00:00",
+                  "created_at": "2026-09-28T19:03:23+00:00",
                   "currency": "BRL",
-                  "expires_at": "2026-09-28T19:09:10+00:00",
+                  "expires_at": "2026-09-28T19:33:23+00:00",
                   "id": "q_6af10b21a8ed0b21",
                   "offer_id": "camiseta-azul",
                   "payment_method": "pix",
@@ -2922,7 +2922,7 @@
         "title": "recuperação persistente"
       },
       "id": "AC011",
-      "latency_p95_ms": 9.404,
+      "latency_p95_ms": 8.868,
       "pass_at_1": {
         "denominator": 1,
         "numerator": 1,
@@ -2936,7 +2936,7 @@
       "repetitions": [
         {
           "cost": null,
-          "duration_ms": 9.404,
+          "duration_ms": 8.868,
           "error": null,
           "number": 1,
           "observations": [
@@ -3122,7 +3122,7 @@
         "title": "conflito de fonte"
       },
       "id": "AC012",
-      "latency_p95_ms": 12.135,
+      "latency_p95_ms": 15.629,
       "pass_at_1": {
         "denominator": 1,
         "numerator": 1,
@@ -3136,7 +3136,7 @@
       "repetitions": [
         {
           "cost": null,
-          "duration_ms": 12.135,
+          "duration_ms": 15.629,
           "error": null,
           "number": 1,
           "observations": [
@@ -3317,7 +3317,7 @@
         "title": "revogação e isolamento"
       },
       "id": "AC013",
-      "latency_p95_ms": 7.577,
+      "latency_p95_ms": 11.257,
       "pass_at_1": {
         "denominator": 1,
         "numerator": 1,
@@ -3331,7 +3331,7 @@
       "repetitions": [
         {
           "cost": null,
-          "duration_ms": 7.577,
+          "duration_ms": 11.257,
           "error": null,
           "number": 1,
           "observations": [],
@@ -3358,7 +3358,7 @@
         "title": "pré-requisito de checkout"
       },
       "id": "AC014",
-      "latency_p95_ms": 7.201,
+      "latency_p95_ms": 7.884,
       "pass_at_1": {
         "denominator": 1,
         "numerator": 1,
@@ -3372,7 +3372,7 @@
       "repetitions": [
         {
           "cost": null,
-          "duration_ms": 7.201,
+          "duration_ms": 7.884,
           "error": null,
           "number": 1,
           "observations": [
@@ -3607,7 +3607,7 @@
         "title": "permissão do efeito"
       },
       "id": "AC015",
-      "latency_p95_ms": 17.572,
+      "latency_p95_ms": 28.859,
       "pass_at_1": {
         "denominator": 1,
         "numerator": 1,
@@ -3621,7 +3621,7 @@
       "repetitions": [
         {
           "cost": null,
-          "duration_ms": 17.572,
+          "duration_ms": 28.859,
           "error": null,
           "number": 1,
           "observations": [
@@ -3745,9 +3745,9 @@
                 "profile": "commercial",
                 "quote": {
                   "amount": 79.0,
-                  "created_at": "2026-09-28T18:39:10+00:00",
+                  "created_at": "2026-09-28T19:03:24+00:00",
                   "currency": "BRL",
-                  "expires_at": "2026-09-28T19:09:10+00:00",
+                  "expires_at": "2026-09-28T19:33:24+00:00",
                   "id": "q_01bf1ff8c826d49a",
                   "offer_id": "camiseta-azul",
                   "payment_method": "pix",
@@ -3891,7 +3891,7 @@
         "title": "resultado desconhecido"
       },
       "id": "AC016",
-      "latency_p95_ms": 21.605,
+      "latency_p95_ms": 21.419,
       "pass_at_1": {
         "denominator": 1,
         "numerator": 1,
@@ -3905,7 +3905,7 @@
       "repetitions": [
         {
           "cost": null,
-          "duration_ms": 21.605,
+          "duration_ms": 21.419,
           "error": null,
           "number": 1,
           "observations": [
@@ -4003,9 +4003,9 @@
                 "profile": "commercial",
                 "quote": {
                   "amount": 79.0,
-                  "created_at": "2026-09-28T18:39:11+00:00",
+                  "created_at": "2026-09-28T19:03:24+00:00",
                   "currency": "BRL",
-                  "expires_at": "2026-09-28T19:09:11+00:00",
+                  "expires_at": "2026-09-28T19:33:24+00:00",
                   "id": "q_8fe69f8810a9b812",
                   "offer_id": "camiseta-azul",
                   "payment_method": "pix",
@@ -4146,7 +4146,7 @@
         "title": "pagamento confirmado por provedor"
       },
       "id": "AC017",
-      "latency_p95_ms": 6.156,
+      "latency_p95_ms": 7.175,
       "pass_at_1": {
         "denominator": 1,
         "numerator": 1,
@@ -4160,7 +4160,7 @@
       "repetitions": [
         {
           "cost": null,
-          "duration_ms": 6.156,
+          "duration_ms": 7.175,
           "error": null,
           "number": 1,
           "observations": [
@@ -4335,7 +4335,7 @@
         "title": "evento repetido"
       },
       "id": "AC018",
-      "latency_p95_ms": 11.667,
+      "latency_p95_ms": 13.953,
       "pass_at_1": {
         "denominator": 1,
         "numerator": 1,
@@ -4349,7 +4349,7 @@
       "repetitions": [
         {
           "cost": null,
-          "duration_ms": 11.667,
+          "duration_ms": 13.953,
           "error": null,
           "number": 1,
           "observations": [],
@@ -4376,7 +4376,7 @@
         "title": "correção tardia"
       },
       "id": "AC019",
-      "latency_p95_ms": 16.792,
+      "latency_p95_ms": 16.516,
       "pass_at_1": {
         "denominator": 1,
         "numerator": 1,
@@ -4390,7 +4390,7 @@
       "repetitions": [
         {
           "cost": null,
-          "duration_ms": 16.792,
+          "duration_ms": 16.516,
           "error": null,
           "number": 1,
           "observations": [
@@ -4946,7 +4946,7 @@
         "title": "estoque concorrente"
       },
       "id": "AC020",
-      "latency_p95_ms": 26.307,
+      "latency_p95_ms": 26.017,
       "pass_at_1": {
         "denominator": 1,
         "numerator": 1,
@@ -4960,7 +4960,7 @@
       "repetitions": [
         {
           "cost": null,
-          "duration_ms": 26.307,
+          "duration_ms": 26.017,
           "error": null,
           "number": 1,
           "observations": [
@@ -5075,9 +5075,9 @@
                 "profile": "commercial",
                 "quote": {
                   "amount": 79.0,
-                  "created_at": "2026-09-28T18:39:11+00:00",
+                  "created_at": "2026-09-28T19:03:24+00:00",
                   "currency": "BRL",
-                  "expires_at": "2026-09-28T19:09:11+00:00",
+                  "expires_at": "2026-09-28T19:33:24+00:00",
                   "id": "q_ffb343ba6978bd10",
                   "offer_id": "camiseta-azul",
                   "payment_method": "pix",
@@ -5282,9 +5282,9 @@
                 "profile": "commercial",
                 "quote": {
                   "amount": 79.0,
-                  "created_at": "2026-09-28T18:39:11+00:00",
+                  "created_at": "2026-09-28T19:03:24+00:00",
                   "currency": "BRL",
-                  "expires_at": "2026-09-28T19:09:11+00:00",
+                  "expires_at": "2026-09-28T19:33:24+00:00",
                   "id": "q_ceda9b314b4f05cd",
                   "offer_id": "camiseta-azul",
                   "payment_method": "pix",
@@ -5424,7 +5424,7 @@
         "title": "pedido de pessoa"
       },
       "id": "AC021",
-      "latency_p95_ms": 8.62,
+      "latency_p95_ms": 11.452,
       "pass_at_1": {
         "denominator": 1,
         "numerator": 1,
@@ -5438,7 +5438,7 @@
       "repetitions": [
         {
           "cost": null,
-          "duration_ms": 8.62,
+          "duration_ms": 11.452,
           "error": null,
           "number": 1,
           "observations": [
@@ -5605,7 +5605,7 @@
         "title": "contexto de transferência"
       },
       "id": "AC022",
-      "latency_p95_ms": 7.252,
+      "latency_p95_ms": 8.268,
       "pass_at_1": {
         "denominator": 1,
         "numerator": 1,
@@ -5619,7 +5619,7 @@
       "repetitions": [
         {
           "cost": null,
-          "duration_ms": 7.252,
+          "duration_ms": 8.268,
           "error": null,
           "number": 1,
           "observations": [
@@ -5787,7 +5787,7 @@
         "title": "recusa"
       },
       "id": "AC023",
-      "latency_p95_ms": 8.304,
+      "latency_p95_ms": 9.515,
       "pass_at_1": {
         "denominator": 1,
         "numerator": 1,
@@ -5801,7 +5801,7 @@
       "repetitions": [
         {
           "cost": null,
-          "duration_ms": 8.304,
+          "duration_ms": 9.515,
           "error": null,
           "number": 1,
           "observations": [
@@ -5944,7 +5944,7 @@
         "title": "follow-up revalidado"
       },
       "id": "AC024",
-      "latency_p95_ms": 7.495,
+      "latency_p95_ms": 11.022,
       "pass_at_1": {
         "denominator": 1,
         "numerator": 1,
@@ -5958,7 +5958,7 @@
       "repetitions": [
         {
           "cost": null,
-          "duration_ms": 7.495,
+          "duration_ms": 11.022,
           "error": null,
           "number": 1,
           "observations": [
@@ -6102,7 +6102,7 @@
         "title": "instalação limpa"
       },
       "id": "AC025",
-      "latency_p95_ms": 3.082,
+      "latency_p95_ms": 2.566,
       "pass_at_1": {
         "denominator": 1,
         "numerator": 1,
@@ -6116,7 +6116,7 @@
       "repetitions": [
         {
           "cost": null,
-          "duration_ms": 3.082,
+          "duration_ms": 2.566,
           "error": null,
           "number": 1,
           "observations": [],
@@ -6142,7 +6142,7 @@
         "title": "retomada"
       },
       "id": "AC026",
-      "latency_p95_ms": 13.065,
+      "latency_p95_ms": 15.091,
       "pass_at_1": {
         "denominator": 1,
         "numerator": 1,
@@ -6156,7 +6156,7 @@
       "repetitions": [
         {
           "cost": null,
-          "duration_ms": 13.065,
+          "duration_ms": 15.091,
           "error": null,
           "number": 1,
           "observations": [],
@@ -6184,7 +6184,7 @@
         "title": "lacunas por capacidade"
       },
       "id": "AC027",
-      "latency_p95_ms": 2.539,
+      "latency_p95_ms": 2.437,
       "pass_at_1": {
         "denominator": 1,
         "numerator": 1,
@@ -6198,7 +6198,7 @@
       "repetitions": [
         {
           "cost": null,
-          "duration_ms": 2.539,
+          "duration_ms": 2.437,
           "error": null,
           "number": 1,
           "observations": [],
@@ -6225,7 +6225,7 @@
         "title": "alteração local"
       },
       "id": "AC028",
-      "latency_p95_ms": 28.118,
+      "latency_p95_ms": 35.515,
       "pass_at_1": {
         "denominator": 1,
         "numerator": 1,
@@ -6239,7 +6239,7 @@
       "repetitions": [
         {
           "cost": null,
-          "duration_ms": 28.118,
+          "duration_ms": 35.515,
           "error": null,
           "number": 1,
           "observations": [],
@@ -6266,7 +6266,7 @@
         "title": "documentos antes da pergunta"
       },
       "id": "AC029",
-      "latency_p95_ms": 4.24,
+      "latency_p95_ms": 6.222,
       "pass_at_1": {
         "denominator": 1,
         "numerator": 1,
@@ -6280,7 +6280,7 @@
       "repetitions": [
         {
           "cost": null,
-          "duration_ms": 4.24,
+          "duration_ms": 6.222,
           "error": null,
           "number": 1,
           "observations": [],
@@ -6308,7 +6308,7 @@
         "title": "descoberta progressiva"
       },
       "id": "AC030",
-      "latency_p95_ms": 5.875,
+      "latency_p95_ms": 8.679,
       "pass_at_1": {
         "denominator": 1,
         "numerator": 1,
@@ -6322,7 +6322,7 @@
       "repetitions": [
         {
           "cost": null,
-          "duration_ms": 5.875,
+          "duration_ms": 8.679,
           "error": null,
           "number": 1,
           "observations": [],
@@ -6349,7 +6349,7 @@
         "title": "B2B direto e B2C consultivo"
       },
       "id": "AC031",
-      "latency_p95_ms": 26.626,
+      "latency_p95_ms": 32.138,
       "pass_at_1": {
         "denominator": 1,
         "numerator": 1,
@@ -6363,7 +6363,7 @@
       "repetitions": [
         {
           "cost": null,
-          "duration_ms": 26.626,
+          "duration_ms": 32.138,
           "error": null,
           "number": 1,
           "observations": [
@@ -6468,9 +6468,9 @@
                 "profile": "commercial",
                 "quote": {
                   "amount": 600.0,
-                  "created_at": "2026-09-28T18:39:12+00:00",
+                  "created_at": "2026-09-28T19:03:26+00:00",
                   "currency": "BRL",
-                  "expires_at": "2026-09-28T19:39:12+00:00",
+                  "expires_at": "2026-09-28T20:03:26+00:00",
                   "id": "q_b415e178fe9f2409",
                   "offer_id": "plano-padrao",
                   "payment_method": "pix",
@@ -6765,7 +6765,7 @@
         "title": "dependências e procedência"
       },
       "id": "AC032",
-      "latency_p95_ms": 2.422,
+      "latency_p95_ms": 2.391,
       "pass_at_1": {
         "denominator": 1,
         "numerator": 1,
@@ -6779,7 +6779,7 @@
       "repetitions": [
         {
           "cost": null,
-          "duration_ms": 2.422,
+          "duration_ms": 2.391,
           "error": null,
           "number": 1,
           "observations": [],
@@ -6805,7 +6805,7 @@
         "title": "troca de harness"
       },
       "id": "AC033",
-      "latency_p95_ms": 8.188,
+      "latency_p95_ms": 13.217,
       "pass_at_1": {
         "denominator": 1,
         "numerator": 1,
@@ -6819,7 +6819,7 @@
       "repetitions": [
         {
           "cost": null,
-          "duration_ms": 8.188,
+          "duration_ms": 13.217,
           "error": null,
           "number": 1,
           "observations": [],
@@ -6847,7 +6847,7 @@
         "title": "modelo insuficiente"
       },
       "id": "AC034",
-      "latency_p95_ms": 9.474,
+      "latency_p95_ms": 10.928,
       "pass_at_1": {
         "denominator": 1,
         "numerator": 1,
@@ -6861,7 +6861,7 @@
       "repetitions": [
         {
           "cost": null,
-          "duration_ms": 9.474,
+          "duration_ms": 10.928,
           "error": null,
           "number": 1,
           "observations": [],
@@ -6887,7 +6887,7 @@
         "title": "troca de modelo"
       },
       "id": "AC035",
-      "latency_p95_ms": 3.109,
+      "latency_p95_ms": 2.588,
       "pass_at_1": {
         "denominator": 1,
         "numerator": 1,
@@ -6901,7 +6901,7 @@
       "repetitions": [
         {
           "cost": null,
-          "duration_ms": 3.109,
+          "duration_ms": 2.588,
           "error": null,
           "number": 1,
           "observations": [],
@@ -6927,7 +6927,7 @@
         "title": "registro de avaliação"
       },
       "id": "AC036",
-      "latency_p95_ms": 2.455,
+      "latency_p95_ms": 2.587,
       "pass_at_1": {
         "denominator": 1,
         "numerator": 1,
@@ -6941,7 +6941,7 @@
       "repetitions": [
         {
           "cost": null,
-          "duration_ms": 2.455,
+          "duration_ms": 2.587,
           "error": null,
           "number": 1,
           "observations": [],
@@ -6969,7 +6969,7 @@
         "title": "recuperação operacional"
       },
       "id": "AC037",
-      "latency_p95_ms": 142.392,
+      "latency_p95_ms": 163.243,
       "pass_at_1": {
         "denominator": 1,
         "numerator": 1,
@@ -6983,7 +6983,7 @@
       "repetitions": [
         {
           "cost": null,
-          "duration_ms": 142.392,
+          "duration_ms": 163.243,
           "error": null,
           "number": 1,
           "observations": [
@@ -7098,9 +7098,9 @@
                 "profile": "commercial",
                 "quote": {
                   "amount": 79.0,
-                  "created_at": "2026-09-28T18:39:13+00:00",
+                  "created_at": "2026-09-28T19:03:27+00:00",
                   "currency": "BRL",
-                  "expires_at": "2026-09-28T19:09:13+00:00",
+                  "expires_at": "2026-09-28T19:33:27+00:00",
                   "id": "q_7b0fadbc80eb9f93",
                   "offer_id": "camiseta-azul",
                   "payment_method": "pix",
@@ -7238,7 +7238,7 @@
         "title": "trajetória observável"
       },
       "id": "AC038",
-      "latency_p95_ms": 9.817,
+      "latency_p95_ms": 11.402,
       "pass_at_1": {
         "denominator": 1,
         "numerator": 1,
@@ -7252,7 +7252,7 @@
       "repetitions": [
         {
           "cost": null,
-          "duration_ms": 9.817,
+          "duration_ms": 11.402,
           "error": null,
           "number": 1,
           "observations": [
@@ -7451,7 +7451,7 @@
         ]
       },
       "id": "dev-direct-01",
-      "latency_p95_ms": 9.635,
+      "latency_p95_ms": 12.465,
       "pass_at_1": {
         "denominator": 1,
         "numerator": 1,
@@ -7465,7 +7465,7 @@
       "repetitions": [
         {
           "cost": null,
-          "duration_ms": 9.635,
+          "duration_ms": 12.465,
           "error": null,
           "number": 1,
           "observations": [
@@ -7580,9 +7580,9 @@
                 "profile": "commercial",
                 "quote": {
                   "amount": 79.0,
-                  "created_at": "2026-09-28T18:39:13+00:00",
+                  "created_at": "2026-09-28T19:03:27+00:00",
                   "currency": "BRL",
-                  "expires_at": "2026-09-28T19:09:13+00:00",
+                  "expires_at": "2026-09-28T19:33:27+00:00",
                   "id": "q_c31723fd7d7a906d",
                   "offer_id": "camiseta-azul",
                   "payment_method": "pix",
@@ -7732,7 +7732,7 @@
         ]
       },
       "id": "dev-direct-02",
-      "latency_p95_ms": 8.507,
+      "latency_p95_ms": 13.803,
       "pass_at_1": {
         "denominator": 1,
         "numerator": 1,
@@ -7746,7 +7746,7 @@
       "repetitions": [
         {
           "cost": null,
-          "duration_ms": 8.507,
+          "duration_ms": 13.803,
           "error": null,
           "number": 1,
           "observations": [
@@ -7861,9 +7861,9 @@
                 "profile": "commercial",
                 "quote": {
                   "amount": 79.0,
-                  "created_at": "2026-09-28T18:39:13+00:00",
+                  "created_at": "2026-09-28T19:03:28+00:00",
                   "currency": "BRL",
-                  "expires_at": "2026-09-28T19:09:13+00:00",
+                  "expires_at": "2026-09-28T19:33:28+00:00",
                   "id": "q_927e65e1173d130a",
                   "offer_id": "camiseta-azul",
                   "payment_method": "pix",
@@ -8013,7 +8013,7 @@
         ]
       },
       "id": "dev-direct-03",
-      "latency_p95_ms": 10.096,
+      "latency_p95_ms": 15.739,
       "pass_at_1": {
         "denominator": 1,
         "numerator": 1,
@@ -8027,7 +8027,7 @@
       "repetitions": [
         {
           "cost": null,
-          "duration_ms": 10.096,
+          "duration_ms": 15.739,
           "error": null,
           "number": 1,
           "observations": [
@@ -8151,9 +8151,9 @@
                 "profile": "commercial",
                 "quote": {
                   "amount": 79.0,
-                  "created_at": "2026-09-28T18:39:13+00:00",
+                  "created_at": "2026-09-28T19:03:28+00:00",
                   "currency": "BRL",
-                  "expires_at": "2026-09-28T19:09:13+00:00",
+                  "expires_at": "2026-09-28T19:33:28+00:00",
                   "id": "q_7ae10ce3ef3e0bb0",
                   "offer_id": "camiseta-azul",
                   "payment_method": "pix",
@@ -8307,7 +8307,7 @@
         ]
       },
       "id": "dev-direct-04",
-      "latency_p95_ms": 8.678,
+      "latency_p95_ms": 10.704,
       "pass_at_1": {
         "denominator": 1,
         "numerator": 1,
@@ -8321,7 +8321,7 @@
       "repetitions": [
         {
           "cost": null,
-          "duration_ms": 8.678,
+          "duration_ms": 10.704,
           "error": null,
           "number": 1,
           "observations": [
@@ -8436,9 +8436,9 @@
                 "profile": "commercial",
                 "quote": {
                   "amount": 79.0,
-                  "created_at": "2026-09-28T18:39:13+00:00",
+                  "created_at": "2026-09-28T19:03:28+00:00",
                   "currency": "BRL",
-                  "expires_at": "2026-09-28T19:09:13+00:00",
+                  "expires_at": "2026-09-28T19:33:28+00:00",
                   "id": "q_1aba6e53086f81e7",
                   "offer_id": "camiseta-azul",
                   "payment_method": "pix",
@@ -8588,7 +8588,7 @@
         ]
       },
       "id": "dev-combination-03",
-      "latency_p95_ms": 10.293,
+      "latency_p95_ms": 12.977,
       "pass_at_1": {
         "denominator": 1,
         "numerator": 1,
@@ -8602,7 +8602,7 @@
       "repetitions": [
         {
           "cost": null,
-          "duration_ms": 10.293,
+          "duration_ms": 12.977,
           "error": null,
           "number": 1,
           "observations": [
@@ -8707,9 +8707,9 @@
                 "profile": "commercial",
                 "quote": {
                   "amount": 240.0,
-                  "created_at": "2026-09-28T18:39:13+00:00",
+                  "created_at": "2026-09-28T19:03:28+00:00",
                   "currency": "BRL",
-                  "expires_at": "2026-09-28T19:39:13+00:00",
+                  "expires_at": "2026-09-28T20:03:28+00:00",
                   "id": "q_904eaba395c92b3f",
                   "offer_id": "plano-padrao",
                   "payment_method": "pix",
@@ -8853,7 +8853,7 @@
         ]
       },
       "id": "dev-combination-01",
-      "latency_p95_ms": 8.684,
+      "latency_p95_ms": 11.817,
       "pass_at_1": {
         "denominator": 1,
         "numerator": 1,
@@ -8867,7 +8867,7 @@
       "repetitions": [
         {
           "cost": null,
-          "duration_ms": 8.684,
+          "duration_ms": 11.817,
           "error": null,
           "number": 1,
           "observations": [
@@ -8972,9 +8972,9 @@
                 "profile": "commercial",
                 "quote": {
                   "amount": 480.0,
-                  "created_at": "2026-09-28T18:39:14+00:00",
+                  "created_at": "2026-09-28T19:03:28+00:00",
                   "currency": "BRL",
-                  "expires_at": "2026-09-28T19:39:14+00:00",
+                  "expires_at": "2026-09-28T20:03:28+00:00",
                   "id": "q_93f39960e18e5184",
                   "offer_id": "plano-padrao",
                   "payment_method": "pix",
@@ -9118,7 +9118,7 @@
         ]
       },
       "id": "dev-combination-02",
-      "latency_p95_ms": 11.79,
+      "latency_p95_ms": 15.18,
       "pass_at_1": {
         "denominator": 1,
         "numerator": 1,
@@ -9132,7 +9132,7 @@
       "repetitions": [
         {
           "cost": null,
-          "duration_ms": 11.79,
+          "duration_ms": 15.18,
           "error": null,
           "number": 1,
           "observations": [
@@ -9247,9 +9247,9 @@
                 "profile": "commercial",
                 "quote": {
                   "amount": 79.0,
-                  "created_at": "2026-09-28T18:39:14+00:00",
+                  "created_at": "2026-09-28T19:03:28+00:00",
                   "currency": "BRL",
-                  "expires_at": "2026-09-28T19:09:14+00:00",
+                  "expires_at": "2026-09-28T19:33:28+00:00",
                   "id": "q_e9ef558af52cc471",
                   "offer_id": "camiseta-azul",
                   "payment_method": "pix",
@@ -9402,7 +9402,7 @@
         ]
       },
       "id": "dev-memory-01",
-      "latency_p95_ms": 16.454,
+      "latency_p95_ms": 20.832,
       "pass_at_1": {
         "denominator": 1,
         "numerator": 1,
@@ -9416,7 +9416,7 @@
       "repetitions": [
         {
           "cost": null,
-          "duration_ms": 16.454,
+          "duration_ms": 20.832,
           "error": null,
           "number": 1,
           "observations": [
@@ -9700,9 +9700,9 @@
                 "profile": "commercial",
                 "quote": {
                   "amount": 79.0,
-                  "created_at": "2026-09-28T18:39:14+00:00",
+                  "created_at": "2026-09-28T19:03:29+00:00",
                   "currency": "BRL",
-                  "expires_at": "2026-09-28T19:09:14+00:00",
+                  "expires_at": "2026-09-28T19:33:29+00:00",
                   "id": "q_0a75e98e239fd5b8",
                   "offer_id": "camiseta-azul",
                   "payment_method": "pix",
@@ -9850,7 +9850,7 @@
         ]
       },
       "id": "dev-memory-02",
-      "latency_p95_ms": 13.252,
+      "latency_p95_ms": 18.979,
       "pass_at_1": {
         "denominator": 1,
         "numerator": 1,
@@ -9864,7 +9864,7 @@
       "repetitions": [
         {
           "cost": null,
-          "duration_ms": 13.252,
+          "duration_ms": 18.979,
           "error": null,
           "number": 1,
           "observations": [
@@ -10166,9 +10166,9 @@
                 "profile": "commercial",
                 "quote": {
                   "amount": 79.0,
-                  "created_at": "2026-09-28T18:39:14+00:00",
+                  "created_at": "2026-09-28T19:03:29+00:00",
                   "currency": "BRL",
-                  "expires_at": "2026-09-28T19:09:14+00:00",
+                  "expires_at": "2026-09-28T19:33:29+00:00",
                   "id": "q_9d30d0b50356b377",
                   "offer_id": "camiseta-azul",
                   "payment_method": "pix",
@@ -10305,7 +10305,7 @@
         ]
       },
       "id": "dev-actions-01",
-      "latency_p95_ms": 5.612,
+      "latency_p95_ms": 5.179,
       "pass_at_1": {
         "denominator": 1,
         "numerator": 1,
@@ -10319,7 +10319,7 @@
       "repetitions": [
         {
           "cost": null,
-          "duration_ms": 5.612,
+          "duration_ms": 5.179,
           "error": null,
           "number": 1,
           "observations": [
@@ -10503,7 +10503,7 @@
         ]
       },
       "id": "dev-actions-02",
-      "latency_p95_ms": 13.018,
+      "latency_p95_ms": 16.825,
       "pass_at_1": {
         "denominator": 1,
         "numerator": 1,
@@ -10517,7 +10517,7 @@
       "repetitions": [
         {
           "cost": null,
-          "duration_ms": 13.018,
+          "duration_ms": 16.825,
           "error": null,
           "number": 1,
           "observations": [
@@ -10767,7 +10767,7 @@
         ]
       },
       "id": "dev-human-01",
-      "latency_p95_ms": 5.966,
+      "latency_p95_ms": 6.868,
       "pass_at_1": {
         "denominator": 1,
         "numerator": 1,
@@ -10781,7 +10781,7 @@
       "repetitions": [
         {
           "cost": null,
-          "duration_ms": 5.966,
+          "duration_ms": 6.868,
           "error": null,
           "number": 1,
           "observations": [
@@ -10948,6 +10948,7 @@
       "price": 7
     },
     "holdout_changed": false,
+    "holdout_file": null,
     "holdout_reference_available": null,
     "holdout_sha256": null,
     "pass_at_1": {
@@ -10962,7 +10963,7 @@
     },
     "performance": {
       "cost": null,
-      "latency_p95_ms": 26.626
+      "latency_p95_ms": 32.138
     },
     "repeat": 1,
     "retrieval": {
@@ -10995,11 +10996,11 @@
     "profile": null
   },
   "run": {
-    "generated_at": "2026-09-28T18:39:14+00:00",
+    "generated_at": "2026-09-28T19:03:29+00:00",
     "python": "3.12.14",
     "source": {
       "dirty": true,
-      "revision": "cbefb2f402c61bb234b6cb1d71a5997630ac6620"
+      "revision": "fb3935db2e988b6cb0c903ab14c7c8df29122b56"
     }
   },
   "schema_version": 1,

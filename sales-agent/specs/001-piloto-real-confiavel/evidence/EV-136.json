@@ -1,0 +1,34 @@
+{
+  "acceptance_refs": [
+    "AC-038",
+    "AC-039",
+    "AC-040"
+  ],
+  "environment": "OS=Linux-5.14.0-687.36.1.el9_8.x86_64-x86_64-with-glibc2.34; Python=3.12.14",
+  "evidence_refs": [],
+  "execution_status": "executed",
+  "id": "EV-136",
+  "input_fingerprints": {
+    "evaluation/holdout.sha256": "cfa4f962776fda45a868d39efbacfc0049f673c91bb43112928e27483bd0d37b",
+    "specs/001-piloto-real-confiavel/plan.md": "a069d7b1d149ba604d47c2cb8035b6bfe0e9dc7471acd4eb697cbcab209ab66e",
+    "specs/001-piloto-real-confiavel/spec.md": "057aed7c1e1360d8f71167caca6af45c61c0ddf7114ce1d2eb8ce7d6dd5858ba",
+    "src/sales_agent/evaluation.py": "0c6ead1af11e3ae79f4cfa6c551d4934b54325dbd4f90070511abe13de644df6",
+    "src/sales_agent/governance.py": "680392fc0b41a58ed2f2cb88f01cc6166bb261525a184eece8da83d7f97b8439",
+    "tests/test_pilot_readiness.py": "e12bc3e7de71001b1c2357453d3b4cb1cec1910858d97e303e332300519270b8"
+  },
+  "input_paths": [
+    "src/sales_agent/governance.py",
+    "src/sales_agent/evaluation.py",
+    "tests/test_pilot_readiness.py",
+    "evaluation/holdout.sha256",
+    "specs/001-piloto-real-confiavel/spec.md",
+    "specs/001-piloto-real-confiavel/plan.md"
+  ],
+  "limitations": "",
+  "observations": "23 focused and 245 full tests passed. Readiness reads only published digest; evaluator verifies digest against reserved corpus. Local holdout 30/30 cases passed.",
+  "procedure": "python3.12 -m pytest -q tests/test_pilot_readiness.py tests/test_cli_and_evaluation.py > /tmp/sales-agent-holdout-manifest-focused.log 2>&1; python3.12 -m pytest -q > /tmp/sales-agent-holdout-manifest-full.log 2>&1",
+  "result": "passed",
+  "tested_revision": "local:0b9e874bc59a81f1318506193859622b296ea571c950de6ead7b6cf3f704e09e",
+  "ticket": "TK-015",
+  "timestamp": "2026-09-28T18:56:01+00:00"
+}

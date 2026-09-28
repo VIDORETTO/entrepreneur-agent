@@ -7,7 +7,6 @@ supervisor permission to send.
 
 from __future__ import annotations
 
-import hashlib
 import math
 import re
 import sys
@@ -70,10 +69,18 @@ class PilotController:
         model = holdout.get("model") if isinstance(holdout.get("model"), Mapping) else {}
         candidate = evaluation.get("candidate") if isinstance(evaluation.get("candidate"), Mapping) else {}
         model_name = str(model.get("name", ""))
-        checkout_holdout = Path(__file__).resolve().parents[2] / "evaluation" / "holdout.json"
-        installed_holdout = Path(sys.prefix) / "share" / "vendedor-adaptavel" / "evaluation" / "holdout.json"
-        holdout_path = checkout_holdout if checkout_holdout.is_file() else installed_holdout
-        current_holdout_hash = hashlib.sha256(holdout_path.read_bytes()).hexdigest() if holdout_path.is_file() else None
+        checkout_digest = Path(__file__).resolve().parents[2] / "evaluation" / "holdout.sha256"
+        installed_digest = Path(sys.prefix) / "share" / "vendedor-adaptavel" / "evaluation" / "holdout.sha256"
+        digest_path = checkout_digest if checkout_digest.is_file() else installed_digest
+        current_holdout_hash = digest_path.read_text(encoding="ascii").strip() if digest_path.is_file() else None
+        corpus_path = digest_path.with_name("holdout.json")
+        corpus_stat = corpus_path.stat() if corpus_path.is_file() else None
+        reported_file = evaluation.get("holdout_file") if isinstance(evaluation.get("holdout_file"), Mapping) else {}
+        holdout_file_matches = bool(
+            corpus_stat
+            and reported_file.get("size") == corpus_stat.st_size
+            and reported_file.get("mtime_ns") == corpus_stat.st_mtime_ns
+        )
         fingerprint = holdout.get("candidate_package_fingerprint") or candidate.get("package_fingerprint")
         version = holdout.get("candidate_package_version") or candidate.get("package_version")
         missing = []
@@ -81,6 +88,7 @@ class PilotController:
         if not (model_name and model_name != "rules-v1" and holdout.get("status") == "passed"
                 and evaluation.get("split") == "holdout" and evaluation.get("thresholds_met") is True
                 and current_holdout_hash and evaluation.get("holdout_sha256") == current_holdout_hash
+                and holdout_file_matches
                 and version == package.get("package_version")
                 and fingerprint == package_fingerprint(package)):
             missing.append("holdout_selected_model")

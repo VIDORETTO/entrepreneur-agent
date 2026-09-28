@@ -1,0 +1,32 @@
+{
+  "acceptance_refs": [
+    "AC-035",
+    "AC-036",
+    "AC-037"
+  ],
+  "environment": "OS=Linux-5.14.0-687.36.1.el9_8.x86_64-x86_64-with-glibc2.34; Python=3.12.14",
+  "evidence_refs": [],
+  "execution_status": "executed",
+  "id": "EV-137",
+  "input_fingerprints": {
+    "evaluation/holdout.sha256": "cfa4f962776fda45a868d39efbacfc0049f673c91bb43112928e27483bd0d37b",
+    "reports/holdout-latest.json": "d3a41fbeb37a131dccdd04a05dfafb78b1d839f84bffb0d28edb496d8f7c88a2",
+    "specs/001-piloto-real-confiavel/plan.md": "a069d7b1d149ba604d47c2cb8035b6bfe0e9dc7471acd4eb697cbcab209ab66e",
+    "specs/001-piloto-real-confiavel/spec.md": "057aed7c1e1360d8f71167caca6af45c61c0ddf7114ce1d2eb8ce7d6dd5858ba",
+    "src/sales_agent/evaluation.py": "0c6ead1af11e3ae79f4cfa6c551d4934b54325dbd4f90070511abe13de644df6"
+  },
+  "input_paths": [
+    "src/sales_agent/evaluation.py",
+    "evaluation/holdout.sha256",
+    "reports/holdout-latest.json",
+    "specs/001-piloto-real-confiavel/spec.md",
+    "specs/001-piloto-real-confiavel/plan.md"
+  ],
+  "limitations": "",
+  "observations": "Local deterministic holdout 30/30 cases and 120/120 runs passed with manifest checksum verification; no remote model credential available.",
+  "procedure": "python3.12 -m sales_agent.cli --data-dir /tmp/sales-agent-manifest-eval evaluate --split holdout --repeat 4 --output reports/holdout-latest.json > /tmp/sales-agent-manifest-holdout.log",
+  "result": "passed",
+  "tested_revision": "local:7ad09ed2e02eb7dce4efa83db74713a278c66fc7144b53c5fb29fb9905b4b0e5",
+  "ticket": "TK-012",
+  "timestamp": "2026-09-28T18:56:10+00:00"
+}

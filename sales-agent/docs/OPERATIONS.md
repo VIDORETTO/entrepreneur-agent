@@ -229,6 +229,6 @@ novas alterações de pedido e novos checkouts.
 
 ## Portão do piloto
 
-`vendedor pilot readiness --business-id ID --channel chatwoot --evidence-file bundle.json` devolve `ready`, `missing` e os nomes das evidências aceitas. O bundle reúne `holdout` do modelo e pacote selecionados, `model_check`, `channel_contract` (assinatura timestamped e eco) e `interruption` para o mesmo escopo. O hash do holdout deve corresponder ao corpus instalado. O pacote precisa declarar `service_hours` e `privacy.retention_days`. Um relatório `rules-v1` não libera o piloto.
+`vendedor pilot readiness --business-id ID --channel chatwoot --evidence-file bundle.json` devolve `ready`, `missing` e os nomes das evidências aceitas. O bundle reúne `holdout` do modelo e pacote selecionados, `model_check`, `channel_contract` (assinatura timestamped e eco) e `interruption` para o mesmo escopo. O hash do relatório deve corresponder a `evaluation/holdout.sha256` e seus metadados de arquivo devem corresponder à instalação atual; o portão não lê os casos reservados. O pacote precisa declarar `service_hours` e `privacy.retention_days`. Um relatório `rules-v1` não libera o piloto.
 
 `pilot configure --mode pilot` consulta o mesmo portão e retorna código 2 se faltar prova. O dono pode registrar uma exceção explícita com `--authorize --override --reason TEXTO`; `pilot inspect` exibe o motivo e os itens ausentes. Isso altera somente o estado local. Não registra webhook nem ativa uma integração externa.

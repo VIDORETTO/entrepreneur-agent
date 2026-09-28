@@ -1,0 +1,28 @@
+{
+  "acceptance_refs": [
+    "AC-003"
+  ],
+  "environment": "OS=Linux-5.14.0-687.36.1.el9_8.x86_64-x86_64-with-glibc2.34; Python=3.12.14",
+  "evidence_refs": [],
+  "execution_status": "executed",
+  "id": "EV-138",
+  "input_fingerprints": {
+    "pyproject.toml": "a778bcd40960a6feaf0a287a760988299244d4de45bfc2c1adeb647c59099312",
+    "specs/001-piloto-real-confiavel/plan.md": "a069d7b1d149ba604d47c2cb8035b6bfe0e9dc7471acd4eb697cbcab209ab66e",
+    "specs/001-piloto-real-confiavel/spec.md": "057aed7c1e1360d8f71167caca6af45c61c0ddf7114ce1d2eb8ce7d6dd5858ba",
+    "tests/test_pilot_readiness.py": "e12bc3e7de71001b1c2357453d3b4cb1cec1910858d97e303e332300519270b8"
+  },
+  "input_paths": [
+    "pyproject.toml",
+    "tests/test_pilot_readiness.py",
+    "specs/001-piloto-real-confiavel/spec.md",
+    "specs/001-piloto-real-confiavel/plan.md"
+  ],
+  "limitations": "GOAL-PROMPT prohibits git push; current branch is local, so GitHub Actions cannot verify AC-003.",
+  "observations": "Python 3.10.21 rejected >=3.11; Python 3.11.16 and 3.14.7 each passed 245 tests; wheel contains holdout checksum and Twine passed. GitHub Actions not run.",
+  "procedure": "/tmp/vendedor-py310/bin/python -m pip install --dry-run --no-deps .; /tmp/vendedor-py311/bin/python -m pytest -q; /tmp/vendedor-py314/bin/python -m pytest -q; .venv/bin/python -m build; .venv/bin/twine check dist/*",
+  "result": "partial",
+  "tested_revision": "local:2b93578729c91134f30fd6bf687eb20e24133ae15eaaf1651cea6d6c19b7c2ab",
+  "ticket": "TK-002",
+  "timestamp": "2026-09-28T18:59:08+00:00"
+}

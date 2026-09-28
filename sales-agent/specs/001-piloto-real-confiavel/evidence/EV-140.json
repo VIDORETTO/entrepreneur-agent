@@ -1,0 +1,32 @@
+{
+  "acceptance_refs": [
+    "AC-035",
+    "AC-036",
+    "AC-037"
+  ],
+  "environment": "OS=Linux-5.14.0-687.36.1.el9_8.x86_64-x86_64-with-glibc2.34; Python=3.12.14",
+  "evidence_refs": [],
+  "execution_status": "executed",
+  "id": "EV-140",
+  "input_fingerprints": {
+    "evaluation/holdout.sha256": "cfa4f962776fda45a868d39efbacfc0049f673c91bb43112928e27483bd0d37b",
+    "reports/holdout-latest.json": "6e6dd2195997da5afbb9b707ff82fc42a16d6de815cc86fabc0ceaaec6cc9c59",
+    "specs/001-piloto-real-confiavel/plan.md": "a069d7b1d149ba604d47c2cb8035b6bfe0e9dc7471acd4eb697cbcab209ab66e",
+    "specs/001-piloto-real-confiavel/spec.md": "057aed7c1e1360d8f71167caca6af45c61c0ddf7114ce1d2eb8ce7d6dd5858ba",
+    "src/sales_agent/evaluation.py": "0b2a2e339cda25d85dd455a621319ca7d3e154436fc51beee9b048d2732f022a"
+  },
+  "input_paths": [
+    "src/sales_agent/evaluation.py",
+    "evaluation/holdout.sha256",
+    "reports/holdout-latest.json",
+    "specs/001-piloto-real-confiavel/spec.md",
+    "specs/001-piloto-real-confiavel/plan.md"
+  ],
+  "limitations": "",
+  "observations": "Local holdout passed 30/30 cases and 120/120 runs with checksum and file metadata; real model unavailable.",
+  "procedure": "python3.12 -m sales_agent.cli --data-dir /tmp/sales-agent-holdout-final-eval evaluate --split holdout --repeat 4 --output reports/holdout-latest.json > /tmp/sales-agent-holdout-final-eval.log",
+  "result": "passed",
+  "tested_revision": "local:36d4d33ea03eaa9f6c60f8f9b74532bcb3adf3c24b59cda2a11a413ec672f581",
+  "ticket": "TK-012",
+  "timestamp": "2026-09-28T19:07:41+00:00"
+}
