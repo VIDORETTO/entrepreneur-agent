@@ -16,6 +16,7 @@ from .knowledge import KnowledgeBackend, PersistentFarolKnowledge
 from .model import ModelAdapter, RuleBasedModel
 from .skills import SkillCatalog
 from .storage import StateStore, durable_key
+from .transcription import Transcriber
 from .types import EngineResult, Proposal
 from .validation import package_capability, package_fingerprint
 
@@ -41,6 +42,7 @@ class SellerEngine:
         before_send: Optional[Callable[[Mapping[str, Any], EngineResult], None]] = None,
         skill_catalog: Optional[SkillCatalog] = None,
         supervisor: Any = None,
+        transcriber: Optional[Transcriber] = None,
     ):
         self.store = store
         self.model = model or RuleBasedModel()
@@ -49,6 +51,7 @@ class SellerEngine:
         self.before_send = before_send
         self.skill_catalog = skill_catalog or SkillCatalog()
         self.supervisor = supervisor
+        self.transcriber = transcriber
         self._lock = threading.RLock()
 
     def handle(self, event: Mapping[str, Any]) -> EngineResult:
@@ -462,7 +465,7 @@ class SellerEngine:
     def _validate_event(event: Mapping[str, Any]) -> None:
         for field in ("business_id", "conversation_id", "event_id", "contact_id", "text"):
             value = event.get(field)
-            if not isinstance(value, str) or not value.strip():
+            if not isinstance(value, str) or (not value.strip() and not (field == "text" and event.get("attachments"))):
                 raise ConversationError("evento sem campo obrigatório: %s" % field)
             limit = MAX_EVENT_TEXT_LENGTH if field == "text" else MAX_EVENT_ID_LENGTH
             if len(value) > limit:
@@ -508,6 +511,36 @@ class SellerEngine:
                 state=state,
                 trace=[{"type": "human_pause_respected"}],
             )
+
+        attachments = event.get("attachments") if isinstance(event.get("attachments"), list) else []
+        if attachments:
+            state["attachments"] = [
+                {key: item.get(key) for key in ("type", "mime", "size")}
+                for item in attachments
+                if isinstance(item, Mapping)
+            ][:8]
+        transcribed = False
+        if attachments and not text.strip() and self.transcriber is not None:
+            audio = next((item for item in attachments if isinstance(item, Mapping) and item.get("type") == "audio"), None)
+            url = audio.get("url") if audio is not None else None
+            if isinstance(url, str):
+                try:
+                    transcript = self.transcriber.transcribe(url)
+                except Exception:
+                    transcript = ""
+                if isinstance(transcript, str) and 0 < len(transcript.strip()) <= MAX_EVENT_TEXT_LENGTH:
+                    text = transcript.strip()
+                    transcribed = True
+                    trace.append({"type": "transcribed", "source": "audio"})
+        if attachments and not text.strip():
+            policy = str(package.get("non_text_policy", "ask_text"))
+            response = (
+                "Posso chamar um atendente para ajudar com este anexo."
+                if policy == "offer_human"
+                else "Recebi o anexo. Pode enviar sua pergunta em texto?"
+            )
+            state["pending"] = {"type": "non_text_message", "reason": "content_unavailable"}
+            return self._result(event, state, response, trace=[{"type": "non_text_policy", "policy": policy}])
 
         skill_selection = self.skill_catalog.select(package, text, state)
         skill_trace = {
@@ -918,6 +951,14 @@ class SellerEngine:
             trace.append({"type": "pending_operation_continued"})
 
         if proposal.intent == "buy":
+            if transcribed:
+                state["pending"] = {"type": "transcribed_confirmation", "reason": "text_confirmation_required"}
+                return self._result(
+                    event,
+                    state,
+                    "Entendi seu pedido no áudio. Confirma por texto antes de eu preparar a compra?",
+                    trace=trace + [{"type": "transcribed_action_blocked"}],
+                )
             return self._buy(package, state, event, proposal, trace)
 
         if proposal.intent == "greeting":

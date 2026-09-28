@@ -1,0 +1,38 @@
+{
+  "acceptance_refs": [
+    "AC-017"
+  ],
+  "environment": "OS=Linux-5.14.0-687.36.1.el9_8.x86_64-x86_64-with-glibc2.34; Python=3.9.25",
+  "evidence_refs": [],
+  "execution_status": "executed",
+  "id": "EV-041",
+  "input_fingerprints": {
+    "schemas/business-package.schema.json": "418fdaa7b2fa8d78644ab2490bb5ce1c13765342644729eeae069c31ee4a081e",
+    "specs/001-piloto-real-confiavel/plan.md": "a069d7b1d149ba604d47c2cb8035b6bfe0e9dc7471acd4eb697cbcab209ab66e",
+    "specs/001-piloto-real-confiavel/spec.md": "057aed7c1e1360d8f71167caca6af45c61c0ddf7114ce1d2eb8ce7d6dd5858ba",
+    "src/sales_agent/channel.py": "2e2cae57f1384bc7c3130ba7c99dc327dfa6ea9554e8cc6dc15a3bda4f5bad75",
+    "src/sales_agent/conversation.py": "a877e8bda309f96dfbf9efa147dadd137bcf312e8d76a53dd445005e762d992c",
+    "src/sales_agent/transcription.py": "86148e1ebd7538435c2cdbca21bcd3c269d4eaeef457082c89592252587c4b26",
+    "src/sales_agent/turns.py": "766d1f221a86ec373ef09673e577803415b4b42f57468724965614c845d45194",
+    "src/sales_agent/validation.py": "1161174ba912fb40e7b2e0b62d120da15ce8832e21ca9f2052a29d98e9a5008f",
+    "tests/test_non_text_messages.py": "be759608f42fa89992e6e524f2ee73201c2bc37bc975e8703db60ff548e47d98"
+  },
+  "input_paths": [
+    "src/sales_agent/channel.py",
+    "src/sales_agent/conversation.py",
+    "src/sales_agent/transcription.py",
+    "src/sales_agent/turns.py",
+    "src/sales_agent/validation.py",
+    "schemas/business-package.schema.json",
+    "tests/test_non_text_messages.py",
+    "specs/001-piloto-real-confiavel/spec.md",
+    "specs/001-piloto-real-confiavel/plan.md"
+  ],
+  "limitations": "",
+  "observations": "Scripted audio transcription URL was sent to the transcriber; model interpreted transcript, trace marked transcribed, and buy effect required text confirmation.",
+  "procedure": ".venv/bin/python -m pytest -q tests/test_non_text_messages.py tests/test_conversation_contract.py",
+  "result": "passed",
+  "tested_revision": "local:63336220dbeac5f18fd322cd7153b22ff9d7999db6c1aff8402a2116c6fd7e63",
+  "ticket": "TK-007",
+  "timestamp": "2026-09-28T15:33:17+00:00"
+}

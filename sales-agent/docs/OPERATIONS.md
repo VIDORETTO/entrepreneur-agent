@@ -156,6 +156,16 @@ atendente, inclusive em modo de observação; uma interrupção do canal bloquei
 esse envio. Follow-ups são revalidados na mesma janela; sem instante confiável
 o envio público falha fechado. Templates HSM não fazem parte deste serviço.
 
+Áudio, imagem e documento são admitidos com metadados `type`, `mime` e `size`;
+o serviço não baixa anexos por padrão. Sem transcritor, um áudio sem legenda
+segue `non_text_policy` do pacote. Opcionalmente, o JSON do serviço aceita
+`"transcriber": {"endpoint": "https://transcriber.example.invalid/transcribe",
+"token": "env:TRANSCRIBER_API_TOKEN", "timeout_seconds": 10}`. O adaptador envia
+apenas a URL HTTPS do áudio ao endpoint configurado. Uma transcrição é marcada
+no trace e um pedido de compra transcrito exige confirmação posterior por
+texto antes de qualquer operação comercial. Falha de transcrição volta à
+política do pacote.
+
 Na entrega pública, o trabalhador registra um hash do conteúdo como envio em
 curso antes de chamar o transporte. Ao receber o ID da mensagem do Chatwoot,
 grava esse ID no mesmo commit que confirma o item do outbox. Um webhook

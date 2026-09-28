@@ -68,6 +68,11 @@ class TurnAssembler:
                     continue
                 message_ids = [str(item["message_id"]) for item in messages]
                 event = dict(messages[0]["event"])
+                event["attachments"] = [
+                    attachment
+                    for message in messages
+                    for attachment in message["event"].get("attachments", [])
+                ][:8]
                 turn_id = durable_key("turn", business_id, conversation_id, *message_ids)
                 event["event_id"] = turn_id
                 event["text"] = "\n".join(str(item["text"]) for item in messages)

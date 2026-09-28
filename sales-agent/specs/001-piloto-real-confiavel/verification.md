@@ -249,7 +249,7 @@
 - Evidence refs: none
 - Limitations: Evidence invalidated because an input changed.
 
-## EV-020 — passed
+## EV-020 — stale
 
 - Ticket: `TK-005`
 - Acceptance: `AC-010`
@@ -260,9 +260,9 @@
 - Timestamp: `2026-09-28T15:02:27+00:00`
 - Observations: Webhook ACK preceded fake Chatwoot POST; one public response arrived after turn window.
 - Evidence refs: none
-- Limitations: none recorded
+- Limitations: Evidence invalidated because an input changed.
 
-## EV-021 — passed
+## EV-021 — stale
 
 - Ticket: `TK-005`
 - Acceptance: `AC-011`
@@ -273,9 +273,9 @@
 - Timestamp: `2026-09-28T15:02:28+00:00`
 - Observations: Ready endpoint was 200, then returned 503 with interruption or SQLite integrity reason; health remained 200.
 - Evidence refs: none
-- Limitations: none recorded
+- Limitations: Evidence invalidated because an input changed.
 
-## EV-022 — passed
+## EV-022 — stale
 
 - Ticket: `TK-005`
 - Acceptance: `AC-012`
@@ -286,7 +286,7 @@
 - Timestamp: `2026-09-28T15:02:28+00:00`
 - Observations: SIGTERM during a held provider POST, followed by restart, produced one POST and outbox sent or unknown.
 - Evidence refs: none
-- Limitations: none recorded
+- Limitations: Evidence invalidated because an input changed.
 
 ## EV-023 — passed
 
@@ -301,7 +301,7 @@
 - Evidence refs: none
 - Limitations: none recorded
 
-## EV-024 — passed
+## EV-024 — stale
 
 - Ticket: `TK-004`
 - Acceptance: `AC-007`, `AC-008`, `AC-009`
@@ -312,9 +312,9 @@
 - Timestamp: `2026-09-28T15:14:36+00:00`
 - Observations: Echo correlation and human takeover remained green after WhatsApp binding and delivery changes; 37 passed.
 - Evidence refs: none
-- Limitations: none recorded
+- Limitations: Evidence invalidated because an input changed.
 
-## EV-025 — passed
+## EV-025 — stale
 
 - Ticket: `TK-003`
 - Acceptance: `AC-004`, `AC-005`, `AC-006`
@@ -325,9 +325,9 @@
 - Timestamp: `2026-09-28T15:14:36+00:00`
 - Observations: Timestamped and legacy webhook signature contracts remained green after binding change; 43 passed.
 - Evidence refs: none
-- Limitations: none recorded
+- Limitations: Evidence invalidated because an input changed.
 
-## EV-026 — passed
+## EV-026 — stale
 
 - Ticket: `TK-005`
 - Acceptance: `AC-010`, `AC-011`, `AC-012`
@@ -338,7 +338,7 @@
 - Timestamp: `2026-09-28T15:14:37+00:00`
 - Observations: Service HTTP, readiness and SIGTERM restart contracts remained green after window change; 4 passed.
 - Evidence refs: none
-- Limitations: none recorded
+- Limitations: Evidence invalidated because an input changed.
 
 ## EV-027 — stale
 
@@ -418,7 +418,7 @@
 - Evidence refs: none
 - Limitations: Evidence invalidated because an input changed.
 
-## EV-033 — passed
+## EV-033 — stale
 
 - Ticket: `TK-006`
 - Acceptance: `AC-013`
@@ -429,9 +429,9 @@
 - Timestamp: `2026-09-28T15:20:26+00:00`
 - Observations: At 23:59:59 and 24:00:00 after buyer admission, public delivery succeeded.
 - Evidence refs: none
-- Limitations: none recorded
+- Limitations: Evidence invalidated because an input changed.
 
-## EV-034 — passed
+## EV-034 — stale
 
 - Ticket: `TK-006`
 - Acceptance: `AC-014`
@@ -442,9 +442,9 @@
 - Timestamp: `2026-09-28T15:20:26+00:00`
 - Observations: After 24:00:01, public delivery became window_closed and exactly one private note was sent, including in observation mode; absent buyer timestamp closed safely.
 - Evidence refs: none
-- Limitations: none recorded
+- Limitations: Evidence invalidated because an input changed.
 
-## EV-035 — passed
+## EV-035 — stale
 
 - Ticket: `TK-006`
 - Acceptance: `AC-015`
@@ -454,5 +454,96 @@
 - Tested revision: `local:ca685b7a73d9eab23e1fb0ac5119c719caba228ffaf8e00f29a803824d39ceb4`
 - Timestamp: `2026-09-28T15:20:27+00:00`
 - Observations: A scheduled Chatwoot follow-up outside the window became window_closed during delivery, with no public POST, and revalidation returned window_closed.
+- Evidence refs: none
+- Limitations: Evidence invalidated because an input changed.
+
+## EV-036 — passed
+
+- Ticket: `TK-003`
+- Acceptance: `AC-004`, `AC-005`, `AC-006`
+- Procedure: `.venv/bin/python -m pytest -q tests/test_chatwoot_contract.py tests/test_channel_pilot_supervisor.py`
+- Execution: `executed`
+- Environment: OS=Linux-5.14.0-687.36.1.el9_8.x86_64-x86_64-with-glibc2.34; Python=3.9.25
+- Tested revision: `local:c850523524393c3d8b078b12d59cafa2148ab56160edf78cddb0083b84a7cf3e`
+- Timestamp: `2026-09-28T15:33:16+00:00`
+- Observations: 43 passed after media admission changes; timestamped, legacy and stale HMAC contracts remain green.
+- Evidence refs: none
+- Limitations: none recorded
+
+## EV-037 — passed
+
+- Ticket: `TK-004`
+- Acceptance: `AC-007`, `AC-008`, `AC-009`
+- Procedure: `.venv/bin/python -m pytest -q tests/test_chatwoot_contract.py tests/test_conversation_contract.py`
+- Execution: `executed`
+- Environment: OS=Linux-5.14.0-687.36.1.el9_8.x86_64-x86_64-with-glibc2.34; Python=3.9.25
+- Tested revision: `local:525e51334d8698013f76a6ee45c928d5e94e932ef38802c69d8257a60dd57e46`
+- Timestamp: `2026-09-28T15:33:16+00:00`
+- Observations: 37 passed after media admission and conversation changes; own echo and human takeover contracts remain green.
+- Evidence refs: none
+- Limitations: none recorded
+
+## EV-038 — passed
+
+- Ticket: `TK-005`
+- Acceptance: `AC-010`, `AC-011`, `AC-012`
+- Procedure: `.venv/bin/python -m pytest -q tests/test_service.py`
+- Execution: `executed`
+- Environment: OS=Linux-5.14.0-687.36.1.el9_8.x86_64-x86_64-with-glibc2.34; Python=3.9.25
+- Tested revision: `local:10561296e09db80c68146157dcc11a80d60d48204a2c8fa2b1fa5a3bcea3a93c`
+- Timestamp: `2026-09-28T15:33:16+00:00`
+- Observations: 5 passed after optional transcriber config; service ACK, readiness and SIGTERM restart contracts remain green.
+- Evidence refs: none
+- Limitations: none recorded
+
+## EV-039 — passed
+
+- Ticket: `TK-006`
+- Acceptance: `AC-013`, `AC-014`, `AC-015`
+- Procedure: `.venv/bin/python -m pytest -q tests/test_channel_window.py tests/test_delivery_and_governance.py`
+- Execution: `executed`
+- Environment: OS=Linux-5.14.0-687.36.1.el9_8.x86_64-x86_64-with-glibc2.34; Python=3.9.25
+- Tested revision: `local:a5f5a380d1426cd98faf379cff4a6df9b8c13d892f3384f45d7c7165b70eede4`
+- Timestamp: `2026-09-28T15:33:16+00:00`
+- Observations: 29 passed after media event changes; WhatsApp window and follow-up remain green.
+- Evidence refs: none
+- Limitations: none recorded
+
+## EV-040 — passed
+
+- Ticket: `TK-007`
+- Acceptance: `AC-016`
+- Procedure: `.venv/bin/python -m pytest -q tests/test_non_text_messages.py tests/test_conversation_contract.py`
+- Execution: `executed`
+- Environment: OS=Linux-5.14.0-687.36.1.el9_8.x86_64-x86_64-with-glibc2.34; Python=3.9.25
+- Tested revision: `local:63336220dbeac5f18fd322cd7153b22ff9d7999db6c1aff8402a2116c6fd7e63`
+- Timestamp: `2026-09-28T15:33:17+00:00`
+- Observations: Audio without text was authenticated, admitted and answered by ask_text; metadata persisted in public state. offer_human package policy also passed.
+- Evidence refs: none
+- Limitations: none recorded
+
+## EV-041 — passed
+
+- Ticket: `TK-007`
+- Acceptance: `AC-017`
+- Procedure: `.venv/bin/python -m pytest -q tests/test_non_text_messages.py tests/test_conversation_contract.py`
+- Execution: `executed`
+- Environment: OS=Linux-5.14.0-687.36.1.el9_8.x86_64-x86_64-with-glibc2.34; Python=3.9.25
+- Tested revision: `local:63336220dbeac5f18fd322cd7153b22ff9d7999db6c1aff8402a2116c6fd7e63`
+- Timestamp: `2026-09-28T15:33:17+00:00`
+- Observations: Scripted audio transcription URL was sent to the transcriber; model interpreted transcript, trace marked transcribed, and buy effect required text confirmation.
+- Evidence refs: none
+- Limitations: none recorded
+
+## EV-042 — passed
+
+- Ticket: `TK-007`
+- Acceptance: `AC-018`
+- Procedure: `.venv/bin/python -m pytest -q tests/test_non_text_messages.py tests/test_conversation_contract.py`
+- Execution: `executed`
+- Environment: OS=Linux-5.14.0-687.36.1.el9_8.x86_64-x86_64-with-glibc2.34; Python=3.9.25
+- Tested revision: `local:63336220dbeac5f18fd322cd7153b22ff9d7999db6c1aff8402a2116c6fd7e63`
+- Timestamp: `2026-09-28T15:33:17+00:00`
+- Observations: Image with payment-proof caption left payment_verification pending and produced no confirmed payment or commercial action.
 - Evidence refs: none
 - Limitations: none recorded

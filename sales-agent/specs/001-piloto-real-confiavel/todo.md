@@ -125,15 +125,15 @@ Status: `done` | Bloqueado por: TK-004
 - [x] TK-006.5 Executar regressão completa (`python -m pytest -q`, `ruff check src tests`) e atualizar documentação da interface.
 - [x] TK-006.6 Registrar evidência (`hybrid.py evidence add --executed`) e checkpoint; não marcar checklist de reviewer.
 
-## [ ] TK-007 — TK-007 — Tratar áudio, imagem e documento sem descartar nem inventar
-Status: `ready` | Bloqueado por: TK-004
+## [x] TK-007 — TK-007 — Tratar áudio, imagem e documento sem descartar nem inventar
+Status: `done` | Bloqueado por: TK-004
 
-- [ ] TK-007.1 Escrever o primeiro caso (AC-016) na seam indicada em `plan.md`; observar red pelo motivo previsto em `tdd.md`.
-- [ ] TK-007.2 Implementar o mínimo para green de AC-016; próximo caso só após green.
-- [ ] TK-007.3 Implementar o mínimo para green de AC-017; próximo caso só após green.
-- [ ] TK-007.4 Implementar o mínimo para green de AC-018; próximo caso só após green.
-- [ ] TK-007.5 Executar regressão completa (`python -m pytest -q`, `ruff check src tests`) e atualizar documentação da interface.
-- [ ] TK-007.6 Registrar evidência (`hybrid.py evidence add --executed`) e checkpoint; não marcar checklist de reviewer.
+- [x] TK-007.1 Escrever o primeiro caso (AC-016) na seam indicada em `plan.md`; observar red pelo motivo previsto em `tdd.md`.
+- [x] TK-007.2 Implementar o mínimo para green de AC-016; próximo caso só após green.
+- [x] TK-007.3 Implementar o mínimo para green de AC-017; próximo caso só após green.
+- [x] TK-007.4 Implementar o mínimo para green de AC-018; próximo caso só após green.
+- [x] TK-007.5 Executar regressão completa (`python -m pytest -q`, `ruff check src tests`) e atualizar documentação da interface.
+- [x] TK-007.6 Registrar evidência (`hybrid.py evidence add --executed`) e checkpoint; não marcar checklist de reviewer.
 
 ## [ ] TK-010 — TK-010 — Resistência a injeção de prompt e vazamento de instruções
 Status: `ready` | Bloqueado por: TK-009

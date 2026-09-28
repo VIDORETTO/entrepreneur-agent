@@ -240,6 +240,30 @@ class ChatwootReceiver:
         value = payload.get("message")
         return value if isinstance(value, Mapping) else payload
 
+    @staticmethod
+    def _attachments(message: Mapping[str, Any]) -> List[Dict[str, Any]]:
+        values = message.get("attachments")
+        if not isinstance(values, list):
+            return []
+        result: List[Dict[str, Any]] = []
+        for value in values[:8]:
+            if not isinstance(value, Mapping):
+                continue
+            kind = str(value.get("file_type") or value.get("type") or "file").casefold()
+            if kind not in {"audio", "image", "file"}:
+                kind = "file"
+            mime = str(value.get("content_type") or value.get("mime") or "application/octet-stream")[:100]
+            try:
+                size = int(value.get("file_size") or value.get("size") or 0)
+            except (TypeError, ValueError):
+                size = 0
+            attachment: Dict[str, Any] = {"type": kind, "mime": mime, "size": max(0, size)}
+            url = value.get("data_url") or value.get("url")
+            if isinstance(url, str) and url.startswith("https://") and len(url) <= 2048:
+                attachment["url"] = url
+            result.append(attachment)
+        return result
+
     @classmethod
     def _event_kind(cls, payload: Mapping[str, Any], message: Mapping[str, Any]) -> str:
         event = str(payload.get("event", "message_created")).casefold()
@@ -362,10 +386,11 @@ class ChatwootReceiver:
                     reason=kind,
                 )
             return result
-        text = _first(message, "content", "text") or _first(payload, "content", "text")
+        text = _first(message, "content", "text") or _first(payload, "content", "text") or ""
+        attachments = self._attachments(message)
         sender = message.get("sender") if isinstance(message.get("sender"), Mapping) else payload.get("sender")
         contact = _first(sender, "id", "identifier", "email")
-        if text is None or not str(text).strip() or contact is None or not str(contact).strip():
+        if (not str(text).strip() and not attachments) or contact is None or not str(contact).strip():
             raise ChannelEventRejected("mensagem Chatwoot sem texto ou contato")
         if len(str(text)) > 20_000 or any(len(value) > 200 for value in (conversation_id, external_id, str(contact))):
             raise ChannelEventRejected("evento Chatwoot excede o limite de tamanho")
@@ -380,6 +405,7 @@ class ChatwootReceiver:
             "channel": self.channel,
             "event_id": event_id,
             "text": str(text),
+            "attachments": attachments,
             "channel_context": {
                 "account_id": account_id,
                 "inbox_id": inbox_id,

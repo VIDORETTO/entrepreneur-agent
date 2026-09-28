@@ -12,4 +12,4 @@
 | `CAND-006` | Comprador simulado por modelo para ampliar avaliação (estilo τ-bench) sem substituir casos escritos à mão | `roadmap` | `P3` | `roadmap` | `candidate` | — | Promover após prontidão |
 | `CAND-007` | Segundo modelo validado para comprovar portabilidade (plano §18 M5) | `roadmap` | `P2` | `roadmap` | `candidate` | — | Promover após prontidão |
 | `CAND-008` | Segundo negócio real reproduzindo a instalação (plano §18 M5) | `roadmap` | `P3` | `roadmap` | `candidate` | — | Promover após prontidão |
-| `001-piloto-real-confiavel` | Specification: Do alpha local ao primeiro piloto real confiável | `effort` | `—` | `implementation` | `active` | `5/15` | Executar TK-007 (mensagens não textuais); TK-002 mantém AC-003 sem CI por proibição de git push |
+| `001-piloto-real-confiavel` | Specification: Do alpha local ao primeiro piloto real confiável | `effort` | `—` | `implementation` | `active` | `6/15` | Executar TK-008 (adaptador OpenAI), consultar documentação atual de Structured Outputs antes do código; TK-002 AC-003 segue sem CI |

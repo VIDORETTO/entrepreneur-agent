@@ -17,6 +17,7 @@ from .conversation import SellerEngine
 from .delivery import DeliveryProcessor
 from .governance import PilotController
 from .storage import StateStore
+from .transcription import HTTPTranscriber
 
 
 def _environment_secret(reference: object) -> str:
@@ -33,6 +34,7 @@ def _environment_secret(reference: object) -> str:
 class ServiceConfig:
     binding: Mapping[str, Any]
     transport: Mapping[str, Any]
+    transcriber: Mapping[str, Any] | None = None
     window_seconds: float = 3.0
     poll_interval_seconds: float = 1.0
     lease_seconds: int = 60
@@ -52,12 +54,18 @@ class ServiceConfig:
             raise ValueError("serviço exige transporte Chatwoot")
         transport = dict(transport)
         transport["api_access_token"] = _environment_secret(transport.get("api_access_token"))
+        transcriber = document.get("transcriber")
+        if transcriber is not None:
+            if not isinstance(transcriber, dict):
+                raise ValueError("transcriber precisa ser objeto JSON")
+            transcriber = dict(transcriber)
+            transcriber["token"] = _environment_secret(transcriber.get("token"))
         window_seconds = float(document.get("window_seconds", 3))
         poll_interval = float(document.get("poll_interval_seconds", 1))
         lease_seconds = int(document.get("lease_seconds", 60))
         if not 0 <= window_seconds <= 30 or not 0.01 <= poll_interval <= 10 or not 1 <= lease_seconds <= 3600:
             raise ValueError("intervalos do serviço inválidos")
-        return cls(binding, transport, window_seconds, poll_interval, lease_seconds)
+        return cls(binding, transport, transcriber, window_seconds, poll_interval, lease_seconds)
 
 
 class _QuietHandler(WSGIRequestHandler):
@@ -99,7 +107,14 @@ class ChannelServer:
             raise ValueError("conta do transporte difere do binding")
         self.service = ChatwootChannelService(
             self.receiver,
-            SellerEngine(self.store),
+            SellerEngine(
+                self.store,
+                transcriber=HTTPTranscriber(
+                    str(config.transcriber.get("endpoint", "")),
+                    str(config.transcriber["token"]),
+                    timeout=float(config.transcriber.get("timeout_seconds", 10)),
+                ) if config.transcriber else None,
+            ),
             DeliveryProcessor(self.store, pilot=self.pilot),
         )
 

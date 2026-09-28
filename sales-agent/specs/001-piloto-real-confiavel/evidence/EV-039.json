@@ -1,0 +1,34 @@
+{
+  "acceptance_refs": [
+    "AC-013",
+    "AC-014",
+    "AC-015"
+  ],
+  "environment": "OS=Linux-5.14.0-687.36.1.el9_8.x86_64-x86_64-with-glibc2.34; Python=3.9.25",
+  "evidence_refs": [],
+  "execution_status": "executed",
+  "id": "EV-039",
+  "input_fingerprints": {
+    "specs/001-piloto-real-confiavel/plan.md": "a069d7b1d149ba604d47c2cb8035b6bfe0e9dc7471acd4eb697cbcab209ab66e",
+    "specs/001-piloto-real-confiavel/spec.md": "057aed7c1e1360d8f71167caca6af45c61c0ddf7114ce1d2eb8ce7d6dd5858ba",
+    "src/sales_agent/channel.py": "2e2cae57f1384bc7c3130ba7c99dc327dfa6ea9554e8cc6dc15a3bda4f5bad75",
+    "src/sales_agent/conversation.py": "a877e8bda309f96dfbf9efa147dadd137bcf312e8d76a53dd445005e762d992c",
+    "tests/test_channel_window.py": "b084efbe7e3fbf73587f286944dcbbb4b9f86a7c92e75cfb1f970eb6a2530f81",
+    "tests/test_delivery_and_governance.py": "6188c07915f567d941d0c42170f70931c3c63d122da76c67376b562ff8f1c3b7"
+  },
+  "input_paths": [
+    "src/sales_agent/channel.py",
+    "src/sales_agent/conversation.py",
+    "tests/test_channel_window.py",
+    "tests/test_delivery_and_governance.py",
+    "specs/001-piloto-real-confiavel/spec.md",
+    "specs/001-piloto-real-confiavel/plan.md"
+  ],
+  "limitations": "",
+  "observations": "29 passed after media event changes; WhatsApp window and follow-up remain green.",
+  "procedure": ".venv/bin/python -m pytest -q tests/test_channel_window.py tests/test_delivery_and_governance.py",
+  "result": "passed",
+  "tested_revision": "local:a5f5a380d1426cd98faf379cff4a6df9b8c13d892f3384f45d7c7165b70eede4",
+  "ticket": "TK-006",
+  "timestamp": "2026-09-28T15:33:16+00:00"
+}

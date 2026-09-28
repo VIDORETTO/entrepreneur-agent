@@ -5,7 +5,7 @@ id: TK-005
 effort: 001-piloto-real-confiavel
 type: delivery
 status: done
-ticket_revision: 8
+ticket_revision: 11
 requires: ["TK-004"]
 requirement_refs: ["FR-005"]
 acceptance_refs: ["AC-010", "AC-011", "AC-012"]
@@ -13,8 +13,11 @@ spec_revision: 2
 plan_revision: 2
 owned_areas: ["src/sales_agent/service.py", "src/sales_agent/cli.py", "tests/test_service.py", "docs/OPERATIONS.md"]
 verification_status: passed
-last_update: EV-020–EV-022 passaram; revisão Standards/Spec em findings/TK-005-review.md sem achados bloqueantes
+last_update: EV-038 revalidou após TK-007; revisão anterior permanece aplicável
 ---
+
+
+
 
 
 

@@ -26,10 +26,10 @@
     "specs/001-piloto-real-confiavel/spec.md",
     "specs/001-piloto-real-confiavel/plan.md"
   ],
-  "limitations": "",
+  "limitations": "Evidence invalidated because an input changed.",
   "observations": "After 24:00:01, public delivery became window_closed and exactly one private note was sent, including in observation mode; absent buyer timestamp closed safely.",
   "procedure": ".venv/bin/python -m pytest -q tests/test_channel_window.py tests/test_delivery_and_governance.py",
-  "result": "passed",
+  "result": "stale",
   "tested_revision": "local:ca685b7a73d9eab23e1fb0ac5119c719caba228ffaf8e00f29a803824d39ceb4",
   "ticket": "TK-006",
   "timestamp": "2026-09-28T15:20:26+00:00"

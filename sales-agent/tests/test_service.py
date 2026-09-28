@@ -16,6 +16,7 @@ from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 
 from sales_agent.config import seed_examples
 from sales_agent.governance import PilotController
+from sales_agent.service import ServiceConfig
 from sales_agent.storage import StateStore
 
 SECRET = "fictional-service-webhook-secret"
@@ -306,3 +307,28 @@ def test_serve_rejects_literal_secrets_and_second_process(tmp_path):
             assert duplicate.returncode == 2
             assert "já existe um serviço" in duplicate.stderr
             assert _get(base_url + "/healthz") == (200, {"alive": True})
+
+
+def test_optional_transcriber_config_uses_environment_secret(tmp_path, monkeypatch):
+    config = tmp_path / "service.json"
+    document = {
+        "bindings": [{"business_id": "fictional", "account_id": "11", "inbox_id": "13", "secret": "env:WEBHOOK_TOKEN"}],
+        "transport": {"base_url": "https://chatwoot.example.invalid", "account_id": "11", "api_access_token": "env:API_TOKEN"},
+        "transcriber": {"endpoint": "https://transcriber.example.invalid/transcribe", "token": "env:TRANSCRIBER_TOKEN"},
+    }
+    monkeypatch.setenv("WEBHOOK_TOKEN", "fictional-webhook")
+    monkeypatch.setenv("API_TOKEN", "fictional-api")
+    monkeypatch.setenv("TRANSCRIBER_TOKEN", "fictional-transcriber")
+    config.write_text(json.dumps(document), encoding="utf-8")
+
+    loaded = ServiceConfig.load(str(config))
+    assert loaded.transcriber["token"] == "fictional-transcriber"
+
+    document["transcriber"]["token"] = "literal-token"
+    config.write_text(json.dumps(document), encoding="utf-8")
+    try:
+        ServiceConfig.load(str(config))
+    except ValueError as exc:
+        assert "env:NOME" in str(exc)
+    else:
+        raise AssertionError("literal transcriber token was accepted")

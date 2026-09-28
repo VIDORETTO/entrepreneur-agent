@@ -59,6 +59,9 @@ def validate_package(package: Mapping[str, Any]) -> Dict[str, Any]:
         _require(package.get(field), field)
     if package.get("schema_version") != 1:
         raise PackageError("schema_version não suportado")
+    non_text_policy = package.get("non_text_policy", "ask_text")
+    if not isinstance(non_text_policy, str) or non_text_policy not in {"ask_text", "offer_human"}:
+        raise PackageError("non_text_policy inválida")
     business = package["business"]
     if not isinstance(business, Mapping):
         raise PackageError("business deve ser um objeto")

@@ -54,3 +54,7 @@ O produto diferencia:
 - fase comercial, prontidão, impedimento, operação e responsável;
 - documento, dado operacional e memória da conversa;
 - preparar/enviar/reservar/cobrar e seus resultados.
+
+`non_text_policy` na raiz do pacote aceita `ask_text` (padrão) ou
+`offer_human`. Sem transcritor, áudio sem legenda usa essa resposta e registra
+metadados do anexo. A política não interpreta mídia nem autoriza checkout.
