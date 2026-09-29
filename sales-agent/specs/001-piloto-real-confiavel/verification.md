@@ -1847,3 +1847,16 @@
 - Observations: Run 36472024805 completed success for commit 9d945fc; Python 3.11 and 3.14 jobs passed pytest with coverage, Ruff, doctor, demo, model-check and evaluation; Python 3.10 installation rejection job passed. Local Python 3.12 pytest: 246 passed. https://github.com/VIDORETTO/entrepreneur-agent/actions/runs/36472024805
 - Evidence refs: none
 - Limitations: none recorded
+
+## EV-143 — passed
+
+- Ticket: `TK-002`
+- Acceptance: `AC-003`
+- Procedure: `/tmp/vendedor-py310/bin/python -m pip install --dry-run --no-deps .; /tmp/vendedor-py311/bin/python -m pytest -q; /tmp/vendedor-py314/bin/python -m pytest -q (árvore em 4aada1e); CI de referência: run 36472024805 (EV-142)`
+- Execution: `executed`
+- Environment: OS=Linux-5.14.0-687.36.1.el9_8.x86_64-x86_64-with-glibc2.34; Python=3.12.14
+- Tested revision: `local:25fa26aef05f87c45c84446ba1b9ab49fcba9e0a205ead6d75f11e4d1148430a`
+- Timestamp: `2026-09-29T11:55:53+00:00`
+- Observations: Reexecução após a alteração de pyproject.toml do esforço 002: pip em 3.10.21 recusa (requires a different Python: not in '>=3.11'); 3.11.16 e 3.14.7 passam 260 testes cada. A diferença de pyproject.toml desde o run de CI 36472024805 são só package-data e data-files; requires-python e a matriz do workflow não mudaram.
+- Evidence refs: none
+- Limitations: O workflow do GitHub Actions não foi executado para o commit 4aada1e (git push não é feito nesta sessão); a prova em CI segue sendo a do run 36472024805 (EV-142) e a verificação local cobre o mesmo piso e as mesmas versões.

@@ -1,0 +1,26 @@
+{
+  "acceptance_refs": [
+    "AC-003"
+  ],
+  "environment": "OS=Linux-5.14.0-687.36.1.el9_8.x86_64-x86_64-with-glibc2.34; Python=3.12.14",
+  "evidence_refs": [],
+  "execution_status": "executed",
+  "id": "EV-143",
+  "input_fingerprints": {
+    "pyproject.toml": "8c2e13e017bf611f350b0abc2fadd62c73e4b240d0483cb397d40fdcf4177780",
+    "specs/001-piloto-real-confiavel/plan.md": "a069d7b1d149ba604d47c2cb8035b6bfe0e9dc7471acd4eb697cbcab209ab66e",
+    "specs/001-piloto-real-confiavel/spec.md": "057aed7c1e1360d8f71167caca6af45c61c0ddf7114ce1d2eb8ce7d6dd5858ba"
+  },
+  "input_paths": [
+    "pyproject.toml",
+    "specs/001-piloto-real-confiavel/spec.md",
+    "specs/001-piloto-real-confiavel/plan.md"
+  ],
+  "limitations": "O workflow do GitHub Actions não foi executado para o commit 4aada1e (git push não é feito nesta sessão); a prova em CI segue sendo a do run 36472024805 (EV-142) e a verificação local cobre o mesmo piso e as mesmas versões.",
+  "observations": "Reexecução após a alteração de pyproject.toml do esforço 002: pip em 3.10.21 recusa (requires a different Python: not in '>=3.11'); 3.11.16 e 3.14.7 passam 260 testes cada. A diferença de pyproject.toml desde o run de CI 36472024805 são só package-data e data-files; requires-python e a matriz do workflow não mudaram.",
+  "procedure": "/tmp/vendedor-py310/bin/python -m pip install --dry-run --no-deps .; /tmp/vendedor-py311/bin/python -m pytest -q; /tmp/vendedor-py314/bin/python -m pytest -q (árvore em 4aada1e); CI de referência: run 36472024805 (EV-142)",
+  "result": "passed",
+  "tested_revision": "local:25fa26aef05f87c45c84446ba1b9ab49fcba9e0a205ead6d75f11e4d1148430a",
+  "ticket": "TK-002",
+  "timestamp": "2026-09-29T11:55:53+00:00"
+}

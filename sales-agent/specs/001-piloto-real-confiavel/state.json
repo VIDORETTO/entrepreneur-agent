@@ -24,7 +24,7 @@
       "revision": 2
     }
   },
-  "last_evidence": "EV-142",
+  "last_evidence": "EV-143",
   "last_invalidation": {
     "evidence": [
       "EV-080",
@@ -46,8 +46,8 @@
   "next_action": "Entrega técnica concluída; para piloto com tráfego real, configurar horário e privacidade e obter evidência de modelo e canal reais antes de ativar.",
   "pending_questions": [],
   "phase": "closed",
-  "revision": 38,
+  "revision": 39,
   "schema_version": "1.0",
   "status": "complete",
-  "updated_at": "2026-09-28T19:28:31+00:00"
+  "updated_at": "2026-09-29T11:55:58+00:00"
 }
