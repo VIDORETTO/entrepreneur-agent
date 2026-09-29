@@ -1,0 +1,42 @@
+{
+  "acceptance_refs": [
+    "AC-001",
+    "AC-002",
+    "AC-003",
+    "AC-004",
+    "AC-005",
+    "AC-006",
+    "AC-007",
+    "AC-008",
+    "AC-009"
+  ],
+  "environment": "OS=Linux-5.14.0-687.36.1.el9_8.x86_64-x86_64-with-glibc2.34; Python=3.12.14",
+  "evidence_refs": [],
+  "execution_status": "executed",
+  "id": "EV-001",
+  "input_fingerprints": {
+    "skills": "364fdfe2db3d44ee4014cd20566b617a5999a014846e5f7149b882a0823a0bc1",
+    "specs/002-skills-adaptacao-agente/change.md": "4668f4194ebdc1e5d1dbb9654d6e19b13fbb4d1b9b62dd1c83bdbc73506b4c0f",
+    "src/sales_agent/cli.py": "2df1df1ec20bbaebdcb16ffc73d088dcd0644688dd6f296e69b74a9d41d4441d",
+    "src/sales_agent/resources/workspace/AGENTS.md": "64b9cd530440a08c99baffd6d9b4a26310cee792f0ed15162315f319f5219098",
+    "src/sales_agent/skills.py": "158e9ae19803cf9b2b1227a0ec6bdd8af145997ebc43fc3da8de97fed10558e3",
+    "src/sales_agent/workspace.py": "4d5ff88eba2fea3fc33d81a1a4c594f4169636adf642aacf29768fb90ece1775",
+    "tests/test_agent_workspace.py": "3769a40837c871630ff523eaf3e719879db7f7fadeacfa77fbf5bfa83f60782e"
+  },
+  "input_paths": [
+    "src/sales_agent/workspace.py",
+    "src/sales_agent/skills.py",
+    "src/sales_agent/cli.py",
+    "tests/test_agent_workspace.py",
+    "skills",
+    "src/sales_agent/resources/workspace/AGENTS.md",
+    "specs/002-skills-adaptacao-agente/change.md"
+  ],
+  "limitations": "Evidence invalidated because an input changed.",
+  "observations": "14 testes novos passam (red inicial: 'invalid choice: install'); suíte completa 260 passed; ruff ok; 14 passed também com --clock-shift-days=400; evaluate --split dev 50/50",
+  "procedure": ".venv/bin/python -m pytest -q tests/test_agent_workspace.py && .venv/bin/python -m pytest -q && .venv/bin/ruff check src tests",
+  "result": "stale",
+  "tested_revision": "local:c7c867e3fad8d790cdc3637e42eddd7fac1eda982bda08c11dca9886a39aebac",
+  "ticket": null,
+  "timestamp": "2026-09-29T11:50:19+00:00"
+}

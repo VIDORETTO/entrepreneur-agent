@@ -11,6 +11,10 @@ Produza diagnóstico, dependências, versão do pacote e separação entre arqui
 gerenciados e dados privados. Uma dependência ausente deve desabilitar apenas a
 capacidade afetada.
 
+Depois do diagnóstico, siga com `seller-adapt` para escolher o próximo passo.
+Para que o agente de código do projeto tenha estas skills e o `AGENTS.md`, rode
+`vendedor skills install`.
+
 ## Saídas
 
 - capacidades `enabled`, `assisted`, `disabled` ou `pending` com motivo;

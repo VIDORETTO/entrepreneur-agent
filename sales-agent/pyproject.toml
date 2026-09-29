@@ -52,7 +52,7 @@ package-dir = {"" = "src"}
 where = ["src"]
 
 [tool.setuptools.package-data]
-sales_agent = ["resources/*.json"]
+sales_agent = ["resources/*.json", "resources/workspace/*.md"]
 
 [tool.setuptools.data-files]
 "share/vendedor-adaptavel" = ["manifest.json", "LICENSE", "THIRD_PARTY_NOTICES.md", "CONTEXT.md", "briefing-do-negocio.md", "contrato-comportamental-vendas.md"]
@@ -67,6 +67,12 @@ sales_agent = ["resources/*.json"]
 "share/vendedor-adaptavel/skills/sales-simulate" = ["skills/sales-simulate/SKILL.md"]
 "share/vendedor-adaptavel/skills/sales-simulate/scripts" = ["skills/sales-simulate/scripts/run_case.py"]
 "share/vendedor-adaptavel/skills/seller-conversation" = ["skills/seller-conversation/SKILL.md"]
+"share/vendedor-adaptavel/skills/seller-adapt" = ["skills/seller-adapt/SKILL.md"]
+"share/vendedor-adaptavel/skills/seller-tune-conversation" = ["skills/seller-tune-conversation/SKILL.md"]
+"share/vendedor-adaptavel/skills/seller-evaluate-and-tune" = ["skills/seller-evaluate-and-tune/SKILL.md"]
+"share/vendedor-adaptavel/skills/seller-connect-channel" = ["skills/seller-connect-channel/SKILL.md"]
+"share/vendedor-adaptavel/skills/seller-pilot-readiness" = ["skills/seller-pilot-readiness/SKILL.md"]
+"share/vendedor-adaptavel/skills/seller-extend-runtime" = ["skills/seller-extend-runtime/SKILL.md"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

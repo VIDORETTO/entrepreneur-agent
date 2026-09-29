@@ -1,0 +1,28 @@
+{
+  "acceptance_refs": [
+    "AC-010"
+  ],
+  "environment": "OS=Linux-5.14.0-687.36.1.el9_8.x86_64-x86_64-with-glibc2.34; Python=3.12.14",
+  "evidence_refs": [],
+  "execution_status": "executed",
+  "id": "EV-004",
+  "input_fingerprints": {
+    "pyproject.toml": "8c2e13e017bf611f350b0abc2fadd62c73e4b240d0483cb397d40fdcf4177780",
+    "skills": "364fdfe2db3d44ee4014cd20566b617a5999a014846e5f7149b882a0823a0bc1",
+    "specs/002-skills-adaptacao-agente/change.md": "021dd36ce6c42eaacf934d42068d654e8a9992c75451cb67949ef2db02544d92",
+    "src/sales_agent/resources/workspace/AGENTS.md": "64b9cd530440a08c99baffd6d9b4a26310cee792f0ed15162315f319f5219098"
+  },
+  "input_paths": [
+    "specs/002-skills-adaptacao-agente/change.md",
+    "pyproject.toml",
+    "skills",
+    "src/sales_agent/resources/workspace/AGENTS.md"
+  ],
+  "limitations": "",
+  "observations": "wheel contém sales_agent/resources/workspace/AGENTS.md e as 6 skills novas em share/vendedor-adaptavel/skills; skills list=11; install grava 42 arquivos, status ok=true",
+  "procedure": "python -m build --wheel; venv limpo com pip install da wheel; vendedor skills doctor/list/install --target all/status em diretório vazio; unzip -l da wheel (executado nesta sessão contra o mesmo código-fonte)",
+  "result": "passed",
+  "tested_revision": "local:8ac89dbb6867860e05bbf0f94c255d7316537bcbb1a80b1ef35d5a69a7608f2d",
+  "ticket": null,
+  "timestamp": "2026-09-29T11:52:13+00:00"
+}

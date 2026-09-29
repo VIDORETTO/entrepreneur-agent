@@ -7,6 +7,13 @@ projeto pretende adotar versionamento semântico após estabilizar a API públic
 
 ### Adicionado
 
+- `vendedor skills install` e `skills status`, `vendedor init --agents`: instalam
+  `AGENTS.md` (bloco gerenciado), `CLAUDE.md` e skills em `.claude/skills/` ou
+  `.agents/skills/`, sem sobrescrever edições do usuário.
+- Seis skills de adaptação para agentes de código (`seller-adapt`,
+  `seller-tune-conversation`, `seller-evaluate-and-tune`,
+  `seller-connect-channel`, `seller-pilot-readiness`, `seller-extend-runtime`)
+  e atualização de `sales-setup` e `sales-simulate`.
 - Verificação de distribuição, documentação de contribuição, segurança e
   processo de liberação.
 - Proteção POSIX para o diretório de estado e o arquivo SQLite.

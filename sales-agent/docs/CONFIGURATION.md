@@ -46,8 +46,11 @@ fica separada da versão de armazenamento, para que uma restauração seja uma
 nova promoção auditável.
 
 Use `vendedor skills list`, `vendedor skills show ID` e `vendedor skills doctor`
-para verificar a instalação. O catálogo só expõe skills de atendimento ao
-comprador e configuração do negócio; versão incompatível ou referência ausente
+para verificar a instalação. O catálogo expõe skills de atendimento ao
+comprador (`buyer-attention`), de configuração do negócio
+(`business-configuration`) e de adaptação para agentes de código
+(`developer-adaptation`, instaladas por `vendedor skills install`); só as do
+comprador entram na conversa; versão incompatível ou referência ausente
 vira diagnóstico. Skills não concedem permissões e não entram no contexto do
 comprador quando pertencem à configuração.
 

@@ -26,3 +26,23 @@ Atualizações do código não sobrescrevem a base. Faça backup do diretório p
 antes de migrar; a avaliação de recuperação usa cópia da base e IDs
 idempotentes. Uma alteração de política deve ser validada novamente e ter uma
 versão de pacote promovida explicitamente.
+
+## Agente de código (Claude Code, Codex e similares)
+
+`vendedor skills install --target claude|codex|all [--dir DIR] [--dry-run] [--force]`
+instala no projeto, sem sobrescrever conteúdo do usuário:
+
+- `AGENTS.md` com um bloco gerenciado entre `<!-- vendedor-adaptavel:begin -->` e
+  `<!-- vendedor-adaptavel:end -->`; o texto fora do bloco é preservado. Se o
+  arquivo já existe sem o bloco, o bloco é acrescentado no fim.
+- `claude`: `.claude/skills/<skill>/` e `CLAUDE.md` que importa `@AGENTS.md`.
+- `codex`: `.agents/skills/<skill>/`.
+- `.vendedor-workspace.json`: versão e SHA-256 de cada arquivo instalado.
+
+Um arquivo já editado (ou que existia antes e difere) é mantido e aparece em
+`skipped` com o motivo `modified` ou `unregistered_conflict`; `--force` o
+substitui. `vendedor skills status` compara com o pacote instalado (`ok`,
+`modified`, `missing`, `outdated`). Depois de atualizar o vendedor, rode
+`skills install` de novo para receber as skills novas. `vendedor init --agents
+claude|codex|all [--workspace DIR]` faz o mesmo ao criar o banco; sem `--agents`,
+`init` não escreve fora do diretório de dados.

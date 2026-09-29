@@ -27,6 +27,7 @@ from .skills import SkillCatalog
 from .storage import StateStore
 from .turns import TurnAssembler
 from .validation import PackageError, validate_package
+from .workspace import TARGETS, AgentWorkspace
 
 
 def _store(args: argparse.Namespace) -> StateStore:
@@ -112,6 +113,8 @@ def command_init(args: argparse.Namespace) -> int:
     result: Dict[str, Any] = {"data_dir": str(store.data_dir), "initialized": True}
     if args.examples:
         result["businesses"] = [item["business"]["id"] for item in seed_examples(store)]
+    if args.agents:
+        result["agent_files"] = AgentWorkspace(Path(args.workspace)).install(args.agents)
     _print(result)
     return 0
 
@@ -204,21 +207,33 @@ def command_configuration_simulate(args: argparse.Namespace) -> int:
 
 
 def command_skills_list(args: argparse.Namespace) -> int:
-    skills = SkillCatalog().list_skills()
+    skills = SkillCatalog(include_adaptation=True).list_skills()
     _print({"skills": skills, "count": len(skills)})
     return 0
 
 
 def command_skills_show(args: argparse.Namespace) -> int:
-    value = SkillCatalog().read_skill(args.skill_id)
+    value = SkillCatalog(include_adaptation=True).read_skill(args.skill_id)
     _print(value)
     return 0 if value.get("available") else 2
 
 
 def command_skills_doctor(args: argparse.Namespace) -> int:
-    value = SkillCatalog().diagnose()
+    value = SkillCatalog(include_adaptation=True).diagnose()
     _print(value)
     return 0 if value.get("ok") else 2
+
+
+def command_skills_install(args: argparse.Namespace) -> int:
+    report = AgentWorkspace(Path(args.dir)).install(args.target, force=args.force, dry_run=args.dry_run)
+    _print(report)
+    return 0
+
+
+def command_skills_status(args: argparse.Namespace) -> int:
+    value = AgentWorkspace(Path(args.dir)).status()
+    _print(value)
+    return 0 if value["ok"] or not value["installed"] else 2
 
 
 def command_configure_start(args: argparse.Namespace) -> int:
@@ -757,6 +772,8 @@ def build_parser() -> argparse.ArgumentParser:
 
     init = sub.add_parser("init", help="criar banco privado")
     init.add_argument("--examples", action="store_true")
+    init.add_argument("--agents", choices=TARGETS, help="instalar AGENTS.md e skills para Claude Code, Codex ou ambos")
+    init.add_argument("--workspace", default=".", help="diretório do projeto que recebe os arquivos de --agents")
     init.set_defaults(func=command_init)
     examples = sub.add_parser("examples", help="instalar os quatro negócios fictícios")
     examples.set_defaults(func=command_examples)
@@ -826,6 +843,15 @@ def build_parser() -> argparse.ArgumentParser:
     skills_show.set_defaults(func=command_skills_show)
     skills_doctor = skills_sub.add_parser("doctor")
     skills_doctor.set_defaults(func=command_skills_doctor)
+    skills_install = skills_sub.add_parser("install", help="instalar AGENTS.md e skills no projeto do agente de código")
+    skills_install.add_argument("--target", choices=TARGETS, default="all")
+    skills_install.add_argument("--dir", default=".", help="diretório do projeto (padrão: atual)")
+    skills_install.add_argument("--force", action="store_true", help="substituir arquivos editados pelo usuário")
+    skills_install.add_argument("--dry-run", action="store_true", help="listar sem escrever")
+    skills_install.set_defaults(func=command_skills_install)
+    skills_status = skills_sub.add_parser("status", help="comparar arquivos instalados com o pacote")
+    skills_status.add_argument("--dir", default=".")
+    skills_status.set_defaults(func=command_skills_status)
 
     chat = sub.add_parser("chat", help="processar uma mensagem persistente")
     chat.add_argument("--business-id", required=True)

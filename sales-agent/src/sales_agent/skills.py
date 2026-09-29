@@ -20,13 +20,22 @@ AUDIENCES = {
     "sales-knowledge-preparation": "business-configuration",
     "sales-simulate": "business-configuration",
     "seller-conversation": "buyer-attention",
+    "seller-adapt": "developer-adaptation",
+    "seller-tune-conversation": "developer-adaptation",
+    "seller-evaluate-and-tune": "developer-adaptation",
+    "seller-connect-channel": "developer-adaptation",
+    "seller-pilot-readiness": "developer-adaptation",
+    "seller-extend-runtime": "developer-adaptation",
 }
 
 
 class SkillCatalog:
     """Discover skills from the checkout or the installed data directory."""
 
-    def __init__(self, roots: Optional[List[Union[Path, str]]] = None):
+    def __init__(self, roots: Optional[List[Union[Path, str]]] = None, *, include_adaptation: bool = False):
+        # Adaptation skills guide a developer's coding agent.  The runtime
+        # catalog keeps them out of sight so they can never reach a buyer turn.
+        self.include_adaptation = include_adaptation
         repository_root = Path(__file__).resolve().parents[2]
         default_roots = [
             repository_root / "skills",
@@ -70,7 +79,13 @@ class SkillCatalog:
     @staticmethod
     def _references(skill_dir: Path, content: str) -> List[str]:
         references = re.findall(r"`([^`\n]+)`", content) + re.findall(r"\]\(([^)]+)\)", content)
-        return [item.strip() for item in references if item.strip().endswith((".md", ".json", ".py"))]
+        # Only relative paths inside the package are resources; a bare name such
+        # as `AGENTS.md` in prose is a mention, not a dependency.
+        return [
+            item.strip()
+            for item in references
+            if item.strip().endswith((".md", ".json", ".py")) and item.strip().startswith(("../", "scripts/", "references/"))
+        ]
 
     def list_skills(self) -> List[Dict[str, Any]]:
         result = []
@@ -78,7 +93,7 @@ class SkillCatalog:
             content = path.read_text(encoding="utf-8")
             metadata = self._frontmatter(content)
             audience = AUDIENCES.get(skill_id)
-            if audience is None:
+            if audience is None or (audience == "developer-adaptation" and not self.include_adaptation):
                 continue
             refs = self._resolved_references(path, content)
             result.append(
@@ -118,6 +133,8 @@ class SkillCatalog:
 
     def read_skill(self, skill_id: str) -> Dict[str, Any]:
         path = self._skill_paths().get(skill_id)
+        if path and AUDIENCES.get(skill_id) == "developer-adaptation" and not self.include_adaptation:
+            path = None
         if not path:
             return {"id": skill_id, "available": False, "reason": "skill desconhecida", "references": []}
         content = path.read_text(encoding="utf-8")

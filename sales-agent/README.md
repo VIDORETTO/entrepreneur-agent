@@ -23,6 +23,23 @@ vendedor doctor
 `doctor` informa capacidades disponíveis, diretório privado e a situação do
 Farol. Nenhuma chave é pedida ou armazenada pelo briefing.
 
+## Usar com Claude Code, Codex ou outro agente
+
+Para que o agente de código ajude a configurar e ajustar o vendedor, instale as
+regras e as skills no seu projeto (ou use `vendedor init --agents all` na
+criação):
+
+```bash
+vendedor skills install --target all    # ou claude / codex
+```
+
+Isso cria `AGENTS.md` (e `CLAUDE.md`, que o importa) e as skills `seller-adapt`,
+`seller-tune-conversation`, `seller-evaluate-and-tune`, `seller-connect-channel`,
+`seller-pilot-readiness` e `seller-extend-runtime`, além das skills de
+configuração. Comece pedindo ao agente: "use a skill seller-adapt". Nada é
+sobrescrito: o texto seu no `AGENTS.md` e as skills que você editou são
+preservados (`vendedor skills status` mostra o que mudou; `--force` substitui).
+
 ## Configurar e retomar
 
 O pacote privado fica em `.vendedor-data/` por padrão. Uma entrevista salva um

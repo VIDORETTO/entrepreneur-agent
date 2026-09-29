@@ -1,0 +1,40 @@
+{
+  "active_ticket": null,
+  "authorization_refs": [],
+  "baseline": {
+    "kind": "git",
+    "ref": "9cc639db97ba9712d37d07dd0dad375d88e9220b"
+  },
+  "blockers": [],
+  "effort_id": "002-skills-adaptacao-agente",
+  "inputs": {
+    "contract": {
+      "fingerprint": "021dd36ce6c42eaacf934d42068d654e8a9992c75451cb67949ef2db02544d92",
+      "path": "specs/002-skills-adaptacao-agente/change.md",
+      "revision": 1
+    }
+  },
+  "last_evidence": "EV-004",
+  "last_invalidation": {
+    "evidence": [
+      "EV-001",
+      "EV-002"
+    ],
+    "inputs": {
+      "contract": {
+        "current": "021dd36ce6c42eaacf934d42068d654e8a9992c75451cb67949ef2db02544d92",
+        "path": "specs/002-skills-adaptacao-agente/change.md",
+        "recorded": "2c90838358bf5ccb8e7ac99b7f1548b10621a02150f78b0e1cd32930eb3395fa"
+      }
+    },
+    "timestamp": "2026-09-29T11:52:20+00:00"
+  },
+  "mode": "compact",
+  "next_action": "Entrega técnica concluída; validar com um agente real (Claude Code e Codex) numa instalação limpa e avaliar um comando que gere o arquivo de evidências do piloto.",
+  "pending_questions": [],
+  "phase": "closed",
+  "revision": 2,
+  "schema_version": "1.0",
+  "status": "complete",
+  "updated_at": "2026-09-29T11:52:28+00:00"
+}
