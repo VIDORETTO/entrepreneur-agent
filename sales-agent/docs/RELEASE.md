@@ -6,7 +6,7 @@ que será marcada. Não reutilize relatório de outro commit.
 1. Confirme que a versão é igual em `pyproject.toml`, `manifest.json`,
    `src/sales_agent/resources/manifest.json` e `sales_agent.__version__`.
 2. Atualize `CHANGELOG.md` e mantenha as limitações do README explícitas.
-3. Execute `ruff check .` e `python -m pytest -q --cov` na matriz Python 3.9/3.12.
+3. Execute `ruff check .` e `python -m pytest -q --cov` na matriz Python 3.11/3.14.
 4. Execute `vendedor doctor`, `vendedor demo`, `vendedor model-check` e
    `vendedor evaluate --output reports/evaluation-latest.json`.
    O relatório final deve registrar a revisão base e `run.source.dirty` deve

@@ -5,7 +5,7 @@ segurança operacional, rastreabilidade e afirmações verificáveis.
 
 ## Ambiente local
 
-Use Python 3.9 ou superior em um ambiente virtual:
+Use Python 3.11 ou superior em um ambiente virtual:
 
 ```bash
 python -m pip install -e ".[dev]"
@@ -32,7 +32,7 @@ python -m twine check dist/*
 - Uma integração só pode ser descrita como validada quando o backend foi
   executado e a evidência correspondente aparece no relatório.
 - Mudanças de comportamento precisam de um teste que falhe sem a correção.
-- Preserve compatibilidade com Python 3.9 e 3.12.
+- Preserve compatibilidade com Python 3.11 e 3.14 (a matriz da CI).
 
 Pull requests devem explicar o comportamento alterado, os riscos e os comandos
 de verificação executados. Alterações de escopo devem atualizar o README, o
