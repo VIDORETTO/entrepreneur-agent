@@ -224,8 +224,7 @@ O motor é a autoridade. O modelo, o redator e o transcritor só propõem. A dec
 ```text
 .
 ├── .github/
-│   ├── workflows/sales-agent-ci.yml   # CI
-│   └── dependabot.yml
+│   └── workflows/sales-agent-ci.yml   # CI
 └── sales-agent/
     ├── src/sales_agent/               # runtime e CLI
     ├── tests/                         # testes pela interface pública
