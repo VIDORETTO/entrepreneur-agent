@@ -9,6 +9,29 @@
     "lifecycle": {"enum": ["draft", "active"]},
     "non_text_policy": {"enum": ["ask_text", "offer_human"]},
     "draft_mode": {"enum": ["off", "on", "auto"]},
+    "sales_posture": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "initiative": {"enum": ["answer", "suggest", "lead"]},
+        "ask_for_close": {"type": "boolean"},
+        "alternative_on_objection": {"type": "boolean"},
+        "max_suggestions_per_conversation": {"type": "integer", "minimum": 0, "maximum": 3},
+        "cross_sell": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["when_offer", "suggest"],
+            "properties": {
+              "when_offer": {"type": "string", "minLength": 1},
+              "suggest": {"type": "string", "minLength": 1},
+              "pitch": {"type": "string", "minLength": 1, "maxLength": 200}
+            }
+          }
+        }
+      }
+    },
     "voice": {
       "type": "object",
       "additionalProperties": false,

@@ -10,6 +10,7 @@ from datetime import datetime
 from numbers import Real
 from typing import Any, Dict, Mapping
 
+from .posture import validate_posture
 from .voice import validate_voice
 
 
@@ -69,6 +70,9 @@ def validate_package(package: Mapping[str, Any]) -> Dict[str, Any]:
         raise PackageError("draft_mode inválido")
     try:
         validate_voice(package.get("voice"))
+        offers_for_posture = package.get("offers") if isinstance(package.get("offers"), list) else []
+        validate_posture(package.get("sales_posture"),
+                         [str(item.get("id")) for item in offers_for_posture if isinstance(item, Mapping)])
     except ValueError as exc:
         raise PackageError(str(exc)) from exc
     privacy = package.get("privacy", {})

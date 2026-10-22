@@ -7,6 +7,15 @@ projeto pretende adotar versionamento semântico após estabilizar a API públic
 
 ### Adicionado
 
+- Postura de venda (`package.sales_posture`): o dono escolhe quanta iniciativa
+  o vendedor toma nas conversas que chegam (`answer`, `suggest`, `lead`),
+  com complementos aprovados (`cross_sell`), oferta de preparar o pedido e
+  limite de sugestões. O motor decide o momento; "sim"/"não" curtos depois de
+  "quer que eu já prepare?" iniciam a compra ou encerram as sugestões.
+  Comprador pronto, suporte, pós-venda, "vou pensar" e recusa nunca recebem
+  sugestão.
+- Pergunta opcional `posture` na entrevista, por cenário (A/B/C), e sete
+  casos `dev` de postura com `package_patch` declarativo.
 - Camada de voz: `package.voice` (tom, tratamento, emoji, tamanho, frases
   proibidas e exemplos reais do dono), `draft_mode: auto`, histórico das
   últimas trocas para o intérprete e o redator, espelhamento do jeito de

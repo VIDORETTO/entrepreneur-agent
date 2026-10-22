@@ -1058,7 +1058,7 @@ class EvaluationRunner:
                 raise ValueError("estado inicial ou operações disponíveis ausentes")
             if not case.get("evidence"):
                 raise ValueError("evidência esperada ausente")
-            if case.get("category") not in {"direct", "price", "combination", "memory", "actions", "human", "installation", "conversation"}:
+            if case.get("category") not in {"direct", "price", "combination", "memory", "actions", "human", "installation", "conversation", "posture"}:
                 raise ValueError("categoria de caso inválida")
             selected.append(case)
         if len({case["id"] for case in selected}) != len(selected):
@@ -1193,6 +1193,19 @@ class EvaluationRunner:
 
     @staticmethod
     def _run_declarative(context: EvaluationContext, case: Mapping[str, Any]) -> None:
+        package_patch = case.get("package_patch")
+        if package_patch is not None:
+            # Posture scenarios run the same buyer text against a different
+            # owner posture; only these keys may change the seeded example.
+            if not isinstance(package_patch, Mapping) or set(package_patch) - {"sales_posture", "append_offers"}:
+                raise ValueError("package_patch inválido")
+            package = context.store.get_business(str(case["business_id"]))
+            if package is None:
+                raise ValueError("negócio do caso não encontrado")
+            package["offers"].extend(copy.deepcopy(list(package_patch.get("append_offers", []))))
+            if "sales_posture" in package_patch:
+                package["sales_posture"] = copy.deepcopy(package_patch["sales_posture"])
+            seed_package(context.store, validate_package(package))
         source_override = case.get("source_override")
         if source_override is not None:
             if not isinstance(source_override, Mapping) or not {"id", "version", "content"} <= source_override.keys():

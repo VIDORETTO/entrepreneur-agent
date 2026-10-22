@@ -28,6 +28,7 @@ Este repositório contém o produto em [`sales-agent/`](sales-agent/README.md), 
 - **Configuração pelo dono**: entrevista com checkpoint retomável, pacote comercial versionado, `diff`, simulação em banco temporário, promoção e restauração de versões.
 - **Conhecimento com evidência**: cada afirmação traz trecho, `source_id`, versão e localização; a revogação de uma fonte vale na consulta seguinte, inclusive em conversas abertas.
 - **Conversa controlada**: pausa por pedido de humano ou recusa, retomada só por comando explícito, correção de pedido que invalida a cotação, redação natural opcional verificada antes da entrega.
+- **Postura de venda**: o dono escolhe se o vendedor só responde, sugere um complemento aprovado ou conduz para o fechamento (`sales_posture`); o estado do comprador sempre vence (pronto, suporte, "vou pensar" e recusa não recebem oferta).
 - **Voz do negócio**: tom, exemplos reais do dono e frases proibidas no pacote (`voice`); o redator usa o histórico e espelha o comprador, e um lint barra frases de robô. Por padrão se apresenta como atendimento virtual e nunca diz ser uma pessoa.
 - **Canal Chatwoot**: serviço HTTP (`vendedor serve`) com assinatura HMAC com timestamp, reconhecimento do eco das próprias mensagens, janela de 24 h do WhatsApp, anexos e transcrição opcional.
 - **Modelo real opcional**: perfis `openai` (Structured Outputs estrito) e `openai-compatible`; sem chave, o adaptador local determinístico funciona.

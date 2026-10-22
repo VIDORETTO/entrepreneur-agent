@@ -18,6 +18,7 @@ from .commerce import CommerceError, SimulatedCommerce
 from .drafting import ClaimVerifier, ResponseRequirements, brl, injection_signals
 from .knowledge import KnowledgeBackend, PersistentFarolKnowledge
 from .model import ModelAdapter, RuleBasedModel
+from .posture import AFFIRMATIVE, NEGATIVE, plan_move, posture_settings, record_decline, record_move
 from .skills import SkillCatalog
 from .storage import StateStore, durable_key
 from .transcription import Transcriber
@@ -650,6 +651,18 @@ class SellerEngine:
                 "latency_ms": proposal.raw.get("latency_ms") if isinstance(proposal.raw, Mapping) else None,
             }
         )
+        posture_memory = state.get("posture") if isinstance(state.get("posture"), dict) else None
+        open_close_offer = posture_memory.pop("open_close_offer", None) if posture_memory else None
+        contract_failed = isinstance(proposal.raw, Mapping) and proposal.raw.get("model_contract_failed")
+        if open_close_offer and not contract_failed and len(text.split()) <= 8:
+            if NEGATIVE.search(text):
+                record_decline(state)
+                return self._result(event, state, "Tranquilo! Se mudar de ideia, é só chamar.",
+                                    trace=trace + [{"type": "posture_declined", "offer_id": open_close_offer}])
+            if AFFIRMATIVE.search(text) and "obrigad" not in text.casefold() and proposal.intent in {"unknown", "update", "buy", "greeting"}:
+                proposal.intent = "buy"
+                proposal.offer_id = proposal.offer_id or open_close_offer
+                trace.append({"type": "posture_close_accepted", "offer_id": proposal.offer_id})
         if proposal.intent == "unknown" and not proposal.offer_id and not proposal.topics:
             state["fallback_count"] = int(state.get("fallback_count", 0)) + 1
             if state["fallback_count"] >= int(package.get("loop_policy", {}).get("fallback_limit", 2)) + 1:
@@ -842,6 +855,8 @@ class SellerEngine:
                 if kind == "doubt" and "price" in proposal.topics:
                     kind = "price_without_offer"
                 trace.append({"type": "objection_handled", "conditions_source": "none_needed", "objection": kind})
+                if kind == "think":
+                    record_decline(state)
                 reply = {
                     "think": "Claro, sem pressa. Se ficar alguma dúvida, é só me chamar por aqui.",
                     "doubt": "Faz sentido querer ter certeza antes de decidir. O que está te deixando em dúvida?",
@@ -937,6 +952,7 @@ class SellerEngine:
             response = "%s sai por %s%s." % (offer["name"], brl(amount), suffix)
             if conditions:
                 response += " " + conditions
+            response = self._with_posture_move(package, state, "price", offer, response, trace)
             return self._result(event, state, response, trace=trace)
 
         if proposal.intent == "knowledge":
@@ -1271,6 +1287,7 @@ class SellerEngine:
         action = {"type": "prepare_checkout", **checkout}
         response = "Fechado! Ficou %s no total. É só finalizar por aqui: %s" % (brl(new_quote["amount"]), checkout["url"])
         trace.append({"type": "checkout_prepared", "charged": checkout.get("charged", False)})
+        response = self._with_posture_move(package, state, "checkout", offer, response, trace)
         return self._result(event, state, response, action, trace)
 
     @staticmethod
@@ -1475,8 +1492,29 @@ class SellerEngine:
         return self._result(event, state, prompts.get(field, "Para seguir, preciso confirmar %s." % field), trace=trace)
 
     @staticmethod
+    def _with_posture_move(
+        package: Mapping[str, Any],
+        state: Dict[str, Any],
+        moment: str,
+        offer: Optional[Mapping[str, Any]],
+        response: str,
+        trace: List[Dict[str, Any]],
+    ) -> str:
+        """Append at most one owner-approved move; the buyer's state decides if it fits."""
+        move = plan_move(package, state, moment, offer)
+        if not move:
+            return response
+        record_move(state, move)
+        separator = "\n\n" if moment == "checkout" else " "
+        trace.append({"type": "posture_move", "move": move["move"], "moment": moment, "offer_id": move["offer_id"],
+                      "initiative": posture_settings(package)["initiative"], "suffix": separator + move["text"]})
+        return response + separator + move["text"]
+
+    @staticmethod
     def _variant_question(offer: Mapping[str, Any]) -> str:
-        options = [str(item) for item in offer.get("stock", {}).keys()]
+        size_order = {size: index for index, size in enumerate(("PP", "P", "M", "G", "GG", "XG", "XGG"))}
+        options = sorted((str(item) for item in offer.get("stock", {}).keys()),
+                         key=lambda size: (size_order.get(size.upper(), len(size_order)), size))
         if not options:
             return "Qual tamanho ou modelo você prefere?"
         listed = options[0] if len(options) == 1 else "%s ou %s" % (", ".join(options[:-1]), options[-1])
@@ -1518,7 +1556,7 @@ class SellerEngine:
             key=lambda item: float(item["price"]),
             reverse=True,
         )
-        if cheaper:
+        if cheaper and posture_settings(package)["alternative_on_objection"]:
             alternative = cheaper[0]
             reply += " Se ajudar, %s sai por %s." % (alternative["name"], brl(float(alternative["price"])))
             trace.append({"type": "objection_alternative", "offer_id": alternative["id"]})
@@ -1716,8 +1754,15 @@ class SellerEngine:
                 for key in ("scope", "audience", "subject", "generation")
             ):
                 trusted_evidence.append(dict(item))
+        # The posture move is owner-approved text the engine depends on (a
+        # short "sim" answers it), so only the base answer is redrafted.
+        posture_suffix = next((str(item.get("suffix", "")) for item in result.trace
+                               if item.get("type") == "posture_move" and item.get("suffix")), "")
+        if posture_suffix and not result.response.endswith(posture_suffix):
+            posture_suffix = ""
+        base_response = result.response[: len(result.response) - len(posture_suffix)] if posture_suffix else result.response
         requirements = ResponseRequirements.from_result(
-            str(event.get("text", "")), EngineResult(result.event_id, result.conversation_id, result.response,
+            str(event.get("text", "")), EngineResult(result.event_id, result.conversation_id, base_response,
                                                       action=result.action, state=result.state, evidence=trusted_evidence),
             history=self._recent_turns(result.state),
             voice=voice_settings(package),
@@ -1734,7 +1779,7 @@ class SellerEngine:
             else:
                 feedback = ClaimVerifier.verify(draft, requirements)
             if not feedback:
-                result.response = draft.strip()
+                result.response = draft.strip() + posture_suffix
                 result.trace.append({"type": "draft_accepted", "attempt": attempt + 1})
                 return
             result.trace.append({"type": "claim_unsupported", "attempt": attempt + 1, "claims": feedback})
