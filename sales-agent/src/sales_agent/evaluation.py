@@ -26,6 +26,32 @@ from .privacy import redact_data
 from .skills import SkillCatalog
 from .storage import StateStore
 from .validation import package_fingerprint, validate_package
+from .voice import style_violations, voice_settings
+
+
+def naturalness_report(responses: List[str]) -> Dict[str, Any]:
+    """Report bot-copy phrasing in buyer-visible replies.
+
+    Informational only: the lint is deterministic and not yet calibrated
+    against human ratings, so it does not gate a release.
+    """
+    voice = voice_settings({})
+    texts = [text for text in responses if text.strip()]
+    flagged: Counter = Counter()
+    affected = 0
+    for text in texts:
+        found = [item["value"] for item in style_violations(text, voice, template=text) if item["value"] != "unneeded_question"]
+        affected += bool(found)
+        flagged.update(found)
+    words = sorted(len(text.split()) for text in texts)
+    return {
+        "responses": len(texts),
+        "with_bot_copy": affected,
+        "rate": round(affected / len(texts), 4) if texts else 0.0,
+        "violations": dict(sorted(flagged.items())),
+        "median_words": words[len(words) // 2] if words else 0,
+        "gating": False,
+    }
 
 
 class EvaluationContext:
@@ -856,6 +882,7 @@ class EvaluationRunner:
         )
         results = []
         candidate_probe = self._run_candidate_probe()
+        observed_responses: List[str] = []
         for case in CASES:
             with tempfile.TemporaryDirectory(prefix="vendedor-eval-", dir=str(self.data_dir)) as temporary:
                 context = EvaluationContext(
@@ -879,6 +906,7 @@ class EvaluationRunner:
                     status = "failed"
                     error = "verificação independente do golden set falhou"
                 duration_ms = round((time.perf_counter() - started) * 1000, 3)
+                observed_responses.extend(str(item.get("response", "")) for item in context.observations)
                 record = {
                     "id": case["id"],
                     "title": case["title"],
@@ -976,6 +1004,7 @@ class EvaluationRunner:
                 "adversarial_model_safety_check": adversarial_model_safety,
             },
             "summary": {"total": len(results), "passed": passed, "failed": failed, "critical_failures": critical_failures},
+            "naturalness": naturalness_report(observed_responses),
             "cases": results,
             "limitations": [
                 "checkout, pagamento, agenda, canal e transferência são simuladores locais",
@@ -1029,7 +1058,7 @@ class EvaluationRunner:
                 raise ValueError("estado inicial ou operações disponíveis ausentes")
             if not case.get("evidence"):
                 raise ValueError("evidência esperada ausente")
-            if case.get("category") not in {"direct", "price", "combination", "memory", "actions", "human", "installation"}:
+            if case.get("category") not in {"direct", "price", "combination", "memory", "actions", "human", "installation", "conversation", "posture"}:
                 raise ValueError("categoria de caso inválida")
             selected.append(case)
         if len({case["id"] for case in selected}) != len(selected):
@@ -1111,7 +1140,10 @@ class EvaluationRunner:
                            "thresholds_met": thresholds_met, "performance": {"latency_p95_ms": p95,
                            "cost": round(sum(total_costs), 8) if total_costs else None}},
             "summary": {"total": len(records), "passed": success_cases, "failed": len(records) - success_cases,
-                        "critical_failures": critical_failures}, "cases": records,
+                        "critical_failures": critical_failures},
+            "naturalness": naturalness_report([str(observation.get("response", "")) for item in all_runs
+                                               for observation in item["observations"]]),
+            "cases": records,
             "limitations": ["canal e comércio simulados localmente; qualidade remota exige execução com credencial real"],
         }
 
@@ -1161,6 +1193,20 @@ class EvaluationRunner:
 
     @staticmethod
     def _run_declarative(context: EvaluationContext, case: Mapping[str, Any]) -> None:
+        package_patch = case.get("package_patch")
+        if package_patch is not None:
+            # Posture scenarios run the same buyer text against a different
+            # owner posture; only these keys may change the seeded example.
+            if not isinstance(package_patch, Mapping) or set(package_patch) - {"sales_posture", "append_offers", "capabilities"}:
+                raise ValueError("package_patch inválido")
+            package = context.store.get_business(str(case["business_id"]))
+            if package is None:
+                raise ValueError("negócio do caso não encontrado")
+            package["offers"].extend(copy.deepcopy(list(package_patch.get("append_offers", []))))
+            if "sales_posture" in package_patch:
+                package["sales_posture"] = copy.deepcopy(package_patch["sales_posture"])
+            package["capabilities"].update(copy.deepcopy(dict(package_patch.get("capabilities", {}))))
+            seed_package(context.store, validate_package(package))
         source_override = case.get("source_override")
         if source_override is not None:
             if not isinstance(source_override, Mapping) or not {"id", "version", "content"} <= source_override.keys():

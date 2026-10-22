@@ -10,6 +10,7 @@ from __future__ import annotations
 from typing import Any, Dict, List, Mapping, Optional, Protocol
 
 from .knowledge import PersistentFarolKnowledge
+from .posture import reminder_still_valid
 from .storage import StateStore
 from .validation import package_capability, package_fingerprint
 
@@ -53,6 +54,10 @@ class DeliveryProcessor:
         package = self.store.get_business(business_id)
         if package is None:
             return {"send": False, "reason": "business_missing", "state": state}
+        if item.get("kind") == "checkout_reminder":
+            valid, reason = reminder_still_valid(state, package, item, self.store.clock.now())
+            if not valid:
+                return {"send": False, "reason": reason, "state": state}
         action = item.get("action") if isinstance(item.get("action"), Mapping) else {}
         is_transfer = action.get("type") == "human_transfer"
         if (state.get("responsible") == "human" or state.get("status") == "human_paused") and not is_transfer:

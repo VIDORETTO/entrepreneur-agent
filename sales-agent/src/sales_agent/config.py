@@ -12,6 +12,7 @@ from pathlib import Path
 from typing import Any, Dict, Iterable, List, Mapping, Optional, Union
 
 from .knowledge import PersistentFarolKnowledge
+from .posture import POSTURE_QUESTION, initiative_from_answer
 from .skills import SkillCatalog
 from .storage import StateStore
 from .validation import PackageError, validate_package
@@ -115,6 +116,20 @@ def example_package(template: str, business_id: Optional[str] = None, business_n
             "skill_context_budget": 8_000,
         },
         "sources": [],
+        "draft_mode": "auto",
+        "voice": {
+            "tone": "próximo, direto e educado, como alguém do time respondendo no WhatsApp",
+            "address": "você",
+            "emoji": "light",
+            "max_chars": 320,
+            "examples": [
+                {"situation": "cliente agradece", "buyer": "valeu!", "seller": "Imagina! Qualquer coisa, é só chamar."},
+                {"situation": "cliente vai pensar", "buyer": "vou pensar e te falo",
+                 "seller": "Tranquilo, sem pressa. Se pintar alguma dúvida, me chama aqui."},
+                {"situation": "cliente pede atendente", "buyer": "quero falar com alguém",
+                 "seller": "Claro, já te passo para uma pessoa do time."},
+            ],
+        },
     }
     if template == "physical":
         base["offers"] = [
@@ -182,6 +197,7 @@ def example_package(template: str, business_id: Optional[str] = None, business_n
                 "currency": "BRL",
                 "required_fields": ["scope", "region"],
                 "consultative_questions": ["scope", "region"],
+                "questions": {"scope": "Você quer uma reforma completa ou só trocar os revestimentos?"},
                 "description": "Projeto e execução sob medida, com orçamento após escopo e medidas.",
             }
         ]
@@ -311,6 +327,7 @@ QUESTIONS = [
         "prompt": "O que a IA pode consultar, preparar, enviar ou cobrar sozinha?",
         "impact": "define permissões; intenção não autoriza cobrança",
     },
+    POSTURE_QUESTION,
 ]
 
 
@@ -347,7 +364,7 @@ class ConfigurationManager:
             "document_findings": findings,
             "facts": {},
             "fact_records": {},
-            "blockers": [item["id"] for item in self._questions_for_capability(capability)],
+            "blockers": [item["id"] for item in self._questions_for_capability(capability) if not item.get("optional")],
             "decisions": [],
             "answered_question_ids": [],
             "deferred_question_ids": [],
@@ -367,8 +384,11 @@ class ConfigurationManager:
             "knowledge_query": ["operational_truth", "offer", "next_step", "autonomy"],
             "quote": ["offer", "operational_truth", "next_step", "autonomy"],
             "catalog_query": ["offer", "operational_truth", "next_step", "autonomy"],
-        }.get(capability, [item["id"] for item in QUESTIONS])
+        }.get(capability, [item["id"] for item in QUESTIONS if not item.get("optional")])
         by_id = {item["id"]: item for item in QUESTIONS}
+        # Optional questions come last: they refine the package but never
+        # block a ready draft (an unanswered posture keeps "answer").
+        order = list(order) + [item["id"] for item in QUESTIONS if item.get("optional")]
         return [copy.deepcopy(by_id[item_id]) for item_id in order]
 
     @staticmethod
@@ -541,13 +561,14 @@ class ConfigurationManager:
         payload["blockers"] = [
             item["id"]
             for item in questions
-            if item["id"] in deferred or item["id"] not in payload.get("answered_question_ids", [])
+            if not item.get("optional")
+            and (item["id"] in deferred or item["id"] not in payload.get("answered_question_ids", []))
         ]
         payload["checkpoint"] = {
             "last_completed": current["id"] if not deferred_answer else payload.get("checkpoint", {}).get("last_completed"),
             "next_blocker": payload["blockers"][0] if payload["blockers"] else None,
         }
-        if payload["next_question_index"] >= len(questions) and not deferred:
+        if not payload["blockers"]:
             payload["status"] = "ready"
             payload["capabilities"] = {"knowledge_query": "enabled", "checkout_prepare": "assisted"}
         else:
@@ -630,6 +651,18 @@ class ConfigurationManager:
             "decisions": payload["decisions"],
             "document_findings": payload["document_findings"],
         }
+        posture_answer = payload["facts"].get("posture")
+        if posture_answer:
+            initiative = initiative_from_answer(str(posture_answer))
+            package["owner_configuration"]["posture"] = {
+                "answer": posture_answer,
+                "initiative": initiative,
+                "status": "confirmed" if initiative else "unmapped",
+            }
+            if initiative:
+                # Complements are not inferred: cross_sell rules need the
+                # owner to name which offer goes with which.
+                package["sales_posture"] = {"initiative": initiative}
         for name in ("catalog_query", "quote", "checkout_prepare", "human_transfer", "knowledge_query"):
             package["capabilities"][name] = {
                 "state": "pending",

@@ -8,7 +8,59 @@
     "package_version": {"type": "string", "minLength": 1},
     "lifecycle": {"enum": ["draft", "active"]},
     "non_text_policy": {"enum": ["ask_text", "offer_human"]},
-    "draft_mode": {"enum": ["off", "on"]},
+    "draft_mode": {"enum": ["off", "on", "auto"]},
+    "sales_posture": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "initiative": {"enum": ["answer", "suggest", "lead"]},
+        "ask_for_close": {"type": "boolean"},
+        "alternative_on_objection": {"type": "boolean"},
+        "max_suggestions_per_conversation": {"type": "integer", "minimum": 0, "maximum": 3},
+        "abandoned_checkout_reminders": {"type": "integer", "minimum": 0, "maximum": 2},
+        "reminder_after_minutes": {"type": "integer", "minimum": 15, "maximum": 1380},
+        "reminder_texts": {"type": "array", "maxItems": 2, "items": {"type": "string", "minLength": 1, "maxLength": 300}},
+        "cross_sell": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["when_offer", "suggest"],
+            "properties": {
+              "when_offer": {"type": "string", "minLength": 1},
+              "suggest": {"type": "string", "minLength": 1},
+              "pitch": {"type": "string", "minLength": 1, "maxLength": 200}
+            }
+          }
+        }
+      }
+    },
+    "voice": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "assistant_name": {"type": "string", "maxLength": 300},
+        "disclose_ai": {"type": "boolean"},
+        "tone": {"type": "string", "maxLength": 300},
+        "address": {"enum": ["você", "tu"]},
+        "emoji": {"enum": ["none", "light", "free"]},
+        "max_chars": {"type": "integer", "minimum": 80, "maximum": 4000},
+        "forbidden_phrases": {"type": "array", "items": {"type": "string", "minLength": 1}},
+        "examples": {
+          "type": "array",
+          "maxItems": 60,
+          "items": {
+            "type": "object",
+            "required": ["seller"],
+            "properties": {
+              "situation": {"type": "string", "maxLength": 600},
+              "buyer": {"type": "string", "maxLength": 600},
+              "seller": {"type": "string", "minLength": 1, "maxLength": 600}
+            }
+          }
+        }
+      }
+    },
     "privacy": {"type": "object", "properties": {"retention_days": {"type": "integer", "minimum": 0}}},
     "loop_policy": {"type": "object", "properties": {"fallback_limit": {"type": "integer", "minimum": 1}}},
     "service_hours": {
@@ -46,6 +98,7 @@
           "price_type": {"enum": ["fixed", "variable", "on_request"]},
           "price": {"type": "number", "minimum": 0},
           "aliases": {"type": "array", "items": {"type": "string", "minLength": 1}},
+          "questions": {"type": "object", "additionalProperties": {"type": "string", "maxLength": 300, "pattern": "\\?"}},
           "required_fields": {"type": "array", "uniqueItems": true, "items": {"type": "string", "minLength": 1}},
           "quote_validity_minutes": {"type": "integer", "minimum": 1},
           "delivery_days": {"type": "integer", "minimum": 0},

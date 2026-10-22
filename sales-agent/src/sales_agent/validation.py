@@ -10,6 +10,9 @@ from datetime import datetime
 from numbers import Real
 from typing import Any, Dict, Mapping
 
+from .posture import validate_posture
+from .voice import validate_voice
+
 
 class PackageError(ValueError):
     """A business package cannot be activated safely."""
@@ -63,8 +66,15 @@ def validate_package(package: Mapping[str, Any]) -> Dict[str, Any]:
     non_text_policy = package.get("non_text_policy", "ask_text")
     if not isinstance(non_text_policy, str) or non_text_policy not in {"ask_text", "offer_human"}:
         raise PackageError("non_text_policy inválida")
-    if package.get("draft_mode", "off") not in {"on", "off"}:
+    if package.get("draft_mode", "off") not in {"on", "off", "auto"}:
         raise PackageError("draft_mode inválido")
+    try:
+        validate_voice(package.get("voice"))
+        offers_for_posture = package.get("offers") if isinstance(package.get("offers"), list) else []
+        validate_posture(package.get("sales_posture"),
+                         [str(item.get("id")) for item in offers_for_posture if isinstance(item, Mapping)])
+    except ValueError as exc:
+        raise PackageError(str(exc)) from exc
     privacy = package.get("privacy", {})
     if not isinstance(privacy, Mapping) or isinstance(privacy.get("retention_days", 180), bool) or not isinstance(privacy.get("retention_days", 180), int) or privacy.get("retention_days", 180) < 0:
         raise PackageError("privacy.retention_days inválido")
@@ -159,6 +169,12 @@ def validate_package(package: Mapping[str, Any]) -> Dict[str, Any]:
             raise PackageError("%s.required_fields deve ser uma lista" % path)
         if len(set(required_fields)) != len(required_fields):
             raise PackageError("%s.required_fields contém valores duplicados" % path)
+        questions = offer.get("questions", {})
+        if not isinstance(questions, Mapping) or not all(
+            isinstance(key, str) and isinstance(value, str) and "?" in value and len(value) <= 300
+            for key, value in questions.items()
+        ):
+            raise PackageError("%s.questions deve mapear campo para uma pergunta curta" % path)
         aliases = offer.get("aliases", [])
         if not isinstance(aliases, list) or not all(isinstance(item, str) and item for item in aliases):
             raise PackageError("%s.aliases deve ser uma lista de textos" % path)

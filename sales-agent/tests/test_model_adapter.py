@@ -132,7 +132,7 @@ def test_http_model_adapter_receives_only_bounded_buyer_skill_context(monkeypatc
     assert captured["messages"][0]["role"] == "system"
     assert captured["messages"][1]["role"] == "user"
     assert "buyer guidance" in captured["messages"][0]["content"]
-    assert "<buyer_message>Olá</buyer_message>" == captured["messages"][1]["content"]
+    assert "<conversation_history>[]</conversation_history>\n<buyer_message>Olá</buyer_message>" == captured["messages"][1]["content"]
     assert "Olá" not in captured["messages"][0]["content"]
     assert "_configuration_skill_context" not in json.dumps(captured)
     assert captured["response_format"]["type"] == "json_schema"
