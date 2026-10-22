@@ -115,6 +115,20 @@ def example_package(template: str, business_id: Optional[str] = None, business_n
             "skill_context_budget": 8_000,
         },
         "sources": [],
+        "draft_mode": "auto",
+        "voice": {
+            "tone": "próximo, direto e educado, como alguém do time respondendo no WhatsApp",
+            "address": "você",
+            "emoji": "light",
+            "max_chars": 320,
+            "examples": [
+                {"situation": "cliente agradece", "buyer": "valeu!", "seller": "Imagina! Qualquer coisa, é só chamar."},
+                {"situation": "cliente vai pensar", "buyer": "vou pensar e te falo",
+                 "seller": "Tranquilo, sem pressa. Se pintar alguma dúvida, me chama aqui."},
+                {"situation": "cliente pede atendente", "buyer": "quero falar com alguém",
+                 "seller": "Claro, já te passo para uma pessoa do time."},
+            ],
+        },
     }
     if template == "physical":
         base["offers"] = [
@@ -182,6 +196,7 @@ def example_package(template: str, business_id: Optional[str] = None, business_n
                 "currency": "BRL",
                 "required_fields": ["scope", "region"],
                 "consultative_questions": ["scope", "region"],
+                "questions": {"scope": "Você quer uma reforma completa ou só trocar os revestimentos?"},
                 "description": "Projeto e execução sob medida, com orçamento após escopo e medidas.",
             }
         ]

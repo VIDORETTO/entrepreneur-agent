@@ -57,7 +57,7 @@ def test_unsupported_discount_twice_returns_template(tmp_path):
     drafter = ScriptedDrafter("Hoje tem 10% de desconto.", "Hoje tem 10% de desconto.")
     result = _send(_engine(tmp_path, drafter), "Quanto custa a camiseta azul?")
 
-    assert result.response.startswith("O Camiseta Azul custa R$ 79.90")
+    assert result.response.startswith("Camiseta Azul sai por R$ 79,90")
     assert [item["type"] for item in result.trace].count("claim_unsupported") == 2
     assert result.trace[-1] == {"type": "draft_fallback", "reason": "verification_failed"}
     assert len(drafter.calls) == 2
@@ -118,7 +118,7 @@ def test_unapproved_checkout_url_never_reaches_buyer(tmp_path):
 def test_unapproved_duration_or_quantity_falls_back(tmp_path, draft, kind):
     result = _send(_engine(tmp_path, ScriptedDrafter(draft, draft)), "Quanto custa a camiseta azul?")
 
-    assert result.response.startswith("O Camiseta Azul custa R$ 79.90")
+    assert result.response.startswith("Camiseta Azul sai por R$ 79,90")
     assert any(item["type"] == "claim_unsupported" and any(
         claim["kind"] == kind for claim in item["claims"]
     ) for item in result.trace)
@@ -141,7 +141,7 @@ def test_http_drafter_keeps_trusted_instructions_separate_from_buyer(monkeypatch
     assert captured[0]["messages"][0]["role"] == "system"
     assert "Quanto custa a camiseta azul?" not in captured[0]["messages"][0]["content"]
     assert captured[0]["messages"][1] == {
-        "role": "user", "content": "<buyer_message>Quanto custa a camiseta azul?</buyer_message>",
+        "role": "user", "content": "<conversation_history>[]</conversation_history>\n<buyer_message>Quanto custa a camiseta azul?</buyer_message>",
     }
     assert "fictional-key" not in json.dumps(captured[0])
 
@@ -158,6 +158,9 @@ def test_first_invalid_draft_can_be_repaired_once(tmp_path):
 def test_disabled_drafting_keeps_template_and_does_not_call_drafter(tmp_path):
     store = StateStore(tmp_path)
     seed_examples(store)
+    package = store.get_business("azul-b2c")
+    package["draft_mode"] = "off"
+    store.save_business(package)
     drafter = ScriptedDrafter("Preço inventado: R$ 1,00")
     result = SellerEngine(store, model=drafter).handle({
         "business_id": "azul-b2c", "conversation_id": "draft-off",
@@ -165,7 +168,7 @@ def test_disabled_drafting_keeps_template_and_does_not_call_drafter(tmp_path):
         "text": "Quanto custa a camiseta azul?",
     })
 
-    assert "R$ 79.00" in result.response
+    assert "R$ 79,00" in result.response
     assert drafter.calls == []
 
 
@@ -177,7 +180,7 @@ def test_disabled_drafting_keeps_template_and_does_not_call_drafter(tmp_path):
 def test_unapproved_status_and_policy_claims_fall_back(tmp_path, draft, kind):
     result = _send(_engine(tmp_path, ScriptedDrafter(draft, draft)), "Quanto custa a camiseta azul?")
 
-    assert result.response.startswith("O Camiseta Azul custa R$ 79.90")
+    assert result.response.startswith("Camiseta Azul sai por R$ 79,90")
     assert any(item["type"] == "claim_unsupported" and any(
         claim["kind"] == kind for claim in item["claims"]
     ) for item in result.trace)

@@ -7,6 +7,33 @@ projeto pretende adotar versionamento semântico após estabilizar a API públic
 
 ### Adicionado
 
+- Camada de voz: `package.voice` (tom, tratamento, emoji, tamanho, frases
+  proibidas e exemplos reais do dono), `draft_mode: auto`, histórico das
+  últimas trocas para o intérprete e o redator, espelhamento do jeito de
+  escrever do comprador e escolha dos exemplos mais parecidos (BM25).
+- Lint determinístico de frases de robô ("Ótima pergunta!", "Como posso
+  ajudar?", travessão, listas, excesso de emoji, pergunta desnecessária,
+  abertura repetida) no verificador do redator e relatório `naturalness` no
+  `vendedor evaluate` (informativo, não bloqueia).
+- Transparência: a saudação se apresenta como atendimento virtual, "você é um
+  robô?" recebe resposta honesta (intent `ai_question`) e o redator não pode
+  afirmar ser uma pessoa.
+- Objeções: "está caro" repete o preço aprovado e cita oferta mais barata real;
+  "vou pensar" não pressiona; dúvida genérica recebe uma pergunta aberta.
+- `offers[].questions` para personalizar a pergunta de cada campo.
+- Quatro casos `dev` de conversa (desistência, objeção, identidade e preço).
+
+### Corrigido
+
+- Preços em formato brasileiro (`R$ 1.299,90`) nas respostas; o verificador
+  lia `R$ 1.299,90` como `1.29` e rejeitava todo rascunho acima de mil reais.
+- Valores, prazos e quantidades por extenso ("setenta e nove reais", "três
+  dias") e variações de frete grátis ("sai de graça", "não cobramos frete")
+  passavam pelo verificador sem checagem.
+- Respostas do motor reescritas em português natural, sem vocabulário interno
+  ("condição aprovada", "nesta configuração", "conciliá-la"); dias da semana
+  em português no horário de atendimento.
+
 - `vendedor skills install` e `skills status`, `vendedor init --agents`: instalam
   `AGENTS.md` (bloco gerenciado), `CLAUDE.md` e skills em `.claude/skills/` ou
   `.agents/skills/`, sem sobrescrever edições do usuário.

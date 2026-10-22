@@ -15,7 +15,7 @@ from typing import Any, Callable, Dict, List, Mapping, Optional
 from zoneinfo import ZoneInfo
 
 from .commerce import CommerceError, SimulatedCommerce
-from .drafting import ClaimVerifier, ResponseRequirements, injection_signals
+from .drafting import ClaimVerifier, ResponseRequirements, brl, injection_signals
 from .knowledge import KnowledgeBackend, PersistentFarolKnowledge
 from .model import ModelAdapter, RuleBasedModel
 from .skills import SkillCatalog
@@ -23,6 +23,9 @@ from .storage import StateStore, durable_key
 from .transcription import Transcriber
 from .types import EngineResult, Proposal
 from .validation import package_capability, package_fingerprint
+from .voice import ai_disclosure, introduction, voice_settings
+
+WEEKDAYS_PT = ("segunda", "terça", "quarta", "quinta", "sexta", "sábado", "domingo")
 
 
 class ConversationError(ValueError):
@@ -585,9 +588,9 @@ class SellerEngine:
         if attachments and not text.strip():
             policy = str(package.get("non_text_policy", "ask_text"))
             response = (
-                "Posso chamar um atendente para ajudar com este anexo."
+                "Recebi seu anexo! Por aqui não consigo abrir esse tipo de arquivo, mas posso chamar um atendente para ver com você."
                 if policy == "offer_human"
-                else "Recebi o anexo. Pode enviar sua pergunta em texto?"
+                else "Recebi seu anexo, mas por aqui não consigo abrir esse tipo de arquivo. Consegue me mandar em texto?"
             )
             state["pending"] = {"type": "non_text_message", "reason": "content_unavailable"}
             return self._result(event, state, response, trace=[{"type": "non_text_policy", "policy": policy}])
@@ -619,6 +622,7 @@ class SellerEngine:
             )
         runtime_package = dict(package)
         runtime_package["_buyer_skill_context"] = self.skill_catalog.context(skill_selection)
+        runtime_package["_recent_turns"] = self._recent_turns(state)
         try:
             proposal = self.model.propose(text, runtime_package, state)
         except Exception:
@@ -627,7 +631,7 @@ class SellerEngine:
             return self._result(
                 event,
                 state,
-                "Não consegui validar esta mensagem agora. Não vou inventar uma condição nem executar uma operação; tente novamente ou peça atendimento humano.",
+                "Tive um problema para processar sua mensagem agora. Pode mandar de novo daqui a pouco? Se preferir, peça para falar com uma pessoa do time.",
                 trace=trace,
             )
         skill_trace["model_observed_applied"] = self._model_observed_skills(proposal)
@@ -650,13 +654,13 @@ class SellerEngine:
             state["fallback_count"] = int(state.get("fallback_count", 0)) + 1
             if state["fallback_count"] >= int(package.get("loop_policy", {}).get("fallback_limit", 2)) + 1:
                 state["pending"] = {"type": "human_offer", "reason": "loop_detected"}
-                return self._result(event, state, "Posso chamar uma pessoa para ajudar. Quer falar com um atendente?",
+                return self._result(event, state, "Acho que não estou conseguindo te entender direito. Quer que eu chame um atendente?",
                                     trace=trace + [{"type": "loop_detected", "reason": "repeated_fallback"}])
         else:
             state["fallback_count"] = 0
         if re.search(r"já falei|ja falei|você não entende|voce nao entende|cansei de repetir", text.casefold()) and proposal.intent != "human":
             state["pending"] = {"type": "human_offer", "reason": "frustration"}
-            return self._result(event, state, "Entendo. Posso chamar uma pessoa para ajudar.",
+            return self._result(event, state, "Desculpa pela repetição. Se preferir, posso chamar uma pessoa do time para continuar com você.",
                                 trace=trace + [{"type": "loop_detected", "reason": "frustration"}])
         if isinstance(proposal.raw, Mapping) and proposal.raw.get("model_contract_failed"):
             trace.append({"type": "model_contract_failed", "model": proposal.model_name, "calls": proposal.raw.get("model_calls")})
@@ -666,7 +670,7 @@ class SellerEngine:
             return self._result(
                 event,
                 state,
-                "Não consegui validar o pedido com segurança. Posso ajudar com informações ou chamar um atendente.",
+                "Não entendi bem o seu pedido. Pode me explicar de outro jeito? Se preferir, chamo um atendente.",
                 trace=trace,
             )
         offer = self._offer(package, proposal.offer_id)
@@ -681,7 +685,7 @@ class SellerEngine:
             return self._result(
                 event,
                 state,
-                "Existe uma operação com resultado pendente de conciliação. Não vou alterar o pedido nem iniciar outro checkout antes de resolvê-la.",
+                "Ainda estou conferindo o seu pedido anterior (conciliação com o sistema de pagamento). Para não duplicar nada, só mexo no pedido depois dessa confirmação.",
                 trace=trace + [{"type": "effect_reconciliation_required"}],
             )
         self._merge_safe_facts(state, proposal, offer, trace, event_id=str(event["event_id"]))
@@ -722,8 +726,8 @@ class SellerEngine:
                 return self._result(
                     event,
                     state,
-                    "Este atendimento está no perfil %s. Não vou abrir checkout a partir de uma atualização isolada; diga explicitamente que quer retomar a compra se isso for o que deseja."
-                    % current_profile.replace("_", "-"),
+                    "Por enquanto estou cuidando do seu atendimento de %s. Se quiser voltar para a compra, é só me dizer \"quero retomar a compra\"."
+                    % self._profile_label(current_profile),
                     trace=trace,
                 )
 
@@ -750,9 +754,9 @@ class SellerEngine:
                 event,
                 state,
                 (
-                    "Entendi. Vou tratar esta conversa como financeira e não vou abrir checkout, confirmar pagamento ou prometer estorno sem o provedor."
+                    "Entendi, é um assunto financeiro. Por aqui não consigo confirmar pagamento nem estorno sem o sistema de pagamento; se quiser, peça para falar com um atendente que eu te encaminho."
                     if proposal.intent == "financial"
-                    else "Entendi. Vou tratar esta conversa como suporte/pós-venda e manter o atendimento dentro desse escopo. Posso registrar o problema e consultar a documentação aprovada."
+                    else "Certo, vamos ver isso. Me conta o que aconteceu que eu confiro as informações que temos sobre o assunto."
                 ),
                 trace=trace,
             )
@@ -775,7 +779,7 @@ class SellerEngine:
                 return self._result(
                     event,
                     state,
-                    "Registrei sua preferência, mas ela ainda não está configurada para mudar o atendimento automaticamente.",
+                    "Anotei sua preferência. Se quiser ajustar algo no atendimento, também posso chamar uma pessoa do time.",
                     trace=trace + [{"type": "preference_unconfigured"}],
                 )
             previous_profile = state.get("profile", "commercial")
@@ -803,15 +807,13 @@ class SellerEngine:
             return self._result(
                 event,
                 state,
-                "Entendi. Vou manter o atendimento no modo informativo configurado, sem preparar uma operação de compra automaticamente.",
+                "Combinado, sigo só com informações, sem preparar compra. Quando quiser comprar, é só falar.",
                 trace=trace,
             )
 
         if proposal.intent == "objection":
             state["intent"] = "objection"
             if offer and offer.get("price_type", "fixed") == "fixed" and "price" in proposal.topics:
-                amount = float(offer["price"])
-                suffix = " por unidade" if offer.get("kind") == "physical" else ""
                 trace.append(
                     {
                         "type": "objection_handled",
@@ -825,17 +827,27 @@ class SellerEngine:
                         "claims": ["discount", "urgency"],
                     }
                 )
-                objection_response = (
-                    "Entendo a preocupação. A condição aprovada é R$ %.2f%s. "
-                    "Não há desconto aprovado nesta configuração; não vou inventar uma condição comercial."
-                    % (amount, suffix)
-                )
+                objection_response = self._price_objection_reply(package, offer, trace)
                 if len(proposal.topics) <= 1:
                     return self._result(event, state, objection_response, trace=trace)
                 # Price is already answered by the structured offer.  Keep all
                 # other requested topics for the evidence path instead of
                 # letting the objection short-circuit the buyer's question.
                 proposal.topics = [topic for topic in proposal.topics if topic != "price"]
+            elif not [topic for topic in proposal.topics if topic not in {"general", "price"}]:
+                # Nothing factual to answer: acknowledge and let the buyer
+                # lead. A buyer who wants time is not pushed (no pitch, no
+                # urgency, no follow-up question about budget).
+                kind = "think" if re.search(r"vou pensar|pensar melhor|depois (?:eu )?(?:vejo|falo|decido)|mais tarde|outra hora|agora n[ãa]o", text.casefold()) else "doubt"
+                if kind == "doubt" and "price" in proposal.topics:
+                    kind = "price_without_offer"
+                trace.append({"type": "objection_handled", "conditions_source": "none_needed", "objection": kind})
+                reply = {
+                    "think": "Claro, sem pressa. Se ficar alguma dúvida, é só me chamar por aqui.",
+                    "doubt": "Faz sentido querer ter certeza antes de decidir. O que está te deixando em dúvida?",
+                    "price_without_offer": "Entendo. Qual produto você está olhando? Assim te passo o valor certinho.",
+                }[kind]
+                return self._result(event, state, reply, trace=trace)
             trace.append({"type": "objection_handled", "conditions_source": "approved-evidence"})
             proposal.intent = "knowledge"
 
@@ -849,7 +861,7 @@ class SellerEngine:
             state["status"] = "closed_without_sale"
             state["phase"] = "encerrado_sem_venda"
             state["pending"] = None
-            return self._result(event, state, "Entendido. Não vou enviar novas mensagens comerciais.", trace=trace)
+            return self._result(event, state, "Tudo bem, não vou mais te mandar mensagens de venda. Se precisar, é só chamar.", trace=trace)
 
         if proposal.intent == "human":
             self.store.cancel_pending_deliveries(
@@ -866,7 +878,7 @@ class SellerEngine:
                 return self._result(
                     event,
                     state,
-                    "Pausei as respostas automáticas, mas este negócio ainda não tem uma fila humana habilitada.",
+                    "Combinado, parei as respostas automáticas. Só que no momento ainda não tem ninguém do time atendendo por este canal.",
                     trace=trace + [{"type": "capability_blocked", "capability": "human_transfer"}],
                 )
             action = {
@@ -879,9 +891,13 @@ class SellerEngine:
                     "pending": pending_context,
                 },
             }
-            response = "Vou encaminhar você para uma pessoa, sem pedir outra qualificação."
+            response = "Claro, vou te passar para uma pessoa do time."
             response += self._service_hours_message(package)
             return self._result(event, state, response, action, trace)
+
+        if proposal.intent == "ai_question":
+            trace.append({"type": "ai_disclosed"})
+            return self._result(event, state, ai_disclosure(package), trace=trace)
 
         if proposal.intent == "thanks":
             response = "Por nada!"
@@ -903,22 +919,22 @@ class SellerEngine:
 
         if proposal.intent == "price":
             if not offer:
-                return self._result(event, state, "Qual oferta você quer consultar?", trace=trace)
+                return self._result(event, state, "Claro! De qual produto você quer saber o valor?", trace=trace)
             if package_capability(package, "catalog_query") not in {"enabled", "assisted"}:
                 state["pending"] = {"type": "catalog_disabled"}
                 return self._result(
                     event,
                     state,
-                    "A consulta de catálogo ainda não está habilitada para este negócio; não vou informar um valor não aprovado.",
+                    "Esse valor eu ainda não tenho confirmado por aqui, e prefiro não te passar um número errado. Se quiser, peça para falar com uma pessoa do time.",
                     trace=trace + [{"type": "capability_blocked", "capability": "catalog_query"}],
                 )
             if offer.get("price_type", "fixed") != "fixed":
                 question = self._first_missing(offer, state["facts"])
                 return self._ask(event, state, offer, question, "o valor depende desse escopo", trace)
             amount = float(offer["price"])
-            suffix = " por unidade" if offer.get("kind") == "physical" else ""
+            suffix = " a unidade" if offer.get("kind") == "physical" else ""
             conditions = offer.get("description", "")
-            response = "O %s custa R$ %.2f%s." % (offer["name"], amount, suffix)
+            response = "%s sai por %s%s." % (offer["name"], brl(amount), suffix)
             if conditions:
                 response += " " + conditions
             return self._result(event, state, response, trace=trace)
@@ -929,7 +945,7 @@ class SellerEngine:
                 return self._result(
                     event,
                     state,
-                    "A consulta de conhecimento ainda não está habilitada para este negócio; não vou responder sem uma fonte aprovada.",
+                    "Essa informação eu ainda não tenho confirmada por aqui, e prefiro não chutar. Se quiser, peça para falar com uma pessoa do time.",
                     trace=trace + [{"type": "capability_blocked", "capability": "knowledge_query"}],
                 )
             if not offer:
@@ -949,7 +965,7 @@ class SellerEngine:
                 return self._result(
                     event,
                     state,
-                    "Não consegui identificar uma condição específica para consultar. Vou registrar a lacuna sem usar uma fonte genérica ou inventar uma resposta.",
+                    "Não entendi bem qual informação você precisa. Pode me dizer de outro jeito?",
                     trace=trace + [{"type": "evidence_topic_missing", "declared_topics": declared_topics}],
                 )
             responses: List[str] = [objection_response] if objection_response else []
@@ -960,8 +976,8 @@ class SellerEngine:
                 if topic == "price":
                     if offer and offer.get("price_type", "fixed") == "fixed":
                         amount = float(offer["price"])
-                        suffix = " por unidade" if offer.get("kind") == "physical" else ""
-                        responses.append("O %s custa R$ %.2f%s." % (offer["name"], amount, suffix))
+                        suffix = " a unidade" if offer.get("kind") == "physical" else ""
+                        responses.append("%s sai por %s%s." % (offer["name"], brl(amount), suffix))
                     else:
                         missing_topics.append(topic)
                     continue
@@ -999,7 +1015,7 @@ class SellerEngine:
                 return self._result(
                     event,
                     state,
-                    "Encontrei condições conflitantes e não vou escolher uma arbitrariamente. Preciso confirmar qual política está vigente.",
+                    "Encontrei informações conflitantes sobre isso aqui. Antes de te responder, preciso confirmar qual delas está valendo.",
                     trace=used_trace + [{"type": "evidence_conflict", "topics": conflict_topics}],
                     evidence=evidence,
                 )
@@ -1011,9 +1027,9 @@ class SellerEngine:
                 }
                 labels = ", ".join(self._topic_label(topic) for topic in missing_topics)
                 if responses:
-                    response = " ".join(responses) + " Sobre %s, não encontrei uma condição documentada e aprovada agora." % labels
+                    response = " ".join(responses) + " Sobre %s, não encontrei uma informação confirmada para te passar agora." % labels
                 else:
-                    response = "Não encontrei uma fonte aprovada para confirmar %s agora. Vou registrar a lacuna sem inventar uma resposta." % labels
+                    response = "Sobre %s, não encontrei uma informação confirmada para te passar agora, e prefiro não chutar." % labels
                 return self._result(
                     event,
                     state,
@@ -1029,7 +1045,7 @@ class SellerEngine:
             return self._result(
                 event,
                 state,
-                "Recebi o comprovante, mas ainda não posso marcar o pagamento como confirmado. Vou consultar o provedor ou encaminhar para conferência.",
+                "Recebi o comprovante, obrigado! Só não posso marcar o pagamento como confirmado antes de ele aparecer no sistema de pagamento, então ele vai passar por conferência.",
                 trace=trace + [{"type": "payment_proof_not_confirmation"}],
             )
 
@@ -1045,14 +1061,14 @@ class SellerEngine:
                 return self._result(
                     event,
                     state,
-                    "Entendi seu pedido no áudio. Confirma por texto antes de eu preparar a compra?",
+                    "Entendi seu pedido pelo áudio. Pode confirmar por texto antes de eu preparar a compra?",
                     trace=trace + [{"type": "transcribed_action_blocked"}],
                 )
             return self._buy(package, state, event, proposal, trace)
 
         if proposal.intent == "greeting":
-            return self._result(event, state, "Olá. O que você gostaria de comprar ou consultar?", trace=trace)
-        return self._result(event, state, "Posso ajudar com uma oferta, preço, prazo ou próximo passo de compra.", trace=trace)
+            return self._result(event, state, introduction(package) + " Me conta o que você está procurando.", trace=trace)
+        return self._result(event, state, "Consigo te ajudar com produtos, preços, prazos e com a compra em si. O que você precisa?", trace=trace)
 
     def _buy(
         self,
@@ -1064,7 +1080,7 @@ class SellerEngine:
     ) -> EngineResult:
         offer = self._offer(package, proposal.offer_id or state.get("facts", {}).get("offer_id"))
         if not offer:
-            return self._result(event, state, "Qual oferta você quer comprar?", trace=trace)
+            return self._result(event, state, "Claro! Qual produto você quer?", trace=trace)
         pending_type = (state.get("pending") or {}).get("type")
         if pending_type in {"reconcile_checkout", "post_effect_correction"} or (
             state.get("operation") or {}
@@ -1072,7 +1088,7 @@ class SellerEngine:
             return self._result(
                 event,
                 state,
-                "Existe uma operação com resultado pendente de conciliação. Não vou iniciar outro checkout antes de resolvê-la.",
+                "Ainda estou conferindo o seu pedido anterior (conciliação com o sistema de pagamento). Para não duplicar nada, só gero outro link depois dessa confirmação.",
                 trace=trace + [{"type": "effect_reconciliation_required"}],
             )
         state["facts"]["offer_id"] = offer["id"]
@@ -1088,7 +1104,7 @@ class SellerEngine:
             return self._result(
                 event,
                 state,
-                "Posso preparar o próximo passo, mas não vou cobrar nem usar um identificador não verificado.",
+                "Consigo preparar o link de pagamento, mas não faço cobranças diretamente por aqui.",
                 trace=trace,
             )
 
@@ -1097,7 +1113,7 @@ class SellerEngine:
             return self._result(
                 event,
                 state,
-                "A cotação ou proposta ainda não está habilitada para este negócio; vou registrar a solicitação sem inventar condições.",
+                "Ainda não consigo montar orçamento por aqui, e não quero te passar condições sem confirmação. Se quiser, peça para falar com uma pessoa do time.",
                 trace=trace + [{"type": "capability_blocked", "capability": "quote"}],
             )
 
@@ -1110,7 +1126,7 @@ class SellerEngine:
                 return self._result(
                     event,
                     state,
-                    "Ainda não consigo confirmar essa condição de prazo. Posso encaminhar para confirmação, sem prometer a entrega.",
+                    "Ainda não consigo confirmar se chega dentro desse prazo, e não quero te prometer sem ter certeza. Se quiser, uma pessoa do time pode confirmar com você.",
                     trace=trace,
                 )
             state["facts"]["delivery"] = delivery
@@ -1128,7 +1144,7 @@ class SellerEngine:
 
         if offer.get("mode") in {"consultative", "proposal", "appointment"} or offer.get("price_type") == "on_request":
             if (state.get("pending") or {}).get("type") == "quote_confirmation" and not state["facts"].get("confirmation"):
-                return self._result(event, state, "O escopo está pronto. Confirma que posso preparar a proposta?", trace=trace)
+                return self._result(event, state, "Já tenho o que preciso. Posso preparar a sua proposta?", trace=trace)
             try:
                 result = self.commerce.prepare_proposal(
                     package,
@@ -1151,7 +1167,7 @@ class SellerEngine:
                     return self._result(
                         event,
                         state,
-                        "Já existe uma proposta em preparação. Não vou duplicá-la; aguarde a confirmação ou peça a conciliação.",
+                        "Sua proposta já está sendo preparada. Para não duplicar, espero a confirmação dela antes de seguir.",
                         trace=trace + [{"type": "proposal_in_progress", "effect_key": exc.details.get("effect_key")}],
                     )
                 if exc.status == "unknown":
@@ -1165,7 +1181,7 @@ class SellerEngine:
                     return self._result(
                         event,
                         state,
-                        "O resultado da proposta não foi confirmado. Não vou repetir a operação; preciso conciliá-la antes de informar um resultado.",
+                        "Não recebi a confirmação do resultado da sua proposta. Para não gerar uma duplicada, vou conferir antes de te passar qualquer coisa.",
                         trace=trace,
                     )
                 return self._result(event, state, "Não consegui preparar a proposta: %s" % str(exc), trace=trace)
@@ -1177,7 +1193,7 @@ class SellerEngine:
             return self._result(
                 event,
                 state,
-                "Com os dados disponíveis, preparei a proposta %s. O valor ainda depende da avaliação do escopo." % result["proposal_id"],
+                "Pronto, preparei sua proposta (%s). O valor final depende da avaliação do escopo." % result["proposal_id"],
                 action,
                 trace + [{"type": "proposal_prepared"}],
             )
@@ -1197,13 +1213,13 @@ class SellerEngine:
             return self._result(
                 event,
                 state,
-                "A quantidade ou o pagamento mudou. A cotação anterior foi invalidada; agora são R$ %.2f. Confirma para eu preparar o checkout?" % new_quote["amount"],
+                "Com essa mudança, o total fica %s. Posso gerar o link de pagamento com esse valor?" % brl(new_quote["amount"]),
                 trace=trace,
             )
 
         if package_capability(package, "checkout_prepare") not in {"enabled", "assisted"}:
             state["pending"] = {"type": "checkout_disabled"}
-            return self._result(event, state, "O checkout ainda não está habilitado para este negócio; vou encaminhar a solicitação.", trace=trace)
+            return self._result(event, state, "O link de pagamento ainda não está disponível por aqui. Se quiser, peça para falar com uma pessoa do time para finalizar.", trace=trace)
 
         try:
             checkout = self.commerce.prepare_checkout(
@@ -1220,7 +1236,7 @@ class SellerEngine:
             trace.append({"type": "checkout_result", "status": exc.status, "code": exc.code})
             if exc.status == "pending" and exc.code == "identity_not_verified":
                 state["pending"] = {"type": "identity", "reason": "checkout requires verified contact"}
-                return self._result(event, state, "Para preparar o checkout, preciso confirmar a identificação do comprador. Qual e-mail devo usar?", trace=trace)
+                return self._result(event, state, "Para gerar o link de pagamento, preciso confirmar seus dados. Qual e-mail posso usar?", trace=trace)
             if exc.status == "pending" and exc.code == "effect_in_progress":
                 state["operation"] = {
                     "type": "checkout",
@@ -1233,7 +1249,7 @@ class SellerEngine:
                 return self._result(
                     event,
                     state,
-                    "Já existe um checkout em preparação. Não vou duplicá-lo; aguarde a confirmação ou peça a conciliação.",
+                    "Seu link de pagamento já está sendo gerado. Para não duplicar, espero a confirmação dele antes de seguir.",
                     trace=trace + [{"type": "checkout_in_progress", "effect_key": exc.details.get("effect_key")}],
                 )
             if exc.status == "unknown":
@@ -1244,7 +1260,7 @@ class SellerEngine:
                     **exc.details,
                 }
                 state["pending"] = {"type": "reconcile_checkout"}
-                return self._result(event, state, "O provedor não confirmou o resultado do checkout. Não vou repetir a operação; preciso conciliá-la antes de informar um link.", trace=trace)
+                return self._result(event, state, "O sistema de pagamento não confirmou o resultado do seu link. Para não gerar cobrança duplicada, vou conferir antes de te mandar outro.", trace=trace)
             return self._result(event, state, "Não consegui preparar o checkout: %s" % str(exc), trace=trace)
 
         state["operation"] = {"type": "checkout", **checkout, "status": "confirmed"}
@@ -1253,7 +1269,7 @@ class SellerEngine:
         state["facts"].pop("confirmation", None)
         state.setdefault("memory", {})["open_questions"] = []
         action = {"type": "prepare_checkout", **checkout}
-        response = "O %s custa R$ %.2f. Você pode concluir aqui: %s" % (offer["name"], new_quote["amount"], checkout["url"])
+        response = "Fechado! Ficou %s no total. É só finalizar por aqui: %s" % (brl(new_quote["amount"]), checkout["url"])
         trace.append({"type": "checkout_prepared", "charged": checkout.get("charged", False)})
         return self._result(event, state, response, action, trace)
 
@@ -1445,15 +1461,68 @@ class SellerEngine:
         memory["open_questions"] = [field]
         memory["answered_fields"] = list(state["answered_fields"])
         prompts = {
-            "variant": "Qual tamanho: %s?" % ", ".join(str(item) for item in offer.get("stock", {}).keys()),
+            "variant": self._variant_question(offer),
             "quantity": "Quantas unidades você quer?",
-            "region": "Para qual região devo verificar a entrega?",
-            "email": "Qual e-mail devo usar para preparar o acesso ou checkout?",
-            "company_name": "Qual é o nome da empresa para provisionar as licenças?",
-            "scope": "Você quer uma reforma completa ou apenas trocar os revestimentos?",
+            "region": "Para qual cidade ou estado é a entrega?",
+            "email": "Qual e-mail posso usar no seu pedido?",
+            "company_name": "Qual o nome da empresa para eu cadastrar as licenças?",
+            "scope": "Me conta um pouco mais do que você precisa? Isso muda o orçamento.",
         }
+        overrides = offer.get("questions") if isinstance(offer.get("questions"), Mapping) else {}
+        if isinstance(overrides.get(field), str) and overrides[field].strip():
+            prompts[field] = overrides[field].strip()
         trace.append({"type": "necessary_question", "field": field, "reason": reason})
-        return self._result(event, state, prompts.get(field, "Preciso confirmar %s para continuar." % field), trace=trace)
+        return self._result(event, state, prompts.get(field, "Para seguir, preciso confirmar %s." % field), trace=trace)
+
+    @staticmethod
+    def _variant_question(offer: Mapping[str, Any]) -> str:
+        options = [str(item) for item in offer.get("stock", {}).keys()]
+        if not options:
+            return "Qual tamanho ou modelo você prefere?"
+        listed = options[0] if len(options) == 1 else "%s ou %s" % (", ".join(options[:-1]), options[-1])
+        return "Qual tamanho você prefere: %s?" % listed
+
+    @staticmethod
+    def _profile_label(profile: str) -> str:
+        return {
+            "support": "suporte",
+            "post_sale": "pós-venda",
+            "financial": "financeiro",
+            "informational": "informações",
+            "consultative": "orçamento",
+        }.get(profile, profile.replace("_", "-"))
+
+    @staticmethod
+    def _price_objection_reply(package: Mapping[str, Any], offer: Mapping[str, Any], trace: List[Dict[str, Any]]) -> str:
+        """Acknowledge, restate the approved price and offer a real cheaper option.
+
+        Discounts and urgency are never invented; an alternative is only
+        mentioned when the package itself has a cheaper fixed-price offer of
+        the same kind.
+        """
+        amount = float(offer["price"])
+        suffix = " a unidade" if offer.get("kind") == "physical" else ""
+        reply = "Entendo, faz sentido comparar. %s sai por %s%s" % (offer["name"], brl(amount), suffix)
+        description = str(offer.get("description", "")).strip()
+        reply += (". " + description if description else ".")
+        if not reply.endswith((".", "!", "?")):
+            reply += "."
+        reply += " Não tenho desconto disponível agora."
+        cheaper = sorted(
+            (
+                item for item in package.get("offers", [])
+                if isinstance(item, Mapping) and item.get("id") != offer.get("id")
+                and item.get("kind") == offer.get("kind") and item.get("price_type", "fixed") == "fixed"
+                and item.get("price") is not None and float(item["price"]) < amount
+            ),
+            key=lambda item: float(item["price"]),
+            reverse=True,
+        )
+        if cheaper:
+            alternative = cheaper[0]
+            reply += " Se ajudar, %s sai por %s." % (alternative["name"], brl(float(alternative["price"])))
+            trace.append({"type": "objection_alternative", "offer_id": alternative["id"]})
+        return reply
 
     @staticmethod
     def _explicit_commercial_resume(text: str, proposal: Proposal, state: Mapping[str, Any]) -> bool:
@@ -1601,8 +1670,19 @@ class SellerEngine:
         }.get(topic, (topic,))
         return any(term in content for term in terms)
 
+    @staticmethod
+    def _recent_turns(state: Mapping[str, Any], limit: int = 8) -> List[Dict[str, str]]:
+        """Last exchanges as data for the interpreter and the drafter."""
+        history = state.get("history") if isinstance(state.get("history"), list) else []
+        return [
+            {"buyer": str(item.get("text", ""))[:1000], "seller": str(item.get("response", ""))[:1000]}
+            for item in history[-limit:]
+            if isinstance(item, Mapping)
+        ]
+
     def _maybe_draft(self, package: Mapping[str, Any], event: Mapping[str, Any], result: EngineResult) -> None:
-        if package.get("draft_mode", "off") != "on" or not result.response:
+        mode = package.get("draft_mode", "off")
+        if mode not in {"on", "auto"} or not result.response:
             return
         if result.state.get("status") == "human_paused" or any(
             item.get("type") in {"model_contract_failed", "model_error", "channel_event_rejected"}
@@ -1611,7 +1691,10 @@ class SellerEngine:
             return
         draft_response = getattr(self.model, "draft_response", None)
         if not callable(draft_response):
-            result.trace.append({"type": "draft_fallback", "reason": "drafter_unavailable"})
+            # "auto" drafts only when the configured model can; "on" makes the
+            # missing drafter visible.
+            if mode == "on":
+                result.trace.append({"type": "draft_fallback", "reason": "drafter_unavailable"})
             return
         trusted_evidence = []
         for item in result.evidence:
@@ -1636,6 +1719,8 @@ class SellerEngine:
         requirements = ResponseRequirements.from_result(
             str(event.get("text", "")), EngineResult(result.event_id, result.conversation_id, result.response,
                                                       action=result.action, state=result.state, evidence=trusted_evidence),
+            history=self._recent_turns(result.state),
+            voice=voice_settings(package),
         )
         feedback: list[dict[str, str]] = []
         for attempt in range(2):
@@ -1658,7 +1743,7 @@ class SellerEngine:
     def _service_hours_message(self, package: Mapping[str, Any]) -> str:
         hours = package.get("service_hours")
         if not isinstance(hours, Mapping):
-            return " Disponibilidade do atendimento humano não informada."
+            return " Ainda não tenho uma previsão de horário para te passar."
         now = datetime.fromisoformat(self.store.clock.now().replace("Z", "+00:00")).astimezone(
             ZoneInfo(str(hours["timezone"]))
         )
@@ -1671,12 +1756,12 @@ class SellerEngine:
                 opening = day.replace(hour=start_hour, minute=start_minute, second=0, microsecond=0)
                 closing = day.replace(hour=end_hour, minute=end_minute, second=0, microsecond=0)
                 if opening <= now < closing:
-                    return " O atendimento humano está dentro do horário informado."
+                    return " O time está no horário de atendimento."
                 if opening > now:
-                    when = "amanhã" if days_ahead == 1 else "hoje" if days_ahead == 0 else day.strftime("%A")
+                    when = "amanhã" if days_ahead == 1 else "hoje" if days_ahead == 0 else WEEKDAYS_PT[day.weekday()]
                     time_label = f"{start_hour}h" + (f"{start_minute:02d}" if start_minute else "")
-                    return f" O próximo horário de atendimento é {when} às {time_label}."
-        return " Disponibilidade do atendimento humano não informada."
+                    return f" O time volta {when} às {time_label}."
+        return " Ainda não tenho uma previsão de horário para te passar."
 
     @staticmethod
     def _result(
