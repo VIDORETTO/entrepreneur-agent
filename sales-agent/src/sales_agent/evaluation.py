@@ -1197,7 +1197,7 @@ class EvaluationRunner:
         if package_patch is not None:
             # Posture scenarios run the same buyer text against a different
             # owner posture; only these keys may change the seeded example.
-            if not isinstance(package_patch, Mapping) or set(package_patch) - {"sales_posture", "append_offers"}:
+            if not isinstance(package_patch, Mapping) or set(package_patch) - {"sales_posture", "append_offers", "capabilities"}:
                 raise ValueError("package_patch inválido")
             package = context.store.get_business(str(case["business_id"]))
             if package is None:
@@ -1205,6 +1205,7 @@ class EvaluationRunner:
             package["offers"].extend(copy.deepcopy(list(package_patch.get("append_offers", []))))
             if "sales_posture" in package_patch:
                 package["sales_posture"] = copy.deepcopy(package_patch["sales_posture"])
+            package["capabilities"].update(copy.deepcopy(dict(package_patch.get("capabilities", {}))))
             seed_package(context.store, validate_package(package))
         source_override = case.get("source_override")
         if source_override is not None:

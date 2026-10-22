@@ -18,7 +18,15 @@ from .commerce import CommerceError, SimulatedCommerce
 from .drafting import ClaimVerifier, ResponseRequirements, brl, injection_signals
 from .knowledge import KnowledgeBackend, PersistentFarolKnowledge
 from .model import ModelAdapter, RuleBasedModel
-from .posture import AFFIRMATIVE, NEGATIVE, plan_move, posture_settings, record_decline, record_move
+from .posture import (
+    AFFIRMATIVE,
+    NEGATIVE,
+    plan_checkout_reminders,
+    plan_move,
+    posture_settings,
+    record_decline,
+    record_move,
+)
 from .skills import SkillCatalog
 from .storage import StateStore, durable_key
 from .transcription import Transcriber
@@ -223,6 +231,7 @@ class SellerEngine:
                 state["history"][-1]["action"] = result.action
             context = event.get("channel_context")
             channel_kind = context.get("channel_kind", "other") if isinstance(context, Mapping) else "other"
+            reminders = self._plan_reminders(package, result)
             payload = result.as_dict()
             commit_status, replay = self.store.commit_event(
                 state,
@@ -402,6 +411,32 @@ class SellerEngine:
                             trace=stale_replay.get("trace", []) + [{"type": "deduplicated_stale_race"}],
                         )
                 raise ConversationError("a conversa mudou repetidamente durante a conciliação; tente novamente")
+            # Any new buyer message makes an earlier abandoned-checkout
+            # reminder stale; a freshly prepared link schedules its own.
+            self.store.cancel_checkout_reminders(business_id, conversation_id, "buyer replied")
+            for reminder in reminders:
+                self.store.enqueue_message(
+                    durable_key("followup", business_id, conversation_id, "checkout-reminder",
+                                str(reminder["checkout_id"]), str(reminder["number"])),
+                    business_id,
+                    conversation_id,
+                    {
+                        "kind": "checkout_reminder",
+                        "number": reminder["number"],
+                        "checkout_id": reminder["checkout_id"],
+                        "after_event_id": event_id,
+                        "window_started_at": reminder["window_started_at"],
+                        "channel": event.get("channel", "cli"),
+                        "channel_kind": channel_kind,
+                        "contact_id": event.get("contact_id"),
+                        "response": reminder["text"],
+                        "action": None,
+                        "package_version": package.get("package_version"),
+                        "package_fingerprint": package_fingerprint(package),
+                        "required_capabilities": ["follow_up"],
+                    },
+                    available_at=reminder["available_at"],
+                )
             if (result.state.get("pending") or {}).get("type") == "effect_in_progress":
                 deadline = time.monotonic() + 0.2
                 while time.monotonic() < deadline:
@@ -1490,6 +1525,22 @@ class SellerEngine:
             prompts[field] = overrides[field].strip()
         trace.append({"type": "necessary_question", "field": field, "reason": reason})
         return self._result(event, state, prompts.get(field, "Para seguir, preciso confirmar %s." % field), trace=trace)
+
+    def _plan_reminders(self, package: Mapping[str, Any], result: EngineResult) -> List[Dict[str, Any]]:
+        """Plan abandoned-checkout reminders for a link prepared in this turn."""
+        action = result.action or {}
+        if action.get("type") != "prepare_checkout" or not result.response:
+            return []
+        offer = self._offer(package, (result.state.get("facts") or {}).get("offer_id")) or {}
+        now = self.store.clock.now()
+        planned, reason = plan_checkout_reminders(package, result.state, offer, now)
+        if reason:
+            result.trace.append({"type": "reminder_not_scheduled", "reason": reason})
+        for reminder in planned:
+            reminder.update({"checkout_id": action.get("checkout_id"), "window_started_at": now})
+            result.trace.append({"type": "reminder_scheduled", "number": reminder["number"],
+                                 "available_at": reminder["available_at"]})
+        return planned
 
     @staticmethod
     def _with_posture_move(

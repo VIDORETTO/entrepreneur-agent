@@ -1311,14 +1311,23 @@ class StateStore:
                         )
             return {**payload, "effect_key": effect_key, "kind": row["kind"], "status": resolution}
 
-    def enqueue_message(self, message_key: str, business_id: str, conversation_id: str, payload: Dict[str, Any]) -> bool:
+    def enqueue_message(
+        self,
+        message_key: str,
+        business_id: str,
+        conversation_id: str,
+        payload: Dict[str, Any],
+        *,
+        available_at: Optional[str] = None,
+    ) -> bool:
+        """Queue one outbound intent; ``available_at`` delays when it may be claimed."""
         now = utc_now()
         with self._lock, self.connect() as db:
             try:
                 db.execute(
                     "INSERT INTO outbox(message_key, business_id, conversation_id, payload, status, created_at, "
                     "attempts, available_at, leased_until, last_error, updated_at) VALUES (?, ?, ?, ?, ?, ?, 0, ?, NULL, NULL, ?)",
-                    (message_key, business_id, conversation_id, self.dumps(payload), "pending", now, now, now),
+                    (message_key, business_id, conversation_id, self.dumps(payload), "pending", now, available_at or now, now),
                 )
                 return True
             except sqlite3.IntegrityError:
@@ -1620,6 +1629,17 @@ class StateStore:
                 (now, business_id, conversation_id),
             )
             return pending.rowcount + processing.rowcount
+
+    def cancel_checkout_reminders(self, business_id: str, conversation_id: str, reason: str) -> int:
+        """Cancel pending abandoned-checkout reminders; other follow-ups are kept."""
+        with self.connect() as db:
+            rows = db.execute(
+                "SELECT message_key, payload FROM outbox WHERE business_id = ? AND conversation_id = ? "
+                "AND message_key LIKE 'followup:%' AND status = 'pending'",
+                (business_id, conversation_id),
+            ).fetchall()
+        keys = [row["message_key"] for row in rows if self.loads(row["payload"]).get("kind") == "checkout_reminder"]
+        return sum(self.cancel_outbox_message(key, reason) for key in keys)
 
     def cancel_outbox_message(self, message_key: str, reason: str, *, lease_owner: Optional[str] = None) -> bool:
         if not reason.strip():

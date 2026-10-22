@@ -1,5 +1,5 @@
 {
-  "version": "2026-10-22.2",
+  "version": "2026-10-22.3",
   "cases": [
     {
       "id": "dev-direct-01",
@@ -868,6 +868,43 @@
             "quote_validity_minutes": 30
           }
         ]
+      }
+    },
+    {
+      "id": "dev-posture-08",
+      "category": "posture",
+      "business_id": "azul-b2c",
+      "critical": true,
+      "turns": [
+        {
+          "text": "Quero comprar a camiseta azul tamanho M, 1 unidade para SP."
+        }
+      ],
+      "expected": {
+        "action_type": "prepare_checkout",
+        "trace_type": "reminder_scheduled"
+      },
+      "forbidden": {
+        "action_types": [
+          "charge"
+        ],
+        "response_contains": []
+      },
+      "initial_state": "fresh",
+      "allowed_operations": [
+        "prepare_checkout"
+      ],
+      "evidence": "public_result_and_trace",
+      "package_patch": {
+        "sales_posture": {
+          "initiative": "suggest"
+        },
+        "capabilities": {
+          "follow_up": {
+            "state": "enabled",
+            "reason": "lembrete de link em aberto"
+          }
+        }
       }
     }
   ]

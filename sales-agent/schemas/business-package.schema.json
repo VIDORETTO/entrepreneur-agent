@@ -17,6 +17,9 @@
         "ask_for_close": {"type": "boolean"},
         "alternative_on_objection": {"type": "boolean"},
         "max_suggestions_per_conversation": {"type": "integer", "minimum": 0, "maximum": 3},
+        "abandoned_checkout_reminders": {"type": "integer", "minimum": 0, "maximum": 2},
+        "reminder_after_minutes": {"type": "integer", "minimum": 15, "maximum": 1380},
+        "reminder_texts": {"type": "array", "maxItems": 2, "items": {"type": "string", "minLength": 1, "maxLength": 300}},
         "cross_sell": {
           "type": "array",
           "items": {

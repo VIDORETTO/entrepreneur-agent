@@ -7,6 +7,14 @@ projeto pretende adotar versionamento semântico após estabilizar a API públic
 
 ### Adicionado
 
+- Lembrete de link em aberto: quando a postura é `suggest` ou `lead` e
+  `follow_up` está habilitada, o link de pagamento agenda até dois lembretes
+  sem link nem preço (`abandoned_checkout_reminders`,
+  `reminder_after_minutes`, `reminder_texts`). Qualquer mensagem do
+  comprador cancela os pendentes; na entrega, o lembrete é revalidado
+  (mesmo checkout, sem pagamento informado, sem recusa ou humano, fora das
+  21h–9h e dentro das 23 h da janela do WhatsApp). `enqueue_message` aceita
+  `available_at`.
 - Postura de venda (`package.sales_posture`): o dono escolhe quanta iniciativa
   o vendedor toma nas conversas que chegam (`answer`, `suggest`, `lead`),
   com complementos aprovados (`cross_sell`), oferta de preparar o pedido e

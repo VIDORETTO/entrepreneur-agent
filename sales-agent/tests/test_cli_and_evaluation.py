@@ -69,9 +69,9 @@ def test_split_corpus_repeats_and_reports_distribution(tmp_path):
     assert dev["summary"]["failed"] == holdout["summary"]["failed"] == 0
     # 80 cases from TK-012 plus dev-only conversation (naturalness) and
     # sales posture cases.
-    assert dev["summary"]["total"] + holdout["summary"]["total"] == 91
+    assert dev["summary"]["total"] + holdout["summary"]["total"] == 92
     assert dev["evaluation"]["distribution"]["conversation"] == 4
-    assert dev["evaluation"]["distribution"]["posture"] == 7
+    assert dev["evaluation"]["distribution"]["posture"] == 8
     assert dev["evaluation"]["pass_at_1"]["denominator"] == dev["summary"]["total"] * 4
     assert dev["evaluation"]["pass_power_k"]["denominator"] == dev["summary"]["total"]
     assert all(case["pass_power_k"]["denominator"] == 1 for case in holdout["cases"])
